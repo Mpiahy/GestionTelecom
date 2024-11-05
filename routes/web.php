@@ -13,6 +13,6 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+// URL par défaut (in this case: Login)
+Route::get('/', [\App\Http\Controllers\LoginController::class,'loginView'])->name('auth.login');
+Route::get('/login', [\App\Http\Controllers\LoginController::class,'loginView'])->name('auth.login');
