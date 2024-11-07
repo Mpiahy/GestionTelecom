@@ -24,14 +24,26 @@
                                     <div class="text-center mb-5">
                                         <h4 class="text-dark">Connectez-vous</h4>
                                     </div>
-                                    <form method="GET" action="#" class="user">
+                                    <form method="post" action="{{ url('/loginCheck') }}" class="user">
+                                        @csrf
                                         <div class="mb-3">
-                                            <input class="form-control form-control-user" type="email" id="login_usr" aria-describedby="emailHelp" placeholder="Adresse e-mail ou login" name="login_usr">
+                                            <input value="andriamahaleompiahisoa.randriamanivo@colas-mg.com" name="identifiant" class="form-control form-control-user" type="text" placeholder="Adresse e-mail ou login" required>
                                         </div>
+                                        
                                         <div class="mb-3">
-                                            <input class="form-control form-control-user" type="password" id="pwd_usr" placeholder="Mot de passe" name="pwd_usr">
+                                            <input value="mdpmpiahy" name="password" class="form-control form-control-user" type="password" placeholder="Mot de passe" required>
                                         </div>
-                                            <button class="btn btn-primary d-block btn-user w-100 mt-5" type="submit">Se connecter</button>
+                                        
+                                        @if ($errors->any())
+                                            <div class="alert alert-danger p-0 text-center">
+                                                    @foreach ($errors->all() as $error)
+                                                        {{ $error }}
+                                                    @endforeach
+                                                </ul>
+                                            </div>
+                                        @endif
+
+                                        <button class="btn btn-primary d-block btn-user w-100 mt-5" type="submit">Se connecter</button>
                                         <hr>
                                     </form>
                                     <div class="text-center">

@@ -5,13 +5,15 @@ services:
       dockerfile: Dockerfile
     container_name: gestiontelecom-app
     ports:
-      - "5050:5000"
+      - "5050:9000"
     volumes:
       - .:/var/www/html
     networks:
       - laravel
     depends_on:
       - db
+    env_file:
+      - .env_docker
 
   webserver:
     image: nginx:latest
