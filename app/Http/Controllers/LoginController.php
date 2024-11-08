@@ -1,9 +1,11 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use App\Http\Requests\LoginRequest;
-use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
+// use App\Models\User;
 
 class LoginController extends Controller
 {
@@ -12,7 +14,7 @@ class LoginController extends Controller
     {
         return view("auth.login");
     }
-
+    // Login validate
     public function loginCheck(LoginRequest $request)
     {
         // Extraire les credentials après validation
@@ -31,11 +33,20 @@ class LoginController extends Controller
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
             $user = Auth::user();
-            return redirect()->route('index')->with('login', $user->login);
+            $request->session()->put('login', $user->login);
+            return redirect()->route('index');
         }
     
         // Si l'authentification échoue
         return to_route('auth.login')->withErrors(['identifiant' => "Identifiant ou mot de passe invalide"])->onlyInput('identifiant');
+    }
+    // Logout
+    public function logout(Request $request)
+    {
+        Auth::logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+        return to_route("auth.login");
     }
     
 }

@@ -8,12 +8,17 @@ services:
       - "5050:9000"
     volumes:
       - .:/var/www/html
+      - /var/www/html/node_modules 
     networks:
       - laravel
     depends_on:
       - db
     env_file:
       - .env_docker
+    command: >
+      sh -c "chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache &&
+             chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache &&
+             php-fpm"
 
   webserver:
     image: nginx:latest

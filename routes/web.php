@@ -20,5 +20,8 @@ Route::get('/login', [\App\Http\Controllers\LoginController::class,'loginView'])
 // Check login
 Route::post('/loginCheck', [\App\Http\Controllers\LoginController::class,'loginCheck'])->name('auth.loginCheck');
 
+// Logout
+Route::get('/logout', [\App\Http\Controllers\LoginController::class,'logout'])->name('auth.logout');
+
 // Page d'accueil
-Route::get('/index', [\App\Http\Controllers\IndexController::class,'indexView'])->name('index');
+Route::get('/index', [\App\Http\Controllers\IndexController::class,'indexView'])->middleware('check.session')->name('index');

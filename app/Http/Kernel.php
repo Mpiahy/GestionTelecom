@@ -6,6 +6,12 @@ use Illuminate\Foundation\Http\Kernel as HttpKernel;
 
 class Kernel extends HttpKernel
 {
+    // ...
+
+    protected $routeMiddleware = [
+        // autres middlewares...
+        'check.session' => \App\Http\Middleware\CheckSession::class,
+    ];
     /**
      * The application's global HTTP middleware stack.
      *
