@@ -15,7 +15,7 @@ services:
       - db
 
   db:
-    image: postgres:10
+    image: postgres:15.8
     container_name: gestiontelecom-db
     environment:
       POSTGRES_DB: telecom
@@ -24,7 +24,7 @@ services:
     volumes:
       - pgdata:/var/lib/postgresql/data
     ports:
-      - "5432:5432"
+      - "5433:5432"
 
 volumes:
   pgdata:
