@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
-    <link rel="icon" href="https://www.colas.com/favicon-32x32.png?v=a3aaafc2f61dca56c11ff88452088fe0" type="image/png">
+    {{-- <link rel="icon" href="https://www.colas.com/favicon-32x32.png?v=a3aaafc2f61dca56c11ff88452088fe0" type="image/png"> --}}
     <link rel="stylesheet" href="{{asset('/assets/bootstrap/css/bootstrap.min.css')}}">
     <link rel="stylesheet" href="{{asset('/assets/css/Nunito.css')}}">
     <link rel="stylesheet" href="{{asset('/assets/fonts/fontawesome-all.min.css')}}">
