@@ -36,7 +36,6 @@ class LoginController extends Controller
             $request->session()->put('login', $user->login);
             return redirect()->route('index');
         }
-    
         // Si l'authentification échoue
         return to_route('auth.login')->withErrors(['identifiant' => "Identifiant ou mot de passe invalide"])->onlyInput('identifiant');
     }
@@ -49,4 +48,9 @@ class LoginController extends Controller
         return to_route("auth.login");
     }
     
+    // Load LoginGuest View
+    public function loginGuestView()
+    {
+        return view("auth.loginGuest");
+    }
 }

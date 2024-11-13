@@ -5,12 +5,13 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 
-class IndexController extends Controller
+class LigneController extends Controller
 {
-    // Load Index View
-    public function indexView()
+
+    // Load utilisateur View
+    public function ligneView()
     {
         $login = Session::get('login');
-        return view('index', compact('login'));
+        return view('ref.ligne', compact('login'));
     }
 }

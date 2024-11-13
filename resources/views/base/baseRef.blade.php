@@ -23,7 +23,7 @@
                 <hr class="sidebar-divider my-0">
                 <ul id="accordionSidebar" class="navbar-nav text-light">
                     <li class="nav-item">
-                        <a class="nav-link active" href="{{ url('/index') }}">
+                        <a class="nav-link" href="{{ url('/index') }}">
                             <i class="fas fa-tachometer-alt"></i><span>Tableau de Bord</span>
                         </a>
                     </li>
@@ -36,32 +36,33 @@
                         <a class="nav-link" aria-expanded="true" data-bs-toggle="dropdown" href="blank.html">
                             <i class="fas fa-database"></i><span>Référentiels</span>
                         </a>
-                        <div class="dropdown-menu" style="background: #0a4866;border-style: none;border-color: #0a4866;margin-right: 9px;padding-top: 0px;" data-bs-smooth-scroll="true">
-                            <a class="nav-link" href="{{ url('/user') }}" style="padding-left: 35px;padding-top: 0px;padding-bottom: 15px;">
+                        <div class="dropdown-menu show" style="background: #0a4866;border-style: none;border-color: #0a4866;margin-right: 9px;padding-top: 0px;" data-bs-smooth-scroll="true">
+                            <a class="nav-link {{ Route::is('ref.user') ? 'active' : '' }}" href="{{ route('ref.user') }}" style="padding-left: 35px;padding-top: 0px;padding-bottom: 15px;">
                                 <i class="fas fa-users"></i><span>Utilisateur</span>
                             </a>
-                            <a class="nav-link" href="ref_chantier.html" style="padding-left: 35px;padding-top: 0px;padding-bottom: 15px;">
+                            <a class="nav-link {{ Route::is('ref.chantier') ? 'active' : '' }}" href="{{ route('ref.chantier') }}" style="padding-left: 35px;padding-top: 0px;padding-bottom: 15px;">
                                 <i class="far fa-building" style="font-size: 14px;"></i><span>Chantiers</span>
                             </a>
-                            <a class="nav-link" href="ref_operateur.html" style="padding-left: 35px;padding-top: 0px;padding-bottom: 15px;">
+                            <a class="nav-link {{ Route::is('ref.operateur') ? 'active' : '' }}" href="{{ route('ref.operateur') }}" style="padding-left: 35px;padding-top: 0px;padding-bottom: 15px;">
                                 <i class="fas fa-globe"></i><span>Opérateurs</span>
                             </a>
-                            <a class="nav-link" href="ref_ligne.html" style="padding-left: 35px;padding-top: 0px;padding-bottom: 15px;">
+                            <a class="nav-link {{ Route::is('ref.ligne') ? 'active' : '' }}" href="{{ route('ref.ligne') }}" style="padding-left: 35px;padding-top: 0px;padding-bottom: 15px;">
                                 <i class="fas fa-satellite-dish"></i><span>Lignes</span>
                             </a>
-                            <a class="nav-link" href="ref_ligne_fixe.html" style="padding-left: 35px;padding-top: 0px;padding-bottom: 15px;">
+                            <a class="nav-link {{ Route::is('ref.fibre') ? 'active' : '' }}" href="{{ route('ref.fibre') }}" style="padding-left: 35px;padding-top: 0px;padding-bottom: 15px;">
                                 <i class="fas fa-broadcast-tower"></i><span>Fibres Optiques</span>
                             </a>
-                            <a class="nav-link" href="ref_telephone.html" style="padding-left: 35px;padding-top: 0px;padding-bottom: 15px;">
+                            <a class="nav-link {{ Route::is('ref.phone') ? 'active' : '' }}" href="{{ route('ref.phone') }}" style="padding-left: 35px;padding-top: 0px;padding-bottom: 15px;">
                                 <i class="fas fa-tablet-alt"></i><span>Téléphones</span>
                             </a>
-                            <a class="nav-link" href="ref_box.html" style="padding-left: 35px;padding-top: 0px;padding-bottom: 15px;">
+                            <a class="nav-link {{ Route::is('ref.box') ? 'active' : '' }}" href="{{ route('ref.box') }}" style="padding-left: 35px;padding-top: 0px;padding-bottom: 15px;">
                                 <i class="fas fa-wifi"></i><span>Box Internet</span>
                             </a>
-                            <a class="nav-link" href="#" style="padding-left: 35px;padding-top: 0px;padding-bottom: 10px;">
+                            <a class="nav-link {{ Route::is('ref.forfait') ? 'active' : '' }}" href="{{ route('ref.forfait') }}" style="padding-left: 35px;padding-top: 0px;padding-bottom: 10px;">
                                 <i class="fas fa-money-check-alt"></i><span>Offres et forfaits</span>
                             </a>
                         </div>
+                        
                     </li>
                 </ul>
             </div>
@@ -111,8 +112,8 @@
                     </div>
                 </nav>
 
-                {{-- <!-- Contenu des pages index --> --}}
-                @yield('content_index')
+                {{-- <!-- Contenu des pages référentiels --> --}}
+                @yield('content_ref')
 
             <footer class="bg-white sticky-footer">
                 <div class="container my-auto">
@@ -121,6 +122,10 @@
             </footer>
         </div><a class="border rounded d-inline scroll-to-top" href="#page-top"><i class="fas fa-angle-up"></i></a>
     </div>
+
+                {{-- <!-- Modals des pages référentiels --> --}}
+                @yield('modal_ref')
+
     <script src="{{asset('/assets/bootstrap/js/bootstrap.min.js')}}"></script>
     <script src="{{asset('/assets/js/chart.min.js')}}"></script>
     <script src="{{asset('/assets/js/bs-init.js')}}"></script>

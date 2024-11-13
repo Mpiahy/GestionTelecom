@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
-    <title>Login - Telecom</title>
+    <title>Login Guest - Telecom</title>
     <link rel="icon" href="https://www.colas.com/favicon-32x32.png?v=a3aaafc2f61dca56c11ff88452088fe0" type="image/png">
     <link rel="stylesheet" href="{{asset('/assets/bootstrap/css/bootstrap.min.css')}}">
     <link rel="stylesheet" href="{{asset('/assets/css/Nunito.css')}}">
@@ -22,16 +22,12 @@
                                     <div class="text-center mb-5" style="padding-top: 0px;margin-top: -30px;">
                                         <img width="258" height="90" src="{{asset('/assets/img/COLAS%20WE%20OPEN%20THE%20WAY.png')}}"></div>
                                     <div class="text-center mb-5">
-                                        <h4 class="text-dark">Connectez vous en tant qu'administrateur</h4>
+                                        <h4 class="text-dark" style="margin-bottom: 0px;">Connectez vous<br/>en tant qu'invité</h4>
                                     </div>
                                     <form method="post" action="{{ url('/loginCheck') }}" class="user">
                                         @csrf
-                                        <div class="mb-3">
-                                            <input value="andriamahaleompiahisoa.randriamanivo@colas-mg.com" name="identifiant" class="form-control form-control-user" type="text" placeholder="Adresse e-mail ou login" required>
-                                        </div>
-                                        
-                                        <div class="mb-3">
-                                            <input value="mdpmpiahy" name="password" class="form-control form-control-user" type="password" placeholder="Mot de passe" required>
+                                        <div class="mb-5">
+                                            <input id="login_guest" class="form-control form-control-user" type="text" aria-describedby="emailHelp" placeholder="Adresse e-mail ou login" name="login_guest" />
                                         </div>
                                         
                                         @if ($errors->any())
@@ -47,7 +43,7 @@
                                         <hr>
                                     </form>
                                     <div class="text-center">
-                                        <a class="small" href="{{ url('/loginGuest') }}">Se connecter en tant qu'invité?</a>
+                                        <a class="small" href="{{ url('/login') }}">Se connecter en tant qu'administrateur?</a>
                                     </div>
                                 </div>
                             </div>

@@ -5,12 +5,13 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 
-class IndexController extends Controller
+class FibreController extends Controller
 {
-    // Load Index View
-    public function indexView()
+
+    // Load utilisateur View
+    public function fibreView()
     {
         $login = Session::get('login');
-        return view('index', compact('login'));
+        return view('ref.fibre', compact('login'));
     }
 }
