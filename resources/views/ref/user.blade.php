@@ -7,7 +7,11 @@
 
     <div class="container-fluid">
         <h3 class="text-dark" style="color: #0a4866;"><i class="fas fa-users" style="padding-right: 5px;"></i>Utilisateur</h3>
-        <div class="text-center mb-4"><a class="btn btn-primary btn-icon-split" role="button" data-bs-target="#modal_add_emp" data-bs-toggle="modal"><span class="icon" style="padding-right: 12px;"><i class="fas fa-plus-circle" style="padding-top: 5px;"></i></span><span class="text">Ajouter un utilisateur</span></a></div>
+        <div class="text-center mb-4">
+            <a class="btn btn-primary btn-icon-split" role="button" data-bs-target="#modal_add_emp" data-bs-toggle="modal">
+                <span class="icon" style="padding-right: 12px;">
+                    <i class="fas fa-plus-circle" style="padding-top: 5px;"></i></span>
+                    <span class="text">Ajouter un utilisateur</span></a></div>
         <div class="card shadow">
             <div class="card-header py-3">
                 <p class="m-0 fw-bold" style="color: #0a4866;">Gestion des utilisateurs</p>
