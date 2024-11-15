@@ -14,10 +14,10 @@ return new class extends Migration
         Schema::create('localisation', function (Blueprint $table) {
             $table->id('id_localisation');
             $table->string('localisation', 100);
-            $table->string('ue', 50);
-            $table->foreign('ue')->references('ue')->on('ue')->onDelete('cascade');
+            $table->unsignedBigInteger('id_ue');
             $table->unsignedBigInteger('id_service');
             $table->unsignedBigInteger('id_imputation');
+            $table->foreign('id_ue')->references('id_ue')->on('ue')->onDelete('cascade');
             $table->foreign('id_service')->references('id_service')->on('service')->onDelete('cascade');
             $table->foreign('id_imputation')->references('id_imputation')->on('imputation')->onDelete('cascade');
             $table->timestamps();

@@ -62,7 +62,6 @@
                                 <i class="fas fa-money-check-alt"></i><span>Offres et forfaits</span>
                             </a>
                         </div>
-                        
                     </li>
                 </ul>
             </div>

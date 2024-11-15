@@ -14,8 +14,9 @@ return new class extends Migration
         Schema::create('service', function (Blueprint $table) {
             $table->id('id_service');
             $table->string('libelle_service', 50);
-            $table->string('ue', 50);
-            $table->foreign('ue')->references('ue')->on('ue')->onDelete('cascade');
+            $table->string('numero_bu', 50);
+            $table->unsignedBigInteger('id_ue');
+            $table->foreign('id_ue')->references('id_ue')->on('ue')->onDelete('cascade');
             $table->timestamps();
         });
     }

@@ -34,6 +34,9 @@ Route::get('/user', [\App\Http\Controllers\UserController::class,'userView'])->m
 
 // Page Référentiels -> Chantier
 Route::get('/chantier', [\App\Http\Controllers\ChantierController::class,'chantierView'])->middleware('check.session')->name('ref.chantier');
+Route::post('/addChantier', [\App\Http\Controllers\ChantierController::class,'ajouterChantier'])->middleware('check.session')->name('ref.chantier.add');
+Route::post('/chantier/modifier/{id}', [\App\Http\Controllers\ChantierController::class, 'modifierChantier'])->name('chantier.modifier');
+Route::get('/chantier/supprimer/{id}', [\App\Http\Controllers\ChantierController::class, 'supprimerChantier'])->name('chantier.supprimer');
 
 // Page Référentiels -> Opérateur
 Route::get('/operateur', [\App\Http\Controllers\OperateurController::class,'operateurView'])->middleware('check.session')->name('ref.operateur');
