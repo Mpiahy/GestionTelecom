@@ -50,6 +50,8 @@ Route::middleware('check.session')->group(function() {
     Route::get('/chantier/supprimer/{id}', [ChantierController::class, 'supprimerChantier'])->name('chantier.supprimer');
 
     Route::get('/operateur', [OperateurController::class, 'operateurView'])->name('ref.operateur');
+    Route::post('/operateur/modifier', [OperateurController::class, 'modifierOperateur'])->name('operateur.modifier');
+
     Route::get('/ligne', [LigneController::class, 'ligneView'])->name('ref.ligne');
     Route::get('/fibre', [FibreController::class, 'fibreView'])->name('ref.fibre');
     Route::get('/phone', [PhoneController::class, 'phoneView'])->name('ref.phone');
