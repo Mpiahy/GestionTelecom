@@ -1,6 +1,18 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use \App\Http\Controllers\{
+    LoginController, 
+    IndexController, 
+    UserController, 
+    ChantierController, 
+    OperateurController, 
+    LigneController, 
+    FibreController, 
+    PhoneController, 
+    BoxController,
+    ForfaitController
+};
 
 /*
 |--------------------------------------------------------------------------
@@ -13,45 +25,34 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-// URL par défaut (in this case: Login)
-Route::get('/', [\App\Http\Controllers\LoginController::class,'loginView'])->name('auth.login');
-Route::get('/login', [\App\Http\Controllers\LoginController::class,'loginView'])->name('auth.login');
-
-// Login 
-Route::get('/loginGuest', [\App\Http\Controllers\LoginController::class,'loginGuestView'])->name('auth.loginGuest');
-
-// Check login
-Route::post('/loginCheck', [\App\Http\Controllers\LoginController::class,'loginCheck'])->name('auth.loginCheck');
-
-// Logout
-Route::get('/logout', [\App\Http\Controllers\LoginController::class,'logout'])->name('auth.logout');
+// Routes d'authentification
+Route::get('/', [LoginController::class, 'loginView'])->name('auth.login');
+Route::get('/login', [LoginController::class, 'loginView'])->name('auth.login');
+Route::get('/loginGuest', [LoginController::class, 'loginGuestView'])->name('auth.loginGuest');
+Route::post('/loginCheck', [LoginController::class, 'loginCheck'])->name('auth.loginCheck');
+Route::get('/logout', [LoginController::class, 'logout'])->name('auth.logout');
 
 // Page d'accueil
-Route::get('/index', [\App\Http\Controllers\IndexController::class,'indexView'])->middleware('check.session')->name('index');
+Route::get('/index', [IndexController::class, 'indexView'])
+    ->middleware('check.session')
+    ->name('index');
 
-// Page Référentiels -> Utilisateur
-Route::get('/user', [\App\Http\Controllers\UserController::class,'userView'])->middleware('check.session')->name('ref.user');
+// Routes de Référentiels avec middleware commun 'check.session'
+Route::middleware('check.session')->group(function() {
+    Route::get('/user', [UserController::class, 'userView'])->name('ref.user');
+    Route::post('/utilisateur/ajouter', [UserController::class, 'ajouterUtilisateur'])->name('ajouter.utilisateur');
+    Route::post('/utilisateur/modifier', [UserController::class, 'modifierUtilisateur'])->name('modifier.utilisateur');
+    Route::get('/utilisateur/supprimer/{id}', [UserController::class, 'supprimerUtilisateur'])->name('utilisateur.supprimer');
 
-// Page Référentiels -> Chantier
-Route::get('/chantier', [\App\Http\Controllers\ChantierController::class,'chantierView'])->middleware('check.session')->name('ref.chantier');
-Route::post('/addChantier', [\App\Http\Controllers\ChantierController::class,'ajouterChantier'])->middleware('check.session')->name('ref.chantier.add');
-Route::post('/chantier/modifier/{id}', [\App\Http\Controllers\ChantierController::class, 'modifierChantier'])->name('chantier.modifier');
-Route::get('/chantier/supprimer/{id}', [\App\Http\Controllers\ChantierController::class, 'supprimerChantier'])->name('chantier.supprimer');
+    Route::get('/chantier', [ChantierController::class, 'chantierView'])->name('ref.chantier');
+    Route::post('/addChantier', [ChantierController::class, 'ajouterChantier'])->name('ref.chantier.add');
+    Route::post('/chantier/modifier/{id}', [ChantierController::class, 'modifierChantier'])->name('chantier.modifier');
+    Route::get('/chantier/supprimer/{id}', [ChantierController::class, 'supprimerChantier'])->name('chantier.supprimer');
 
-// Page Référentiels -> Opérateur
-Route::get('/operateur', [\App\Http\Controllers\OperateurController::class,'operateurView'])->middleware('check.session')->name('ref.operateur');
-
-// Page Référentiels -> Ligne
-Route::get('/ligne', [\App\Http\Controllers\LigneController::class,'ligneView'])->middleware('check.session')->name('ref.ligne');
-
-// Page Référentiels -> Fibre optique
-Route::get('/fibre', [\App\Http\Controllers\FibreController::class,'fibreView'])->middleware('check.session')->name('ref.fibre');
-
-// Page Référentiels -> Téléphone
-Route::get('/phone', [\App\Http\Controllers\PhoneController::class,'phoneView'])->middleware('check.session')->name('ref.phone');
-
-// Page Référentiels -> Box
-Route::get('/box', [\App\Http\Controllers\BoxController::class,'boxView'])->middleware('check.session')->name('ref.box');
-
-// Page Référentiels -> Utilisateur
-Route::get('/forfait', [\App\Http\Controllers\ForfaitController::class,'forfaitView'])->middleware('check.session')->name('ref.forfait');
+    Route::get('/operateur', [OperateurController::class, 'operateurView'])->name('ref.operateur');
+    Route::get('/ligne', [LigneController::class, 'ligneView'])->name('ref.ligne');
+    Route::get('/fibre', [FibreController::class, 'fibreView'])->name('ref.fibre');
+    Route::get('/phone', [PhoneController::class, 'phoneView'])->name('ref.phone');
+    Route::get('/box', [BoxController::class, 'boxView'])->name('ref.box');
+    Route::get('/forfait', [ForfaitController::class, 'forfaitView'])->name('ref.forfait');
+});
