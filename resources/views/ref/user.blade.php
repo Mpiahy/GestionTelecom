@@ -473,7 +473,7 @@
     <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="modal-title text-danger">Voulez-vous vraiment supprimer cet utilisateur ?</h4>
+                <h4 class="modal-title text-danger">Départ d'un utilisateur ?</h4>
                 <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -486,7 +486,7 @@
             </div>
             <div class="modal-footer">
                 <button class="btn btn-warning" type="button" data-bs-dismiss="modal">Fermer</button>
-                <a href="#" id="confirm_delete_utilisateur" class="btn btn-danger">Supprimer</a>
+                <a href="#" id="confirm_delete_utilisateur" class="btn btn-danger">Valider</a>
             </div>
         </div>
     </div>
