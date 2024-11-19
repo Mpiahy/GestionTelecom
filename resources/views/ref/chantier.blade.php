@@ -7,6 +7,22 @@
 
     <div class="container-fluid">
         <h3 class="text-dark"><i class="far fa-building" style="padding-right: 5px;"></i>Chantiers</h3>
+
+        <!-- Affichage des messages de succès ou d'erreur -->
+        @if (session('success'))
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <i class="fas fa-check-circle me-2"></i>{{ session('success') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        @endif
+
+        @if (session('error'))
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="fas fa-exclamation-circle me-2"></i>{{ session('error') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        @endif
+
         <div class="text-center mb-4"><a class="btn btn-primary btn-icon-split" role="button" data-bs-target="#ajouter_chantier" data-bs-toggle="modal"><span class="icon"><i class="fas fa-plus-circle" style="padding-top: 5px;"></i></span><span class="text">Ajouter un chantier</span></a></div>
         <div class="card shadow">
             <div class="card-header py-3">
@@ -44,7 +60,6 @@
                             <div class="btn-group" role="group">
                                 <!-- Bouton "Tout" -->
                                 <button class="btn btn-outline-primary {{ request('ue') ? '' : 'active' }}" type="submit" name="ue" value="">Tout</button>
-                    
                                 <!-- Boutons dynamiques pour chaque UE -->
                                 @foreach ($ue as $unit)
                                     <button 
@@ -187,7 +202,7 @@
                                     <div class="mb-3">
                                         <label class="form-label" for="add_ue"><strong>Libellé UE</strong></label>
                                         <select id="add_ue" class="form-select" name="add_ue">
-                                            <option value="0" selected>Choisir UE</option>
+                                            <option value="0" selected disabled>Choisir UE</option>
                                             @foreach ($ue as $ues)
                                                 <option value="{{$ues->id_ue}}">{{$ues->libelle_ue}}</option>
                                             @endforeach
@@ -195,15 +210,15 @@
                                     </div>
                                     <div class="mb-3">
                                         <label class="form-label" for="add_bu"><strong>Numéro BU</strong></label>
-                                        <input id="add_bu" class="form-control" type="text" placeholder="Entrer le numéro BU" name="add_bu" />
+                                        <input required id="add_bu" class="form-control" type="text" placeholder="Entrer le numéro BU" name="add_bu" />
                                     </div>
                                     <div class="mb-3">
                                         <label class="form-label" for="add_lib_service"><strong>Libellé Service</strong></label>
-                                        <input id="add_lib_service" class="form-control" type="text" placeholder="Entrer le libellé service" name="add_lib_service" />
+                                        <input required id="add_lib_service" class="form-control" type="text" placeholder="Entrer le libellé service" name="add_lib_service" />
                                     </div>
                                     <div class="mb-3">
                                         <label class="form-label" for="add_code_imp"><strong>Code Imputation</strong></label>
-                                        <input id="add_code_imp" class="form-control" type="text" placeholder="Entrer le code imputation" name="add_code_imp" />
+                                        <input required id="add_code_imp" class="form-control" type="text" placeholder="Entrer le code imputation" name="add_code_imp" />
                                     </div>
                                 </form>
                             </div>
@@ -222,10 +237,11 @@
     <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="modal-title text-danger">Voulez vous vraiment supprimer ce chantier?</h4><button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
+                <h4 class="modal-title text-danger">Voulez vous vraiment supprimer ce chantier?</h4>
+                <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <p class="text-dark" style="margin-bottom: 0px;">Chantier: <strong>2200001AD001-Service Informatique-300800</strong></p>
+                <p class="text-dark" style="margin-bottom: 0px;">Chantier: <strong></strong></p>
             </div>
             <div class="modal-footer">
                 <button class="btn btn-warning" type="button" data-bs-dismiss="modal">Fermer</button>
@@ -255,7 +271,7 @@
                                     <div class="mb-3">
                                         <label class="form-label" for="edt_lib_ue"><strong>Libellé UE</strong></label>
                                         <select id="edt_lib_ue" class="form-select" name="edt_lib_ue">
-                                            <option value="0">Choisir UE</option>
+                                            <option value="0" disabled>Choisir UE</option>
                                             @foreach ($ue as $ues)
                                                 <option value="{{ $ues->id_ue }}">{{ $ues->libelle_ue }}</option>
                                             @endforeach
@@ -263,15 +279,15 @@
                                     </div>
                                     <div class="mb-3">
                                         <label class="form-label" for="edt_bu"><strong>Numéro BU</strong></label>
-                                        <input id="edt_bu" class="form-control" type="text" placeholder="Entrer le numéro BU" name="edt_bu" />
+                                        <input required id="edt_bu" class="form-control" type="text" placeholder="Entrer le numéro BU" name="edt_bu" />
                                     </div>
                                     <div class="mb-3">
                                         <label class="form-label" for="edt_lib_service"><strong>Libellé Service</strong></label>
-                                        <input id="edt_lib_service" class="form-control" type="text" placeholder="Entrer le libellé service" name="edt_lib_service" />
+                                        <input required id="edt_lib_service" class="form-control" type="text" placeholder="Entrer le libellé service" name="edt_lib_service" />
                                     </div>
                                     <div class="mb-3">
                                         <label class="form-label" for="edt_code_imp"><strong>Code Imputation</strong></label>
-                                        <input id="edt_code_imp" class="form-control" type="text" placeholder="Entrer le code imputation" name="edt_code_imp" />
+                                        <input required id="edt_code_imp" class="form-control" type="text" placeholder="Entrer le code imputation" name="edt_code_imp" />
                                     </div>
                                 </form>                                
                             </div>

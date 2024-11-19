@@ -410,12 +410,12 @@
                                         name="id_fonction" 
                                         required>
                                             <option value="" selected disabled>Fonction</option>
+                                            <option value="new" {{ old('id_fonction') == 'new' ? 'selected' : '' }}>Ajouter une nouvelle fonction</option>
                                             @foreach ($fonctions as $fonction)
                                                 <option value="{{ $fonction->id_fonction }}" {{ old('id_fonction') == $fonction->id_fonction ? 'selected' : '' }}>
                                                     {{ $fonction->fonction }}
                                                 </option>
                                             @endforeach
-                                            <option value="new" {{ old('id_fonction') == 'new' ? 'selected' : '' }}>Ajouter une nouvelle fonction</option>
                                         </select>
                                         @error('id_fonction')
                                             <div class="invalid-feedback">{{ $message }}</div>

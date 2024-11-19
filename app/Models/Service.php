@@ -53,4 +53,22 @@ class Service extends Model
 
         return $service;
     }
+
+    /**
+     * Met à jour un service et son imputation associée.
+     */
+    public function updateWithImputation($data)
+    {
+        // Mettre à jour le service
+        $this->update([
+            'numero_bu' => $data['numero_bu'],
+            'libelle_service' => $data['libelle_service'],
+            'id_ue' => $data['id_ue'],
+        ]);
+
+        // Mettre à jour l'imputation associée
+        $this->imputations()->first()->update([
+            'code_imputation' => $data['code_imputation'],
+        ]);
+    }
 }

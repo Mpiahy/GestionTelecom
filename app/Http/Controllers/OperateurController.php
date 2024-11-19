@@ -24,13 +24,10 @@ class OperateurController extends Controller
     public function modifierOperateur(Request $request)
     {
         $contact = ContactOperateur::findOrFail($request->id_contact);
-
-        $contact->update([
-            'nom' => $request->nom_contact,
-            'email' => $request->email_contact,
-        ]);
-
+    
+        $contact->updateContact($request->only('nom_contact', 'email_contact'));
+    
         return redirect()->route('ref.operateur')->with('success', 'Contact mis à jour avec succès.');
-    }
+    }    
 
 }

@@ -70,4 +70,21 @@ class Localisation extends Model
         }
         return $query;
     }
+
+    /**
+     * Supprime une localisation avec son service et ses imputations associées.
+     */
+    public function deleteWithRelations()
+    {
+        try {
+            if ($this->service) {
+                $this->service->imputations()->delete();
+                $this->service->delete();
+            }
+            
+            $this->delete();
+        } catch (\Exception $e) {
+            throw new \Exception("Une erreur est survenue lors de la suppression de la localisation : " . $e->getMessage());
+        }
+    }
 }

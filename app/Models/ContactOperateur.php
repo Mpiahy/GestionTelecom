@@ -20,4 +20,12 @@ class ContactOperateur extends Model
     {
         return $this->belongsTo(Operateur::class, 'id_operateur', 'id_operateur');
     }
+
+    public function updateContact(array $data)
+    {
+        $this->update([
+            'nom' => $data['nom_contact'],
+            'email' => $data['email_contact'],
+        ]);
+    }
 }

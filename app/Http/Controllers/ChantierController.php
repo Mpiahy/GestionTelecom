@@ -40,77 +40,85 @@ class ChantierController extends Controller
 
     public function ajouterChantier(Request $request)
     {
-        // Valider les données du formulaire
-        $validated = $request->validate([
-            'add_ue' => 'required|integer',
-            'add_bu' => 'required|string|max:50',
-            'add_lib_service' => 'required|string|max:50',
-            'add_code_imp' => 'required|string|max:20',
-        ]);
+        try {
+            // Valider les données du formulaire
+            $validated = $request->validate([
+                'add_ue' => 'required|integer',
+                'add_bu' => 'required|string|max:50',
+                'add_lib_service' => 'required|string|max:50',
+                'add_code_imp' => 'required|string|max:20',
+            ]);
 
-        // Appeler la méthode de création de Service avec Imputation
-        Service::createServiceWithImputation(
-            $validated['add_lib_service'],
-            $validated['add_bu'],
-            $validated['add_ue'],
-            $validated['add_code_imp']
-        );
+            // Convertir les données en majuscules
+            $validated['add_bu'] = strtoupper($validated['add_bu']);
+            $validated['add_lib_service'] = strtoupper($validated['add_lib_service']);
+            $validated['add_code_imp'] = strtoupper($validated['add_code_imp']);
 
-        // Rediriger avec un message de succès
-        return redirect()->route('ref.chantier')->with('success', 'Chantier ajouté avec succès');
+            // Appeler la méthode de création de Service avec Imputation
+            Service::createServiceWithImputation(
+                $validated['add_lib_service'],
+                $validated['add_bu'],
+                $validated['add_ue'],
+                $validated['add_code_imp']
+            );
+
+            // Rediriger avec un message de succès
+            return redirect()->route('ref.chantier')->with('success', 'Chantier ajouté avec succès');
+        } catch (\Exception $e) {
+            return redirect()->route('ref.chantier')->with('error', "Une erreur est survenue lors de l'ajout de chantier. Veuillez réessayer.");
+        }
     }
 
     public function modifierChantier($id, Request $request)
     {
-        // Valider les données du formulaire
-        $validated = $request->validate([
-            'edt_lib_ue' => 'required|integer',
-            'edt_bu' => 'required|string|max:50',
-            'edt_lib_service' => 'required|string|max:50',
-            'edt_code_imp' => 'required|string|max:20',
-        ]);
+        try {
+            $validated = $request->validate([
+                'edt_lib_ue' => 'required|integer',
+                'edt_bu' => 'required|string|max:50',
+                'edt_lib_service' => 'required|string|max:50',
+                'edt_code_imp' => 'required|string|max:20',
+            ]);
 
-        // Récupérer la localisation et les modèles associés
-        $localisation = Localisation::findOrFail($id);
-        $service = $localisation->service;
-        $imputation = $localisation->imputation;
+            // Convertir les données en majuscules
+            $validated['edt_bu'] = strtoupper($validated['edt_bu']);
+            $validated['edt_lib_service'] = strtoupper($validated['edt_lib_service']);
+            $validated['edt_code_imp'] = strtoupper($validated['edt_code_imp']);
 
-        // Mettre à jour les données dans le modèle `Service`
-        $service->update([
-            'numero_bu' => $validated['edt_bu'],
-            'libelle_service' => $validated['edt_lib_service'],
-            'id_ue' => $validated['edt_lib_ue'], // Mettre à jour l'UE si nécessaire
-        ]);
+            $localisation = Localisation::findOrFail($id);
 
-        // Mettre à jour les données dans le modèle `Imputation`
-        $imputation->update([
-            'code_imputation' => $validated['edt_code_imp'],
-        ]);
+            // Mettre à jour via la méthode du modèle Service
+            $localisation->service->updateWithImputation([
+                'numero_bu' => $validated['edt_bu'],
+                'libelle_service' => $validated['edt_lib_service'],
+                'id_ue' => $validated['edt_lib_ue'],
+                'code_imputation' => $validated['edt_code_imp'],
+            ]);
 
-        // Rediriger avec un message de succès
-        return redirect()->route('ref.chantier')->with('success', 'Chantier mis à jour avec succès');
+            return redirect()->route('ref.chantier')->with('success', 'Chantier mis à jour avec succès.');
+
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return redirect()->route('ref.chantier')->with('error', 'Chantier introuvable.');
+        } catch (\Exception $e) {
+            return redirect()->route('ref.chantier')->with('error', 'Une erreur est survenue lors de la mise à jour. Veuillez réessayer.');
+        }
     }
 
     public function supprimerChantier($id)
     {
-        // Récupérer l'enregistrement de localisation avec les relations nécessaires
-        $localisation = Localisation::with(['service.imputations'])->find($id);
-
-        if ($localisation) {
-            // Supprimer toutes les imputations associées au service
-            foreach ($localisation->service->imputations as $imputation) {
-                $imputation->delete();
+        try {
+            $localisation = Localisation::findOrFail($id);
+    
+            if ($localisation) {
+                // Supprimer via la méthode du modèle
+                $localisation->deleteWithRelations();
+    
+                return redirect()->route('ref.chantier')->with('success', 'Chantier supprimé avec succès.');
             }
-
-            // Supprimer le service associé
-            $localisation->service->delete();
-
-            // Enfin, supprimer la localisation elle-même (sans toucher à `UE`)
-            $localisation->delete();
-
-            return redirect()->route('ref.chantier')->with('success', 'Chantier et ses données associées ont été supprimés avec succès');
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return redirect()->route('ref.chantier')->with('error', 'Chantier introuvable.');
+        } catch (\Exception $e) {
+            return redirect()->route('ref.chantier')->with('error', 'Une erreur est survenue lors de la suppression. Veuillez réessayer.');
         }
+    }    
 
-        return redirect()->route('ref.chantier')->with('error', 'Chantier introuvable');
-    }
 }

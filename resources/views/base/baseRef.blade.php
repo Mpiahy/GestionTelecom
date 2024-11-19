@@ -15,7 +15,7 @@
     <div id="wrapper">
         <nav class="navbar navbar-dark align-items-start sidebar sidebar-dark accordion bg-gradient-primary p-0" style="color: var(--bs-accordion-active-color);background: rgb(10,72,102);">
             <div class="container-fluid d-flex flex-column p-0">
-                <a class="navbar-brand d-flex justify-content-center align-items-center sidebar-brand m-0" href="/index.html">
+                <a class="navbar-brand d-flex justify-content-center align-items-center sidebar-brand m-0" href="{{ url('/index') }}">
                     <div>
                         <img src="{{asset('/assets/img/COLAS.png')}}" width="201" height="63">
                     </div>
@@ -73,7 +73,7 @@
                         <button class="btn btn-link d-md-none rounded-circle me-3" id="sidebarToggleTop" type="button">
                             <i class="fas fa-bars"></i>
                         </button>
-                        <a class="navbar-brand d-flex justify-content-center align-items-center sidebar-brand m-0" href="#">
+                        <a class="navbar-brand d-flex justify-content-center align-items-center sidebar-brand m-0" href="{{ url('/index') }}">
                             <div>
                                 <span style="font-size: 30px;font-weight: bold;font-family: Nunito, sans-serif;color: #fff200;">TELECOM-MADA</span>
                             </div>
