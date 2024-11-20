@@ -13,10 +13,8 @@ class ContactOperateurSeeder extends Seeder
      */
     public function run(): void
     {
-        // Vider la table avant l'insertion
         ContactOperateur::truncate();
 
-        // Exemple de contacts par opérateur
         $contacts = [
             '34' => [ // ID de Telma
                 ['nom' => 'Mpiahisoa Telma', 'email' => 'mpiahyandriam@gmail.com'],

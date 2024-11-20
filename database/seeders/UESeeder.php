@@ -13,15 +13,16 @@ class UESeeder extends Seeder
      */
     public function run()
     {
-        // Vider la table
         UE::truncate();
 
-        // Insertion des données avec le nouvel attribut 'ue'
-        UE::create(['libelle_ue' => 'SIEGE - ADM']);
-        UE::create(['libelle_ue' => 'BATIMENT']);
-        UE::create(['libelle_ue' => 'ROUTE']);
-        UE::create(['libelle_ue' => 'GRAND PROJET']);
-        UE::create(['libelle_ue' => 'INDUSTRIE']);
-    }
+        $ues = [
+            ['libelle_ue' => 'SIEGE - ADM'],
+            ['libelle_ue' => 'BATIMENT'],
+            ['libelle_ue' => 'ROUTE'],
+            ['libelle_ue' => 'GRAND PROJET'],
+            ['libelle_ue' => 'INDUSTRIE'],
+        ];
 
+        UE::insert($ues);
+    }
 }

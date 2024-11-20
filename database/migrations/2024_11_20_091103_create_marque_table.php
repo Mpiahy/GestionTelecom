@@ -11,9 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('operateur', function (Blueprint $table) {
-            $table->integer('id_operateur')->primary()->unsigned();
-            $table->string('nom_operateur', 50);
+        Schema::create('marque', function (Blueprint $table) {
+            $table->id('id_marque');
+            $table->string('marque', 20);
             $table->timestamps();
         });
     }
@@ -23,6 +23,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('operateur');
+        Schema::dropIfExists('marque');
     }
 };

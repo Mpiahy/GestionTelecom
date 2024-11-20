@@ -2,8 +2,8 @@
 
 namespace Database\Seeders;
 
-use App\Models\Operateur;
 use Illuminate\Database\Seeder;
+use App\Models\Operateur;
 
 class OperateurSeeder extends Seeder
 {
@@ -12,28 +12,13 @@ class OperateurSeeder extends Seeder
      */
     public function run(): void
     {
-        // Vider la table avant l'insertion
         Operateur::truncate();
 
-        // Insertion des données
-        Operateur::create([
-            'id_operateur' => 34,
-            'nom_operateur' => 'Telma',
-        ]);
-
-        Operateur::create([
-            'id_operateur' => 32,
-            'nom_operateur' => 'Orange',
-        ]);
-
-        Operateur::create([
-            'id_operateur' => 33,
-            'nom_operateur' => 'Airtel',
-        ]);
-
-        Operateur::create([
-            'id_operateur' => 7,
-            'nom_operateur' => 'Starlink',
+        Operateur::insert([
+            ['id_operateur' => 34, 'nom_operateur' => 'Telma'],
+            ['id_operateur' => 32, 'nom_operateur' => 'Orange'],
+            ['id_operateur' => 33, 'nom_operateur' => 'Airtel'],
+            ['id_operateur' => 7, 'nom_operateur' => 'Starlink'],
         ]);
     }
 }

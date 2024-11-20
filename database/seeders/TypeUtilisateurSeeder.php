@@ -9,15 +9,15 @@ class TypeUtilisateurSeeder extends Seeder
 {
     /**
      * Run the database seeds.
-     *
      */
-    public function run()
+    public function run(): void
     {
-        // Vider la table
         TypeUtilisateur::truncate();
-        // Insertion des données
-        TypeUtilisateur::create(['type_utilisateur' => 'Collaborateur']);
-        TypeUtilisateur::create(['type_utilisateur' => 'Prestataire']);
-        TypeUtilisateur::create(['type_utilisateur' => 'Stagiaire']);
+
+        TypeUtilisateur::insert([
+            ['type_utilisateur' => 'Collaborateur'],
+            ['type_utilisateur' => 'Prestataire'],
+            ['type_utilisateur' => 'Stagiaire'],
+        ]);
     }
 }
