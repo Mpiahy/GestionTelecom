@@ -11,8 +11,6 @@ use App\Models\Localisation;
 
 class ChantierController extends Controller
 {
-
-    // Load utilisateur View
     public function chantierView(Request $request)
     {
         $login = Session::get('login');

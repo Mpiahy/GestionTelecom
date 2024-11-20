@@ -54,7 +54,10 @@ Route::middleware('check.session')->group(function() {
 
     Route::get('/ligne', [LigneController::class, 'ligneView'])->name('ref.ligne');
     Route::get('/fibre', [FibreController::class, 'fibreView'])->name('ref.fibre');
+
     Route::get('/phone', [PhoneController::class, 'phoneView'])->name('ref.phone');
+    Route::post('/phone/save', [PhoneController::class, 'savePhone'])->name('phone.enr');
+
     Route::get('/box', [BoxController::class, 'boxView'])->name('ref.box');
     Route::get('/forfait', [ForfaitController::class, 'forfaitView'])->name('ref.forfait');
 });
