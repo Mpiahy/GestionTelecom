@@ -15,10 +15,10 @@ class StatutEquipementSeeder extends Seeder
         StatutEquipement::truncate();
 
         $statuts = [
-            ['statut_equipement' => 'Nouveau'],
-            ['statut_equipement' => 'Attribué'],
-            ['statut_equipement' => 'Retourné'],
-            ['statut_equipement' => 'HS'],
+            ['id_statut_equipement' => StatutEquipement::STATUT_NOUVEAU, 'statut_equipement' => 'Nouveau'],
+            ['id_statut_equipement' => StatutEquipement::STATUT_ATTRIBUE, 'statut_equipement' => 'Attribué'],
+            ['id_statut_equipement' => StatutEquipement::STATUT_RETOURNE, 'statut_equipement' => 'Retourné'],
+            ['id_statut_equipement' => StatutEquipement::STATUT_HS, 'statut_equipement' => 'HS'],
         ];
 
         StatutEquipement::insert($statuts);

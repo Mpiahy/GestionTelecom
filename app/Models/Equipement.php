@@ -36,6 +36,18 @@ class Equipement extends Model
         return $this->belongsTo(StatutEquipement::class, 'id_statut_equipement');
     }
 
+    /**
+     * Scope pour récupérer uniquement les téléphones (Smartphone et Téléphone à Touche).
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopePhones($query)
+    {
+        return $query->whereHas('typeEquipement', function ($q) {
+            $q->whereIn('type_equipement', ['Smartphone', 'Téléphone à Touche']);
+        });
+    }
 
     /**
      * Créer un équipement à partir des données validées.
@@ -43,16 +55,24 @@ class Equipement extends Model
      * @param  array $validatedData
      * @param  Modele $modele
      * @return Equipement
+     * @throws \Exception
      */
     public static function createFromRequest(array $validatedData, Modele $modele)
     {
+        // Vérifier que le type d'équipement est valide pour un téléphone
+        $typeEquipement = TypeEquipement::find($validatedData['enr_phone_type']);
+        if (!$typeEquipement || !in_array($typeEquipement->type_equipement, ['Smartphone', 'Téléphone à Touche'])) {
+            throw new \Exception('Type d\'équipement invalide pour un téléphone.');
+        }
+
+        // Créer et retourner l'équipement
         return self::create([
             'imei' => $validatedData['enr_phone_imei'],
             'serial_number' => $validatedData['enr_phone_sn'],
             'enrole' => $validatedData['enr_phone_enroll'] == 1, // Convertir en booléen
             'id_type_equipement' => $validatedData['enr_phone_type'],
             'id_modele' => $modele->id_modele,
-            'id_statut_equipement' => 1, // Par défaut : statut "Nouveau"
+            'id_statut_equipement' => 1,
         ]);
     }
 

@@ -12,4 +12,14 @@ class StatutEquipement extends Model
     public $timestamps = false;
     protected $primaryKey = 'id_statut_equipement';
     protected $fillable = ['statut_equipement'];
+    const STATUT_NOUVEAU = 1;
+    const STATUT_ATTRIBUE = 2;
+    const STATUT_RETOURNE = 3;
+    const STATUT_HS = 4;
+    public static function markAsHS($equipement)
+    {
+        $equipement->update([
+            'id_statut_equipement' => self::STATUT_HS,
+        ]);
+    }
 }

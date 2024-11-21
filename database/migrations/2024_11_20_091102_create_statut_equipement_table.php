@@ -12,10 +12,10 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('statut_equipement', function (Blueprint $table) {
-            $table->id('id_statut_equipement');
+            $table->unsignedBigInteger('id_statut_equipement')->primary(); // Pas d'auto-incrément
             $table->string('statut_equipement', 20);
             $table->timestamps();
-        });
+        });        
     }
 
     /**

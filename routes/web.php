@@ -57,6 +57,7 @@ Route::middleware('check.session')->group(function() {
 
     Route::get('/phone', [PhoneController::class, 'phoneView'])->name('ref.phone');
     Route::post('/phone/save', [PhoneController::class, 'savePhone'])->name('phone.enr');
+    Route::post('/phone/hs', [PhoneController::class, 'hsPhone'])->name('phone.hs');
 
     Route::get('/box', [BoxController::class, 'boxView'])->name('ref.box');
     Route::get('/forfait', [ForfaitController::class, 'forfaitView'])->name('ref.forfait');
