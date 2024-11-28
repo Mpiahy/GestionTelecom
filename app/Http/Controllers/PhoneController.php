@@ -60,29 +60,66 @@ class PhoneController extends Controller
             ]);
     
             // Gestion des marques et modèles
-            $marque = Marque::findOrCreate($request->enr_phone_marque, $request->new_phone_marque);
+            $marque = Marque::findOrCreate($request->enr_phone_marque, $request->new_phone_marque, $request->enr_phone_type);
             $modele = Modele::findOrCreate($request->enr_phone_modele, $request->new_phone_modele, $marque->id_marque);
     
             // Créer l'équipement
-            Equipement::createFromRequest($validatedData, $modele);
+            Equipement::createPhoneFromRequest($validatedData, $modele);
     
             // Retour succès
             return redirect()->route('ref.phone')->with('success', 'Téléphone enregistré avec succès.');
         } catch (ValidationException $e) {
-            // Retourner avec les erreurs de validation
             return redirect()
-                ->back() // Redirige à la même page
-                ->withErrors($e->errors()) // Transmet les erreurs de validation
-                ->withInput(); // Garde les anciennes valeurs saisies
+                ->route('ref.phone')
+                ->withErrors($e->errors(), 'enr_phone_errors') // Associer les erreurs à enr_phone_errors
+                ->withInput();
         } catch (\Exception $e) {
-            // Retourner avec une erreur générale
+            return redirect()
+                ->route('ref.phone')
+                ->withErrors(['error_general' => $e->getMessage()])
+                ->withInput();
+        }
+    }    
+
+    public function updatePhone(Request $request, $id)
+    {
+        try {
+            // Valider les données
+            $validatedData = $request->validate([
+                'edt_phone_type' => 'required|exists:type_equipement,id_type_equipement',
+                'edt_phone_marque' => 'required',
+                'new_phone_marque' => 'required_if:edt_phone_marque,new_marque|max:50',
+                'edt_phone_modele' => 'required',
+                'new_phone_modele' => 'required_if:edt_phone_modele,new|max:50',
+                'edt_phone_imei' => 'required|unique:equipement,imei,' . $id . ',id_equipement|max:50',
+                'edt_phone_sn' => 'required|unique:equipement,serial_number,' . $id . ',id_equipement|max:50',
+                'edt_phone_enroll' => 'required|in:1,2',
+            ]);
+    
+            // Trouver l'équipement existant
+            $equipement = Equipement::findOrFail($id);
+    
+            // Gestion des marques et modèles
+            $marque = Marque::findOrCreate($request->edt_phone_marque, $request->new_phone_marque, $request->edt_phone_type);
+            $modele = Modele::findOrCreate($request->edt_phone_modele, $request->new_phone_modele, $marque->id_marque);
+    
+            // Mettre à jour l'équipement
+            $equipement->updatePhoneFromRequest($validatedData, $modele);
+    
+            return redirect()->route('ref.phone')->with('success', 'Téléphone modifié avec succès.');
+        } catch (ValidationException $e) {
+            return redirect()
+                ->route('ref.phone')
+                ->withErrors($e->errors(), 'edt_phone_errors') // Associer les erreurs à edt_phone_errors
+                ->withInput();
+        } catch (\Exception $e) {
             return redirect()
                 ->route('ref.phone')
                 ->withErrors(['error_general' => $e->getMessage()])
                 ->withInput();
         }
     }
-
+    
     public function hsPhone(Request $request)
     {
         try {
@@ -113,4 +150,38 @@ class PhoneController extends Controller
                 ->withInput();
         }
     }
+
+    public function getMarquesByType($typeId)
+    {
+        // Calcul de la plage d'ID pour le type d'équipement donné
+        $startRange = $typeId * 1000; // Ex: 1 * 1000 = 1000
+        $endRange = ($typeId + 1) * 1000; // Ex: (1 + 1) * 1000 = 2000
+    
+        // Récupérer les marques dont les IDs sont dans cette plage
+        $marques = Marque::where('id_marque', '>=', $startRange)
+                         ->where('id_marque', '<', $endRange)
+                         ->get(['id_marque as id', 'marque as name']);
+    
+        return response()->json([
+            'success' => true,
+            'marques' => $marques
+        ]);
+    }    
+
+    public function getModelesByMarque($marqueId)
+    {
+        // Calcul de la plage d'ID pour les modèles de cette marque
+        $startRange = $marqueId * 1000; // Ex: 1001 * 1000 = 1001000
+        $endRange = ($marqueId + 1) * 1000; // Ex: (1001 + 1) * 1000 = 1002000
+    
+        // Récupérer les modèles dans cette plage
+        $modeles = Modele::where('id_modele', '>=', $startRange)
+                         ->where('id_modele', '<', $endRange)
+                         ->get(['id_modele as id', 'nom_modele as name']);
+    
+        return response()->json([
+            'success' => true,
+            'modeles' => $modeles
+        ]);
+    }    
 }

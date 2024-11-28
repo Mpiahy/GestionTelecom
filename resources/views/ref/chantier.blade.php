@@ -8,20 +8,43 @@
     <div class="container-fluid">
         <h3 class="text-dark"><i class="far fa-building" style="padding-right: 5px;"></i>Chantiers</h3>
 
-        <!-- Affichage des messages de succès ou d'erreur -->
-        @if (session('success'))
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                <i class="fas fa-check-circle me-2"></i>{{ session('success') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        @endif
+        <!-- Toast container -->
+        <div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 1055;">
+            <!-- Toast for Success Message -->
+            @if (session('success'))
+                <div class="toast align-items-center text-bg-success border-0 show" role="alert" aria-live="assertive" aria-atomic="true">
+                    <div class="d-flex">
+                        <div class="toast-body">
+                            {{ session('success') }}
+                        </div>
+                        <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                    </div>
+                </div>
+            @endif
 
-        @if (session('error'))
-            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                <i class="fas fa-exclamation-circle me-2"></i>{{ session('error') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        @endif
+            <!-- Toast for Error Message -->
+            @if (session('error'))
+                <div class="toast align-items-center text-bg-danger border-0 show" role="alert" aria-live="assertive" aria-atomic="true">
+                    <div class="d-flex">
+                        <div class="toast-body">
+                            {{ session('error') }}
+                        </div>
+                        <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                    </div>
+                </div>
+            @endif
+        </div>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', () => {
+                const toastElList = [].slice.call(document.querySelectorAll('.toast'));
+                const toastList = toastElList.map(function (toastEl) {
+                    return new bootstrap.Toast(toastEl, { delay: 5000 }); // Durée de 5 secondes
+                });
+
+                toastList.forEach(toast => toast.show());
+            });
+        </script>
 
         <div class="text-center mb-4"><a class="btn btn-primary btn-icon-split" role="button" data-bs-target="#ajouter_chantier" data-bs-toggle="modal"><span class="icon"><i class="fas fa-plus-circle" style="padding-top: 5px;"></i></span><span class="text">Ajouter un chantier</span></a></div>
         <div class="card shadow">
@@ -132,177 +155,17 @@
             </div>
         </div>
     </div>
-
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            // Ciblez tous les boutons de modification
-            document.querySelectorAll('.open-edit-modal').forEach(button => {
-                button.addEventListener('click', function() {
-                    // Récupérez les valeurs actuelles du chantier depuis les attributs data-*
-                    const id = this.getAttribute('data-id');
-                    const ue = this.getAttribute('data-ue');
-                    const bu = this.getAttribute('data-bu');
-                    const service = this.getAttribute('data-service');
-                    const imputation = this.getAttribute('data-imputation');
     
-                    // Pré-remplissez les champs du formulaire dans le modal
-                    document.getElementById('edt_lib_ue').value = ue;
-                    document.getElementById('edt_bu').value = bu;
-                    document.getElementById('edt_lib_service').value = service;
-                    document.getElementById('edt_code_imp').value = imputation;
-    
-                    // Mettez à jour l'action du formulaire pour inclure l'ID du chantier
-                    document.getElementById('edt_chantier').action = `/chantier/modifier/${id}`;
-                });
-            });
-        });
-    </script>
-    
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            // Ciblez tous les boutons de suppression
-            document.querySelectorAll('.open-delete-modal').forEach(button => {
-                button.addEventListener('click', function() {
-                    // Récupérez l'ID et le nom du chantier depuis les attributs data-*
-                    const id = this.getAttribute('data-id');
-                    const name = this.getAttribute('data-name');
-                    
-                    // Mettez à jour le texte du modal pour afficher le nom du chantier
-                    document.querySelector('#supprimer_chantier .modal-body p strong').textContent = name;
-    
-                    // Mettez à jour le lien de suppression
-                    const deleteButton = document.querySelector('#supprimer_chantier .modal-footer .btn-danger');
-                    deleteButton.href = `/chantier/supprimer/${id}`;
-                });
-            });
-        });
-    </script>
-    
-
 @endsection
 
 @section('modal_ref')
 
-<div id="ajouter_chantier" class="modal" role="dialog" tabindex="-1">
-    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h4 class="modal-title text-primary">Ajouter un chantier</h4><button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <div class="row">
-                    <div class="col">
-                        <div></div>
-                    </div>
-                    <div class="col-xl-6">
-                        <div class="card shadow">
-                            <div class="card-body">
-                                <form id="add_ue" method="post" action="{{ route('ref.chantier.add') }}" style="color: #a0c8d8;">
-                                    @csrf
-                                    <div class="mb-3">
-                                        <label class="form-label" for="add_ue"><strong>Libellé UE</strong></label>
-                                        <select id="add_ue" class="form-select" name="add_ue">
-                                            <option value="0" selected disabled>Choisir UE</option>
-                                            @foreach ($ue as $ues)
-                                                <option value="{{$ues->id_ue}}">{{$ues->libelle_ue}}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label class="form-label" for="add_bu"><strong>Numéro BU</strong></label>
-                                        <input required id="add_bu" class="form-control" type="text" placeholder="Entrer le numéro BU" name="add_bu" />
-                                    </div>
-                                    <div class="mb-3">
-                                        <label class="form-label" for="add_lib_service"><strong>Libellé Service</strong></label>
-                                        <input required id="add_lib_service" class="form-control" type="text" placeholder="Entrer le libellé service" name="add_lib_service" />
-                                    </div>
-                                    <div class="mb-3">
-                                        <label class="form-label" for="add_code_imp"><strong>Code Imputation</strong></label>
-                                        <input required id="add_code_imp" class="form-control" type="text" placeholder="Entrer le code imputation" name="add_code_imp" />
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col">
-                        <div></div>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer"><button class="btn btn-warning" type="button" data-bs-dismiss="modal">Fermer</button><button class="btn btn-primary" type="submit" form="add_ue">Ajouter</button></div>
-        </div>
-    </div>
-</div>
-<div id="supprimer_chantier" class="modal" role="dialog" tabindex="-1">
-    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h4 class="modal-title text-danger">Voulez vous vraiment supprimer ce chantier?</h4>
-                <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <p class="text-dark" style="margin-bottom: 0px;">Chantier: <strong></strong></p>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-warning" type="button" data-bs-dismiss="modal">Fermer</button>
-                <a href="#" class="btn btn-danger">Supprimer</a>
-            </div>
-        </div>
-    </div>
-</div>
+    @include('modals.chantierModal')
 
-<div id="modifier_chantier" class="modal" role="dialog" tabindex="-1">
-    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h4 class="modal-title text-primary">Modifier ce chantier</h4>
-                <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <div class="row">
-                    <div class="col">
-                        <div></div>
-                    </div>
-                    <div class="col-xl-9">
-                        <div class="card shadow">
-                            <div class="card-body">
-                                <form id="edt_chantier" action="" method="post" style="color: #a0c8d8;">
-                                    @csrf <!-- Protection CSRF -->
-                                    <div class="mb-3">
-                                        <label class="form-label" for="edt_lib_ue"><strong>Libellé UE</strong></label>
-                                        <select id="edt_lib_ue" class="form-select" name="edt_lib_ue">
-                                            <option value="0" disabled>Choisir UE</option>
-                                            @foreach ($ue as $ues)
-                                                <option value="{{ $ues->id_ue }}">{{ $ues->libelle_ue }}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label class="form-label" for="edt_bu"><strong>Numéro BU</strong></label>
-                                        <input required id="edt_bu" class="form-control" type="text" placeholder="Entrer le numéro BU" name="edt_bu" />
-                                    </div>
-                                    <div class="mb-3">
-                                        <label class="form-label" for="edt_lib_service"><strong>Libellé Service</strong></label>
-                                        <input required id="edt_lib_service" class="form-control" type="text" placeholder="Entrer le libellé service" name="edt_lib_service" />
-                                    </div>
-                                    <div class="mb-3">
-                                        <label class="form-label" for="edt_code_imp"><strong>Code Imputation</strong></label>
-                                        <input required id="edt_code_imp" class="form-control" type="text" placeholder="Entrer le code imputation" name="edt_code_imp" />
-                                    </div>
-                                </form>                                
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col">
-                        <div></div>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-warning" type="button" data-bs-dismiss="modal">Fermer</button>
-                <button class="btn btn-info" type="submit" form="edt_chantier">Modifier</button></div>
-        </div>
-    </div>
-</div>
+@endsection
+
+@section('scripts')
+
+    @include('js.chantierJs')
 
 @endsection

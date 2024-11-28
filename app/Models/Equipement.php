@@ -50,6 +50,19 @@ class Equipement extends Model
     }
 
     /**
+     * Scope pour récupérer uniquement les box.
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeBox($query)
+    {
+        return $query->whereHas('typeEquipement', function ($q) {
+            $q->whereIn('type_equipement', ['Box']);
+        });
+    }
+
+    /**
      * Créer un équipement à partir des données validées.
      *
      * @param  array $validatedData
@@ -57,7 +70,7 @@ class Equipement extends Model
      * @return Equipement
      * @throws \Exception
      */
-    public static function createFromRequest(array $validatedData, Modele $modele)
+    public static function createPhoneFromRequest(array $validatedData, Modele $modele)
     {
         // Vérifier que le type d'équipement est valide pour un téléphone
         $typeEquipement = TypeEquipement::find($validatedData['enr_phone_type']);
@@ -73,6 +86,17 @@ class Equipement extends Model
             'id_type_equipement' => $validatedData['enr_phone_type'],
             'id_modele' => $modele->id_modele,
             'id_statut_equipement' => 1,
+        ]);
+    }
+
+    public function updatePhoneFromRequest($validatedData, $modele)
+    {
+        $this->update([
+            'id_type_equipement' => $validatedData['edt_phone_type'],
+            'id_modele' => $modele->id_modele,
+            'imei' => $validatedData['edt_phone_imei'],
+            'serial_number' => $validatedData['edt_phone_sn'],
+            'enrole' => $validatedData['edt_phone_enroll'] == '1', //bool
         ]);
     }
 

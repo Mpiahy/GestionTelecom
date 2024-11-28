@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('marque', function (Blueprint $table) {
-            $table->id('id_marque');
+            $table->unsignedBigInteger('id_marque')->primary(); // Pas d'auto-incrément
             $table->string('marque', 20);
             $table->timestamps();
         });

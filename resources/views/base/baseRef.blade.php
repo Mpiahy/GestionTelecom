@@ -122,8 +122,11 @@
         </div><a class="border rounded d-inline scroll-to-top" href="#page-top"><i class="fas fa-angle-up"></i></a>
     </div>
 
-                {{-- <!-- Modals des pages référentiels --> --}}
-                @yield('modal_ref')
+{{-- MODALS --}}
+    @yield('modal_ref')
+    
+{{-- SCRIPTS --}}
+    @yield('scripts')
 
     <script src="{{asset('/assets/bootstrap/js/bootstrap.min.js')}}"></script>
     <script src="{{asset('/assets/js/chart.min.js')}}"></script>

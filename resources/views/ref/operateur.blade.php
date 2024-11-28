@@ -8,20 +8,43 @@
 <div class="container-fluid">
     <h3 class="text-dark mb-5"><i class="fas fa-globe" style="padding-right: 5px;"></i>Opérateurs</h3>
     
-    <!-- Affichage des messages de succès ou d'erreur -->
-    @if (session('success'))
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            <i class="fas fa-check-circle me-2"></i>{{ session('success') }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-    @endif
+    <!-- Toast container -->
+    <div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 1055;">
+        <!-- Toast for Success Message -->
+        @if (session('success'))
+            <div class="toast align-items-center text-bg-success border-0 show" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="d-flex">
+                    <div class="toast-body">
+                        {{ session('success') }}
+                    </div>
+                    <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+            </div>
+        @endif
 
-    @if (session('error'))
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            <i class="fas fa-exclamation-circle me-2"></i>{{ session('error') }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-    @endif
+        <!-- Toast for Error Message -->
+        @if (session('error'))
+            <div class="toast align-items-center text-bg-danger border-0 show" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="d-flex">
+                    <div class="toast-body">
+                        {{ session('error') }}
+                    </div>
+                    <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+            </div>
+        @endif
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const toastElList = [].slice.call(document.querySelectorAll('.toast'));
+            const toastList = toastElList.map(function (toastEl) {
+                return new bootstrap.Toast(toastEl, { delay: 5000 }); // Durée de 5 secondes
+            });
+
+            toastList.forEach(toast => toast.show());
+        });
+    </script>
 
     <div class="card shadow">
         <div class="card-header py-3">
@@ -73,54 +96,13 @@
 @endsection
 
 @section('modal_ref')
-<!-- Modal pour modifier un contact -->
-<div id="modifier_contact_operateur" class="modal" role="dialog" tabindex="-1">
-    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h4 class="modal-title text-primary">Modifier le contact pour cet opérateur</h4>
-                <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form id="form_edt_contact_operateur" action="{{ route('operateur.modifier') }}" method="POST">
-                    @csrf
-                    <input type="hidden" name="id_contact" id="modal-id-contact">
-                    <div class="mb-3">
-                        <label class="form-label" for="nom_contact"><strong>Nom du contact</strong></label>
-                        <input id="modal-nom-contact" class="form-control" type="text" name="nom_contact" />
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label" for="email_contact"><strong>Email du contact</strong></label>
-                        <input id="modal-email-contact" class="form-control" type="email" name="email_contact" />
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-warning" type="button" data-bs-dismiss="modal">Fermer</button>
-                <button class="btn btn-primary" type="submit" form="form_edt_contact_operateur">Enregistrer</button>
-            </div>
-        </div>
-    </div>
-</div>
 
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        // Écoute les clics sur les boutons d'édition
-        document.querySelectorAll('.edit-contact').forEach(function (button) {
-            button.addEventListener('click', function () {
-                // Récupère les données depuis les attributs
-                const id = this.getAttribute('data-id');
-                const nom = this.getAttribute('data-nom');
-                const email = this.getAttribute('data-email');
-                const operateur = this.getAttribute('data-operateur');
-                
-                // Remplit les champs du modal
-                document.getElementById('modal-id-contact').value = id;
-                document.getElementById('modal-nom-contact').value = nom;
-                document.getElementById('modal-email-contact').value = email;
-            });
-        });
-    });
-</script>
+    @include('modals.operateurModal')
+
+@endsection
+
+@section('scripts')
+
+    @include('js.operateurJs')
 
 @endsection

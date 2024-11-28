@@ -29,4 +29,14 @@ class TypeEquipement extends Model
     {
         return $query->whereIn('id_type_equipement', [self::SMARTPHONE, self::TELEPHONE_TOUCHE]);
     }
+    /**
+     * Scope pour récupérer uniquement les types correspondant aux téléphones.
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeForBox($query)
+    {
+        return $query->whereIn('id_type_equipement', [self::BOX]);
+    }
 }

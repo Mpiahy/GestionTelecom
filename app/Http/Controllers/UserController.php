@@ -33,50 +33,77 @@ class UserController extends Controller
     // Insertion d'un nouvel utilisateur
     public function ajouterUtilisateur(Request $request)
     {
-        // Validation des données
-        $validatedData = $request->validate([
-            'matricule' => 'required|numeric|unique:utilisateur,matricule',
-            'nom' => 'required|string|max:50',
-            'prenom' => 'required|string|max:50',
-            'login' => 'required|string|max:20|unique:utilisateur,login',
-            'id_type_utilisateur' => 'required|exists:type_utilisateur,id_type_utilisateur',
-            'id_fonction' => 'nullable|exists:fonction,id_fonction',
-            'id_localisation' => 'required|exists:localisation,id_localisation',
-            'new_fonction' => 'nullable|string|max:50',
-        ]);
+        try {
+            $validatedData = $request->validate([
+                'matricule' => 'required|unique:utilisateur,matricule',
+                'nom' => 'required|string|max:50',
+                'prenom' => 'required|string|max:50',
+                'login' => 'required|string|max:20|unique:utilisateur,login',
+                'id_type_utilisateur' => 'required|exists:type_utilisateur,id_type_utilisateur',
+                'id_localisation' => 'required|exists:localisation,id_localisation',
+                'new_fonction' => 'nullable|string|max:50',
+            ], [], [
+                'matricule' => __('Matricule'),
+                'nom' => __('Nom'),
+                'prenom' => __('Prénom'),
+                'login' => __('Login'),
+                'id_type_utilisateur' => __('Type utilisateur'),
+                'id_localisation' => __('Localisation'),
+                'new_fonction' => __('Nouvelle fonction'),
+            ]);
 
-        // Gestion d'une nouvelle fonction
-        if ($request->id_fonction === 'new') {
-            $request->validate(['new_fonction' => 'required|string|max:50']); // Validation spécifique
-            $fonction = Fonction::create(['fonction' => $request->new_fonction]);
-            $validatedData['id_fonction'] = $fonction->id_fonction;
+            if ($request->id_fonction === 'new') {
+                $request->validate(['new_fonction' => 'required|string|max:50']);
+                $fonction = Fonction::create(['fonction' => $request->new_fonction]);
+                $validatedData['id_fonction'] = $fonction->id_fonction;
+            } else {
+                $request->validate(['id_fonction' => 'nullable|exists:fonction,id_fonction']);
+                $validatedData['id_fonction'] = $request->id_fonction;
+            }
+
+            Utilisateur::create($validatedData);
+            return redirect()->route('ref.user')->with('success', __('Utilisateur ajouté avec succès !'));
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return redirect()->route('ref.user')
+                ->withErrors($e->validator)
+                ->withInput()
+                ->with('modal_with_error', 'modal_add_emp');
         }
-
-        // Création de l'utilisateur
-        Utilisateur::create($validatedData);
-
-        return redirect()->route('ref.user')->with('success', __('Utilisateur ajouté avec succès !'));
     }
 
     // Modification d'un utilisateur existant
     public function modifierUtilisateur(Request $request)
     {
-        $validated = $request->validate([
-            'matricule' => 'required|exists:utilisateur,matricule',
-            'nom' => 'required|string|max:255',
-            'prenom' => 'required|string|max:255',
-            'login' => 'required|string|max:255|unique:utilisateur,login,' . $request->matricule . ',matricule',
-            'id_type_utilisateur' => 'required|exists:type_utilisateur,id_type_utilisateur',
-            'id_fonction' => 'required|exists:fonction,id_fonction',
-            'id_localisation' => 'required|exists:localisation,id_localisation',
-        ]);
-
-        // Mettre à jour l'utilisateur
-        $utilisateur = Utilisateur::findOrFail($request->matricule);
-        $utilisateur->update($validated);
-
-        return redirect()->route('ref.user')->with('success', __('Utilisateur modifié avec succès.'));
-    }
+        try {
+            $validated = $request->validate([
+                'matricule' => 'required|exists:utilisateur,matricule',
+                'nom' => 'required|string|max:255',
+                'prenom' => 'required|string|max:255',
+                'login' => 'required|string|max:255|unique:utilisateur,login,' . $request->matricule . ',matricule',
+                'id_type_utilisateur' => 'required|exists:type_utilisateur,id_type_utilisateur',
+                'id_fonction' => 'required|exists:fonction,id_fonction',
+                'id_localisation' => 'required|exists:localisation,id_localisation',
+            ], [], [
+                'matricule' => __('Matricule'),
+                'nom' => __('Nom'),
+                'prenom' => __('Prénom'),
+                'login' => __('Login'),
+                'id_type_utilisateur' => __('Type utilisateur'),
+                'id_fonction' => __('Fonction'),
+                'id_localisation' => __('Localisation'),
+            ]);
+    
+            $utilisateur = Utilisateur::findOrFail($request->matricule);
+            $utilisateur->update($validated);
+    
+            return redirect()->route('ref.user')->with('success', __('Utilisateur modifié avec succès.'));
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return redirect()->route('ref.user')
+                ->withErrors($e->validator)
+                ->withInput()
+                ->with('modal_with_error', 'modal_edit_emp');
+        }
+    }        
 
     // Suppression d'un utilisateur
     public function supprimerUtilisateur($id)
