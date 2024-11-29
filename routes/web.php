@@ -64,5 +64,6 @@ Route::middleware('check.session')->group(function() {
 
 
     Route::get('/box', [BoxController::class, 'boxView'])->name('ref.box');
+
     Route::get('/forfait', [ForfaitController::class, 'forfaitView'])->name('ref.forfait');
 });

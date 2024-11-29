@@ -101,7 +101,7 @@ class Equipement extends Model
     }
 
     /**
-     * Scope pour appliquer les filtres dynamiques.
+     * Scope pour appliquer des filtres dynamiques optimisés.
      *
      * @param \Illuminate\Database\Eloquent\Builder $query
      * @param array $filters
@@ -109,20 +109,34 @@ class Equipement extends Model
      */
     public function scopeFilter($query, array $filters)
     {
+        // Préparez les filtres avant utilisation
+        $filters = array_filter($filters); // Supprime les valeurs nulles ou vides
+
         return $query
-            ->when($filters['filter_marque'] ?? null, function ($query, $filterMarque) {
-                $query->whereHas('modele.marque', function ($q) use ($filterMarque) {
-                    $q->where('id_marque', $filterMarque);
+            // Filtre par marque
+            ->when(isset($filters['filter_marque']), function ($query) use ($filters) {
+                $query->whereHas('modele.marque', function ($q) use ($filters) {
+                    $q->where('id_marque', $filters['filter_marque']);
                 });
             })
-            ->when($filters['filter_statut'] ?? null, function ($query, $filterStatut) {
-                $query->where('id_statut_equipement', $filterStatut);
+
+            // Filtre par statut
+            ->when(isset($filters['filter_statut']), function ($query) use ($filters) {
+                $query->where('id_statut_equipement', $filters['filter_statut']);
             })
-            ->when($filters['search_imei'] ?? null, function ($query, $searchIMEI) {
-                $query->where('imei', 'like', "%$searchIMEI%");
+
+            // Recherche par IMEI (LIKE avec wildcard optimisé)
+            ->when(isset($filters['search_imei']), function ($query) use ($filters) {
+                $query->where('imei', 'like', '%' . $filters['search_imei'] . '%');
             })
-            ->when($filters['search_sn'] ?? null, function ($query, $searchSN) {
-                $query->where('serial_number', 'like', "%$searchSN%");
-            });
+
+            // Recherche par numéro de série (SN)
+            ->when(isset($filters['search_sn']), function ($query) use ($filters) {
+                $query->where('serial_number', 'like', '%' . $filters['search_sn'] . '%');
+            })
+
+            // Tri conditionnel : met le statut HS (id_statut_equipement = 4) à la fin
+            ->orderByRaw('CASE WHEN id_statut_equipement = 4 THEN 1 ELSE 0 END')
+            ->orderBy('id_equipement'); // Optionnel : tri secondaire par ID pour un ordre cohérent.
     }
 }
