@@ -8,7 +8,6 @@ create or replace view forBox as
     select * from equipement where id_type_equipement = 3;
 select * from forBox;
 
-
 -- View pour les marques Phone (id_marque commence par 1 ou 2)
 CREATE OR REPLACE VIEW marquePhone AS
 SELECT * 

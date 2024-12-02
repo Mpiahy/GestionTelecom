@@ -85,11 +85,6 @@ class PhoneController extends Controller
         try {
             // Valider les données
             $validatedData = $request->validate([
-                'edt_phone_type' => 'required|exists:type_equipement,id_type_equipement',
-                'edt_phone_marque' => 'required',
-                'new_phone_marque' => 'required_if:edt_phone_marque,new_marque|max:50',
-                'edt_phone_modele' => 'required',
-                'new_phone_modele' => 'required_if:edt_phone_modele,new|max:50',
                 'edt_phone_imei' => 'required|unique:equipement,imei,' . $id . ',id_equipement|max:50',
                 'edt_phone_sn' => 'required|unique:equipement,serial_number,' . $id . ',id_equipement|max:50',
                 'edt_phone_enroll' => 'required|in:1,2',
@@ -136,7 +131,7 @@ class PhoneController extends Controller
             // Message de succès
             return redirect()
                 ->route('ref.phone')
-                ->with('success', "L'équipement {$equipement->modele->marque->marque} {$equipement->modele->nom_modele} ({$equipement->serial_number}) a été marqué comme HS.");
+                ->with('success', "Le téléphone {$equipement->modele->marque->marque} {$equipement->modele->nom_modele} ({$equipement->serial_number}) a été marqué comme HS.");
         } catch (ValidationException $e) {
             return redirect()
                 ->back()

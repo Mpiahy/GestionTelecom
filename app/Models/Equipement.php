@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\StatutEquipement;
 
 class Equipement extends Model
 {
@@ -85,18 +86,45 @@ class Equipement extends Model
             'enrole' => $validatedData['enr_phone_enroll'] == 1, // Convertir en booléen
             'id_type_equipement' => $validatedData['enr_phone_type'],
             'id_modele' => $modele->id_modele,
-            'id_statut_equipement' => 1,
+            'id_statut_equipement' => StatutEquipement::STATUT_NOUVEAU,
+        ]);
+    }    
+    
+    /**
+     * Créer un box à partir des données validées.
+     *
+     * @param  array $validatedData
+     * @param  Modele $modele
+     * @return Equipement
+     * @throws \Exception
+     */
+    public static function createBoxFromRequest(array $validatedData, Modele $modele)
+    {
+        // Créer et retourner le box
+        return self::create([
+            'imei' => $validatedData['enr_box_imei'],
+            'serial_number' => $validatedData['enr_box_sn'],
+            'enrole' => false,
+            'id_type_equipement' => 3,
+            'id_modele' => $modele->id_modele,
+            'id_statut_equipement' => StatutEquipement::STATUT_NOUVEAU,
         ]);
     }
 
     public function updatePhoneFromRequest($validatedData, $modele)
     {
         $this->update([
-            'id_type_equipement' => $validatedData['edt_phone_type'],
-            'id_modele' => $modele->id_modele,
             'imei' => $validatedData['edt_phone_imei'],
             'serial_number' => $validatedData['edt_phone_sn'],
             'enrole' => $validatedData['edt_phone_enroll'] == '1', //bool
+        ]);
+    }
+
+    public function updateBoxFromRequest($validatedData, $modele)
+    {
+        $this->update([
+            'imei' => $validatedData['edt_box_imei'],
+            'serial_number' => $validatedData['edt_box_sn'],
         ]);
     }
 

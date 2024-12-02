@@ -2,44 +2,30 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        // Initialisation des éléments du formulaire
-        const enrBoxType = document.getElementById('enr_box_type');
+        // Initialisation des éléments du formulaire pour les Box
         const enrBoxMarque = document.getElementById('enr_box_marque');
         const newMarqueInput = document.getElementById('new_box_marque');
         const enrBoxModele = document.getElementById('enr_box_modele');
         const newModeleInput = document.getElementById('new_box_modele');
-        const enrBoxEnroll = document.getElementById('enr_box_enroll');
-        const enrBoxEnrollDiv = enrBoxEnroll.closest('.mb-3'); // Conteneur du champ "Enrôlé"
 
-        // Affiche ou masque le champ "Nouvelle Marque"
+        // Affiche ou masque le champ "Nouvelle Marque" et sélectionne automatiquement "Ajouter un nouveau modèle"
         function toggleNewMarqueInput() {
-            if (enrBoxMarque.value === 'new_marque') {
-                newMarqueInput.classList.remove('d-none');
+            if (enrBoxMarque.value === 'new') { // Vérifie si l'utilisateur a sélectionné "Ajouter une nouvelle marque"
+                newMarqueInput.classList.remove('d-none'); // Affiche le champ "Nouvelle Marque"
                 populateNewModeleOption(); // Ajoute automatiquement "Ajouter un nouveau modèle"
             } else {
                 newMarqueInput.classList.add('d-none');
-                newMarqueInput.value = ''; // Réinitialise le champ
+                newMarqueInput.value = ''; // Réinitialise le champ "Nouvelle Marque"
             }
         }
 
         // Affiche ou masque le champ "Nouveau Modèle"
         function toggleNewModeleInput() {
-            if (enrBoxModele.value === 'new') {
-                newModeleInput.classList.remove('d-none');
+            if (enrBoxModele.value === 'new') { // Vérifie si l'utilisateur a sélectionné "Ajouter un nouveau modèle"
+                newModeleInput.classList.remove('d-none'); // Affiche le champ "Nouveau Modèle"
             } else {
                 newModeleInput.classList.add('d-none');
-                newModeleInput.value = ''; // Réinitialise le champ
-            }
-        }
-
-        // Affiche ou masque le champ "Enrôlé" en fonction du type d'équipement
-        function toggleBoxEnroll() {
-            if (enrBoxType.value === '2') { // Télébox à touche
-                enrBoxEnrollDiv.classList.add('d-none');
-                enrBoxEnroll.value = '2'; // Définit la valeur par défaut à "Non"
-            } else {
-                enrBoxEnrollDiv.classList.remove('d-none');
-                enrBoxEnroll.value = '0'; // Réinitialise la valeur par défaut
+                newModeleInput.value = ''; // Réinitialise le champ s'il est masqué
             }
         }
 
@@ -48,7 +34,7 @@
             selectElement.innerHTML = `<option value="0" disabled selected>${defaultOptionText}</option>`;
         }
 
-        // Remplit un champ <select> avec des options dynamiques, en conservant l'option "new" ou "new_marque"
+        // Remplit un champ <select> avec des options dynamiques, tout en gardant l'option "new"
         function populateSelect(selectElement, items, newItemValue, newItemText) {
             if (newItemValue && newItemText) {
                 selectElement.insertAdjacentHTML('beforeend', `<option value="${newItemValue}">${newItemText}</option>`);
@@ -58,44 +44,25 @@
             });
         }
 
-        // Ajoute l'option "Ajouter un nouveau modèle" et la sélectionne automatiquement
+        // Ajoute et sélectionne automatiquement l'option "Ajouter un nouveau modèle"
         function populateNewModeleOption() {
             resetSelect(enrBoxModele, 'Choisir le modèle');
-            enrBoxModele.insertAdjacentHTML('beforeend', `<option value="new">Ajouter un nouveau modèle</option>`);
-            enrBoxModele.value = 'new';
+            enrBoxModele.insertAdjacentHTML('beforeend', `<option value="new" selected>Ajouter un nouveau modèle</option>`);
             toggleNewModeleInput(); // Affiche le champ "Nouveau Modèle"
         }
-
-        // Gère les changements de type d'équipement
-        enrBoxType.addEventListener('change', function () {
-            const typeId = this.value;
-            resetSelect(enrBoxMarque, 'Choisir la marque');
-            resetSelect(enrBoxModele, 'Choisir le modèle');
-            toggleBoxEnroll();
-
-            if (typeId) {
-                fetch(`/get-marques-by-type/${typeId}`)
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            populateSelect(enrBoxMarque, data.marques, 'new_marque', 'Ajouter une nouvelle marque');
-                        }
-                    })
-                    .catch(error => console.error('Erreur lors de la récupération des marques :', error));
-            }
-        });
 
         // Gère les changements de marque
         enrBoxMarque.addEventListener('change', function () {
             const marqueId = this.value;
             resetSelect(enrBoxModele, 'Choisir le modèle');
-            toggleNewMarqueInput();
+            toggleNewMarqueInput(); // Affiche ou masque le champ "Nouvelle Marque"
 
-            if (marqueId && marqueId !== 'new_marque') {
+            if (marqueId && marqueId !== 'new') { // Si une marque existante est sélectionnée
                 fetch(`/get-modeles-by-marque/${marqueId}`)
                     .then(response => response.json())
                     .then(data => {
                         populateSelect(enrBoxModele, data.modeles, 'new', 'Ajouter un nouveau modèle');
+                        toggleNewModeleInput(); // Vérifie s'il faut afficher le champ "Nouveau Modèle"
                     })
                     .catch(error => console.error('Erreur lors de la récupération des modèles :', error));
             }
@@ -103,18 +70,27 @@
 
         // Gère les changements de modèle
         enrBoxModele.addEventListener('change', function () {
-            toggleNewModeleInput();
+            toggleNewModeleInput(); // Affiche ou masque le champ "Nouveau Modèle"
         });
 
-        // Gère l'affichage initial (au cas où des champs seraient pré-sélectionnés)
-        toggleNewMarqueInput();
-        toggleNewModeleInput();
-        toggleBoxEnroll();
+        // Gestion initiale lors du chargement de la page
+        toggleNewMarqueInput(); // Gère le champ "Nouvelle Marque" au chargement
+        toggleNewModeleInput(); // Gère le champ "Nouveau Modèle" au chargement
 
         // Affiche le modal en cas d'erreurs de validation
         @if ($errors->hasBag('enr_box_errors'))
-            var modalEnrBox = new bootstrap.Modal(document.getElementById('modal_enr_box'));
+            const modalEnrBox = new bootstrap.Modal(document.getElementById('modal_enr_box'));
             modalEnrBox.show();
+        @endif
+    });
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        @if ($errors->hasBag('enr_box_errors'))
+            setTimeout(function () {
+                const modalEnrBox = new bootstrap.Modal(document.getElementById('modal_enr_box'));
+                modalEnrBox.show();
+            }, 500); // Petit délai pour s'assurer que le DOM est prêt
         @endif
     });
 </script>
@@ -142,11 +118,8 @@
                 injectDataIntoForm(form, this);
 
                 // Met à jour l'action du formulaire
-                const id = this.getAttribute('data-id');
-                form.action = `/boxs/${id}`;
-
-                // Gère l'affichage du champ "Enrôlé"
-                toggleBoxEnroll(this.getAttribute('data-type'), this.getAttribute('data-enroll'));
+                const id_box = this.getAttribute('data-id');
+                form.action = `/box/${id_box}`;
             });
         });
     }
@@ -164,7 +137,6 @@
             { id: 'edt_box_modele', data: 'data-modele' },
             { id: 'edt_box_imei', data: 'data-imei' },
             { id: 'edt_box_sn', data: 'data-sn' },
-            { id: 'edt_box_enroll', data: 'data-enroll' },
         ];
 
         fields.forEach(field => {
@@ -194,24 +166,6 @@
                 hiddenElement.value = button.getAttribute(field.data);
             }
         });
-    }
-
-    /**
-     * Gère l'affichage du champ "Enrôlé" selon le type d'équipement.
-     * @param {string} typeId - Type d'équipement.
-     * @param {string} enrollValue - Valeur "Enrôlé".
-     */
-    function toggleBoxEnroll(typeId, enrollValue) {
-        const edtboxEnroll = document.getElementById('edt_box_enroll');
-        const edtboxEnrollDiv = edtboxEnroll.closest('.mb-3');
-
-        if (typeId === '2') {
-            edtboxEnrollDiv.classList.add('d-none');
-            edtboxEnroll.value = '2';
-        } else {
-            edtboxEnrollDiv.classList.remove('d-none');
-            edtboxEnroll.value = enrollValue || '0';
-        }
     }
 
     /**

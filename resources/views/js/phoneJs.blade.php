@@ -142,8 +142,8 @@
                 injectDataIntoForm(form, this);
 
                 // Met à jour l'action du formulaire
-                const id = this.getAttribute('data-id');
-                form.action = `/phones/${id}`;
+                const id_phone = this.getAttribute('data-id');
+                form.action = `/phones/${id_phone}`;
 
                 // Gère l'affichage du champ "Enrôlé"
                 togglePhoneEnroll(this.getAttribute('data-type'), this.getAttribute('data-enroll'));

@@ -15,30 +15,14 @@
                             <div class="card-body">
                                 <form id="form_enr_box" action="{{ route('box.enr') }}" method="post" style="color: #a0c8d8;">
                                     @csrf
-                                    <div class="mb-3">
-                                        <label class="form-label" for="enr_box_type"><strong>Type</strong></label>
-                                        <select id="enr_box_type" class="form-select @error('enr_box_type','enr_box_errors') is-invalid @enderror" name="enr_box_type" required>
-                                            <option value="0" disabled {{ old('enr_box_type') ? '' : 'selected' }}>Choisir le type</option>
-                                            @foreach($types as $type)
-                                                <option value="{{ $type->id_type_equipement }}"
-                                                    {{ old('enr_box_type') == $type->id_type_equipement ? 'selected' : '' }}>
-                                                    {{ $type->type_equipement }}
-                                                </option>
-                                            @endforeach
-                                        </select>
-                                        @error('enr_box_type','enr_box_errors')
-                                            <div class="invalid-feedback">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-
+                                    <!-- Champ pour la marque -->
                                     <div class="mb-3">
                                         <label class="form-label" for="enr_box_marque"><strong>Marque</strong></label>
                                         <select id="enr_box_marque" class="form-select @error('enr_box_marque','enr_box_errors') is-invalid @enderror" name="enr_box_marque" required>
                                             <option value="0" disabled {{ old('enr_box_marque') ? '' : 'selected' }}>Choisir la marque</option>
-                                            <option value="new_marque" {{ old('enr_box_marque') == 'new_marque' ? 'selected' : '' }}>Ajouter une nouvelle marque</option>
+                                            <option value="new" {{ old('enr_box_marque') == 'new' ? 'selected' : '' }}>Ajouter une nouvelle marque</option>
                                             @foreach($marques as $marque)
-                                                <option value="{{ $marque->id_marque }}"
-                                                    {{ old('enr_box_marque') == $marque->id_marque ? 'selected' : '' }}>
+                                                <option value="{{ $marque->id_marque }}" {{ old('enr_box_marque') == $marque->id_marque ? 'selected' : '' }}>
                                                     {{ $marque->marque }}
                                                 </option>
                                             @endforeach
@@ -47,8 +31,13 @@
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
 
-                                        <!-- Champ pour nouvelle marque -->
-                                        <input id="new_box_marque" class="form-control mt-2 d-none @error('new_box_marque','enr_box_errors') is-invalid @enderror" type="text" placeholder="Nouvelle marque" name="new_box_marque" value="{{ old('new_box_marque') }}" />
+                                        <!-- Champ pour nouvelle marque, visible seulement si "new" est sélectionné -->
+                                        <input id="new_box_marque" 
+                                            class="form-control mt-2 @error('new_box_marque','enr_box_errors') is-invalid @enderror {{ old('enr_box_marque') == 'new' ? '' : 'd-none' }}" 
+                                            type="text" 
+                                            placeholder="Nouvelle marque" 
+                                            name="new_box_marque" 
+                                            value="{{ old('new_box_marque') }}" />
                                         @error('new_box_marque','enr_box_errors')
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
@@ -102,18 +91,6 @@
                                             value="{{ old('enr_box_sn') }}"
                                             required />
                                         @error('enr_box_sn','enr_box_errors')
-                                            <div class="invalid-feedback">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-
-                                    <div class="mb-3">
-                                        <label class="form-label" for="enr_box_enroll"><strong>Enrôlé</strong></label>
-                                        <select id="enr_box_enroll" class="form-select @error('enr_box_enroll','enr_box_errors') is-invalid @enderror" name="enr_box_enroll" required>
-                                            <option value="0" disabled {{ old('enr_box_enroll') ? '' : 'selected' }}>Oui ou Non</option>
-                                            <option value="1" {{ old('enr_box_enroll') == '1' ? 'selected' : '' }}>Oui</option>
-                                            <option value="2" {{ old('enr_box_enroll') == '2' ? 'selected' : '' }}>Non</option>
-                                        </select>
-                                        @error('enr_box_enroll','enr_box_errors')
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
                                     </div>
@@ -240,18 +217,6 @@
                                             value="{{ old('edt_box_sn') }}"
                                             required />
                                         @error('edt_box_sn','edt_box_errors')
-                                            <div class="invalid-feedback">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-
-                                    <div class="mb-3">
-                                        <label class="form-label" for="edt_box_enroll"><strong>Enrôlé</strong></label>
-                                        <select id="edt_box_enroll" class="form-select @error('edt_box_enroll','edt_box_errors') is-invalid @enderror" name="edt_box_enroll" required>
-                                            <option value="0" disabled {{ old('edt_box_enroll') ? '' : 'selected' }}>Oui ou Non</option>
-                                            <option value="1" {{ old('edt_box_enroll') == '1' ? 'selected' : '' }}>Oui</option>
-                                            <option value="2" {{ old('edt_box_enroll') == '2' ? 'selected' : '' }}>Non</option>
-                                        </select>
-                                        @error('edt_box_enroll','edt_box_errors')
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
                                     </div>

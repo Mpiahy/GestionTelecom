@@ -87,23 +87,28 @@ class Marque extends Model
      */
     public static function findOrCreate($marqueId, $newMarque = null, $typeEquipementId)
     {
-        if ($marqueId === 'new_marque') {
-            // Vérifiez si $typeEquipementId est défini
+        if ($marqueId === 'new'|| $marqueId === 'new_marque') { // Vérifier si l'utilisateur a sélectionné "Ajouter une nouvelle marque"
+            if (!$newMarque) {
+                throw new \InvalidArgumentException('Le champ "Nouvelle Marque" est requis.');
+            }
+
+            // Vérifiez que $typeEquipementId est défini
             if (!$typeEquipementId) {
                 throw new \InvalidArgumentException('Le type d\'équipement est requis pour créer une nouvelle marque.');
             }
-    
+
             // Générer un nouvel id_marque basé sur le type d'équipement
             $newId = self::generateId($typeEquipementId);
-    
+
             // Créer une nouvelle marque
             return self::create([
                 'id_marque' => $newId,
                 'marque' => $newMarque,
             ]);
         }
-    
-        // Rechercher une marque existante
+
+        // Sinon, chercher une marque existante
         return self::findOrFail($marqueId);
-    }    
+    }
+
 }

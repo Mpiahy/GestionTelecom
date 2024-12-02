@@ -3,7 +3,6 @@
     <title>Box - Telecom</title>
 </head>
 
-
 @section('content_ref')
 
 <div class="container-fluid">
@@ -162,12 +161,11 @@
                         <tr>
                             <th>Marque</th>
                             <th>Modèle</th>
-                            <th>Type</th>
                             <th>Imei</th>
                             <th>Serial Number</th>
                             <th>Utilisateur</th>
+                            <th>Chantier</th>
                             <th>Statut</th>
-                            <th>Enrôlé</th>
                             <th class="text-center">Action</th>
                         </tr>
                     </thead>
@@ -176,14 +174,15 @@
                             <tr>
                                 <td>{{ $equipement->modele->marque->marque }}</td>
                                 <td>{{ $equipement->modele->nom_modele }}</td>
-                                <td>{{ $equipement->typeEquipement->type_equipement }}</td>
                                 <td>{{ $equipement->imei }}</td>
                                 <td>{{ $equipement->serial_number }}</td>
                                 <td>
                                     N/A
                                 </td>
+                                <td>
+                                    N/A
+                                </td>
                                 <td>{{ $equipement->statut->statut_equipement }}</td>
-                                <td>{{ $equipement->enrole ? 'Oui' : 'Non' }}</td>
                                 <td class="text-center">
                                     <!-- Action buttons -->
                                     <a class="text-decoration-none"
@@ -197,8 +196,7 @@
                                         data-marque="{{ $equipement->modele->marque->id_marque ?? '' }}"
                                         data-modele="{{ $equipement->modele->id_modele ?? '' }}"
                                         data-imei="{{ $equipement->imei ?? '' }}"
-                                        data-sn="{{ $equipement->serial_number ?? '' }}"
-                                        data-enroll="{{ $equipement->enrole ? '1' : '2' }}">
+                                        data-sn="{{ $equipement->serial_number ?? '' }}">
                                         <i class="far fa-edit text-info" style="font-size: 25px;"></i>
                                     </a>
                                     <a class="text-decoration-none" data-bs-target="#modal_histo_box" data-bs-toggle="modal" data-toggle="tooltip" title="Historique" href="#" style="margin-right: 10px;">

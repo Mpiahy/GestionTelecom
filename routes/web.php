@@ -57,13 +57,16 @@ Route::middleware('check.session')->group(function() {
 
     Route::get('/phone', [PhoneController::class, 'phoneView'])->name('ref.phone');
     Route::post('/phone/save', [PhoneController::class, 'savePhone'])->name('phone.enr');
-    Route::get('/phones/{id}', [PhoneController::class, 'updatePhone'])->name('phone.edt');
+    Route::get('/phones/{id_phone}', [PhoneController::class, 'updatePhone'])->name('phone.edt');
     Route::post('/phone/hs', [PhoneController::class, 'hsPhone'])->name('phone.hs');
-    Route::get('/get-marques-by-type/{typeId}', [PhoneController::class, 'getMarquesByType']);
-    Route::get('/get-modeles-by-marque/{marqueId}', [PhoneController::class, 'getModelesByMarque']);
 
+    Route::get('/get-marques-by-type/{typeId}', [PhoneController::class, 'getMarquesByType']); //for phones
+    Route::get('/get-modeles-by-marque/{marqueId}', [PhoneController::class, 'getModelesByMarque']); //for phones & box
 
     Route::get('/box', [BoxController::class, 'boxView'])->name('ref.box');
+    Route::post('/box/save', [BoxController::class, 'saveBox'])->name('box.enr');
+    Route::get('/box/{id_box}', [BoxController::class, 'updateBox'])->name('box.edt');
+    Route::post('/box/hs', [BoxController::class, 'hsBox'])->name('box.hs');
 
     Route::get('/forfait', [ForfaitController::class, 'forfaitView'])->name('ref.forfait');
 });
