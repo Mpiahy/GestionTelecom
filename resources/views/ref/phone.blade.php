@@ -164,7 +164,7 @@
                             <th>Modèle</th>
                             <th>Type</th>
                             <th>Imei</th>
-                            <th>Serial Number</th>
+                            <th>SN</th>
                             <th>Utilisateur</th>
                             <th>Statut</th>
                             <th>Enrôlé</th>
@@ -184,6 +184,13 @@
                                 </td>
                                 <td>{{ $equipement->statut->statut_equipement }}</td>
                                 <td>{{ $equipement->enrole ? 'Oui' : 'Non' }}</td>
+                                @if ($equipement->isHS())
+                                <td class="text-center">
+                                    <a class="text-decoration-none" data-bs-target="#modal_histo_phone" data-bs-toggle="modal" data-toggle="tooltip" title="Historique" href="#" style="margin-right: 10px;">
+                                        <i class="fas fa-history text-primary" style="font-size: 25px;"></i>
+                                    </a>
+                                </td>
+                                @else
                                 <td class="text-center">
                                     <!-- Action buttons -->
                                     <a class="text-decoration-none"
@@ -217,6 +224,8 @@
                                         <i class="fas fa-undo text-warning" style="font-size: 25px;"></i>
                                     </a>
                                 </td>
+                                    
+                                @endif
                             </tr>
                         @endforeach
                     </tbody>

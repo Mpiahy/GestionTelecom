@@ -19,5 +19,8 @@ class DatabaseSeeder extends Seeder
         $this->call(ContactOperateurSeeder::class);
         $this->call(StatutEquipementSeeder::class);
         $this->call(TypeEquipementSeeder::class);
+        $this->call(ElementSeeder::class);
+        $this->call(ForfaitSeeder::class);
+        $this->call(ForfaitElementSeeder::class);
     }
 }

@@ -167,4 +167,9 @@ class Equipement extends Model
             ->orderByRaw('CASE WHEN id_statut_equipement = 4 THEN 1 ELSE 0 END')
             ->orderBy('id_equipement'); // Optionnel : tri secondaire par ID pour un ordre cohérent.
     }
+
+    public function isHS()
+    {
+        return $this->statut->statut_equipement === 'HS';
+    }
 }

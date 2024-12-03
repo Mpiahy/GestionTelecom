@@ -11,6 +11,19 @@ return new class extends Migration
      */
     public function up(): void
     {
+        // TABLE type_utilisateur
+        Schema::create('type_utilisateur', function (Blueprint $table) {
+            $table->id('id_type_utilisateur');
+            $table->string('type_utilisateur', 20);
+            $table->timestamps();
+        });
+        // TABLE fonction
+        Schema::create('fonction', function (Blueprint $table) {
+            $table->id('id_fonction');
+            $table->string('fonction', 50);
+            $table->timestamps();
+        });
+        // TABLE utilisateur
         Schema::create('utilisateur', function (Blueprint $table) {
             $table->id('matricule'); // Utiliser 'matricule' comme clé primaire
             $table->string('nom', 50);
@@ -31,6 +44,8 @@ return new class extends Migration
      */
     public function down(): void
     {
+        Schema::dropIfExists('type_utilisateur');
+        Schema::dropIfExists('fonction');
         Schema::dropIfExists('utilisateur');
     }
 };

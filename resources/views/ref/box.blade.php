@@ -162,7 +162,7 @@
                             <th>Marque</th>
                             <th>Modèle</th>
                             <th>Imei</th>
-                            <th>Serial Number</th>
+                            <th>SN</th>
                             <th>Utilisateur</th>
                             <th>Chantier</th>
                             <th>Statut</th>
@@ -183,9 +183,18 @@
                                     N/A
                                 </td>
                                 <td>{{ $equipement->statut->statut_equipement }}</td>
+
+                                @if ($equipement->isHS())
+                                <td class="text-center">
+                                    <a id="btn_histo_box" class="text-decoration-none" data-bs-target="#modal_histo_box" data-bs-toggle="modal" data-toggle="tooltip" title="Historique" href="#" >
+                                        <i class="fas fa-history text-primary" style="font-size: 25px;"></i>
+                                    </a>
+                                </td>
+                                @else
                                 <td class="text-center">
                                     <!-- Action buttons -->
-                                    <a class="text-decoration-none"
+                                    <a id="btn_edt_box"
+                                        class="text-decoration-none"
                                         style="margin-right: 10px;"
                                         data-bs-target="#modal_edt_box"
                                         data-bs-toggle="modal"
@@ -199,10 +208,11 @@
                                         data-sn="{{ $equipement->serial_number ?? '' }}">
                                         <i class="far fa-edit text-info" style="font-size: 25px;"></i>
                                     </a>
-                                    <a class="text-decoration-none" data-bs-target="#modal_histo_box" data-bs-toggle="modal" data-toggle="tooltip" title="Historique" href="#" style="margin-right: 10px;">
+                                    <a id="btn_histo_box" class="text-decoration-none" data-bs-target="#modal_histo_box" data-bs-toggle="modal" data-toggle="tooltip" title="Historique" href="#" style="margin-right: 10px;">
                                         <i class="fas fa-history text-primary" style="font-size: 25px;"></i>
                                     </a>
-                                    <a class="text-decoration-none open-hs-modal"
+                                    <a id="btn_hs_box"
+                                        class="text-decoration-none open-hs-modal"
                                         data-bs-toggle="tooltip"
                                         title="Déclarer HS"
                                         href="#"
@@ -211,10 +221,11 @@
                                         data-box-sn="{{ $equipement->serial_number }}">
                                         <i class="far fa-times-circle text-danger" style="font-size: 25px;"></i>
                                     </a>
-                                    <a class="text-decoration-none" data-bs-target="#modal_retour_box" data-bs-toggle="modal" data-toggle="tooltip" title="Retourner" href="#" style="margin-left: 10px;">
+                                    <a id="btn_retour_box" class="text-decoration-none" data-bs-target="#modal_retour_box" data-bs-toggle="modal" data-toggle="tooltip" title="Retourner" href="#" style="margin-left: 10px;">
                                         <i class="fas fa-undo text-warning" style="font-size: 25px;"></i>
                                     </a>
                                 </td>
+                                @endif
                             </tr>
                         @endforeach
                     </tbody>

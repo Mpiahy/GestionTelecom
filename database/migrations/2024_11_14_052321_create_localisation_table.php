@@ -11,6 +11,30 @@ return new class extends Migration
      */
     public function up(): void
     {
+        // TABLE ue
+        Schema::create('ue', function (Blueprint $table) {
+            $table->id('id_ue');
+            $table->string('libelle_ue', 50);
+            $table->timestamps();
+        });
+        // TABLE service
+        Schema::create('service', function (Blueprint $table) {
+            $table->id('id_service');
+            $table->string('libelle_service', 50);
+            $table->string('numero_bu', 50);
+            $table->unsignedBigInteger('id_ue');
+            $table->foreign('id_ue')->references('id_ue')->on('ue')->onDelete('cascade');
+            $table->timestamps();
+        });
+        // TABLE imputation
+        Schema::create('imputation', function (Blueprint $table) {
+            $table->id('id_imputation');
+            $table->string('code_imputation', 20);
+            $table->unsignedBigInteger('id_service');
+            $table->foreign('id_service')->references('id_service')->on('service')->onDelete('cascade');
+            $table->timestamps();
+        });
+        // TABLE localisation
         Schema::create('localisation', function (Blueprint $table) {
             $table->id('id_localisation');
             $table->string('localisation', 100);
@@ -29,6 +53,9 @@ return new class extends Migration
      */
     public function down(): void
     {
+        Schema::dropIfExists('ue');
+        Schema::dropIfExists('service');
+        Schema::dropIfExists('imputation');
         Schema::dropIfExists('localisation');
     }
 };
