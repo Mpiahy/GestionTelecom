@@ -105,7 +105,7 @@ class Equipement extends Model
             'imei' => $validatedData['enr_box_imei'],
             'serial_number' => $validatedData['enr_box_sn'],
             'enrole' => false,
-            'id_type_equipement' => 3,
+            'id_type_equipement' => TypeEquipement::BOX,
             'id_modele' => $modele->id_modele,
             'id_statut_equipement' => StatutEquipement::STATUT_NOUVEAU,
         ]);

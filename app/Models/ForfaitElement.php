@@ -19,4 +19,14 @@ class ForfaitElement extends Model
         'id_forfait',
         'quantite',
     ];
+
+    public function element()
+    {
+        return $this->belongsTo(Element::class, 'id_element', 'id_element');
+    }
+
+    public function forfait()
+    {
+        return $this->belongsTo(Forfait::class, 'id_forfait', 'id_forfait');
+    }
 }
