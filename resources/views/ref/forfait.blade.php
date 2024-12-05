@@ -146,7 +146,7 @@
                                                         data-bs-target="#modifier_element" 
                                                         data-bs-toggle="modal" 
                                                         data-id_element="{{ $element->id_element }}"
-                                                        data-id_forfait="{{ request('forfait') }}"
+                                                        data-id_forfait="{{ $selectedForfaitId }}"
                                                         data-libelle="{{ $element->libelle }}"
                                                         data-unite="{{ $element->unite }}"
                                                         data-prix_unitaire="{{ $element->prix_unitaire_element }}"
@@ -154,7 +154,16 @@
                                                         style="margin-right: 10px;">
                                                             <i class="fas fa-cogs text-info" style="font-size: 25px;" title="Modifier"></i>
                                                     </a>
-                                                    <a class="text-decoration-none" href="#" data-bs-target="#supprimer_element" data-bs-toggle="modal">
+                                                    <a class="text-decoration-none" 
+                                                        href="#" 
+                                                        data-bs-target="#supprimer_element" 
+                                                        data-bs-toggle="modal"
+                                                        del-data-id_element="{{ $element->id_element }}"
+                                                        del-data-id_forfait="{{ $selectedForfaitId }}"
+                                                        del-data-libelle="{{ $element->libelle }}"
+                                                        del-data-unite="{{ $element->unite }}"
+                                                        del-data-prix_unitaire="{{ $element->prix_unitaire_element }}"
+                                                        del-data-quantite={{ $element->quantite }}>
                                                         <i class="far fa-trash-alt text-danger" style="font-size: 25px;" title="Supprimer"></i>
                                                     </a>
                                                 </td>

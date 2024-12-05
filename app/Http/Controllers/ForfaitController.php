@@ -35,7 +35,7 @@ class ForfaitController extends Controller
             }
         }
 
-        return view('ref.forfait', compact('login', 'forfaits', 'forfaitDetails', 'elements'));
+        return view('ref.forfait', compact('login', 'forfaits', 'forfaitDetails', 'elements', 'selectedForfaitId'));
     }
 
     /**
@@ -49,11 +49,14 @@ class ForfaitController extends Controller
     public function updateElement(Request $request, $id_forfait, $id_element)
     {
         try {
-            // Valider les données de la requête
             $validatedData = $request->validate([
+                'edt_element' => 'required|string|max:255',
+                'edt_unite' => 'required|string|max:50',
                 'edt_qu' => 'required|numeric|min:0',
                 'edt_pu' => 'required|numeric|min:0',
-            ]);
+                'edt_id_element' => 'required|exists:element,id_element',
+                'edt_id_forfait' => 'required|exists:forfait,id_forfait'
+            ]);            
 
             $forfaitElementQuantite = new ForfaitElement();
             $forfaitElementQuantite->updateQuantiteFromRequest($validatedData, $id_element, $id_forfait);// Appeler la méthode de mise à jour dans le modèle
@@ -65,13 +68,59 @@ class ForfaitController extends Controller
             
         } catch (ValidationException $e) {
             return redirect()
-                ->route('ref.forfait')
+                ->route('ref.forfait', ['forfait' => $id_forfait])
                 ->withErrors($e->errors(), 'edt_element_errors')
+                ->with('openEditModal', true)
+                ->withInput();
+        
+        } catch (\Exception $e) {
+            return redirect()
+                ->route('ref.forfait', ['forfait' => $id_forfait])
+                ->withErrors(['error_general' => $e->getMessage()])
+                ->with('openEditModal', true)
+                ->withInput();
+        }
+    }
+
+    /**
+     * Met à jour les éléments d'un forfait.
+     *
+     * @param Request $request
+     * @param int $id_forfait
+     * @param int $id_element
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function deleteElement(Request $request, $id_forfait, $id_element)
+    {
+        try {
+            $validatedData = $request->validate([
+                'del_element' => 'required|string|max:255',
+                'del_unite' => 'required|string|max:50',
+                'del_qu' => 'required|numeric|min:0',
+                'del_pu' => 'required|numeric|min:0',
+                'del_id_element' => 'required|exists:element,id_element',
+                'del_id_forfait' => 'required|exists:forfait,id_forfait'
+            ]);            
+
+            // Forcer la valeur 'del_qu' à 0
+            $validatedData['del_qu'] = 0;
+
+            $forfaitElementQuantite = new ForfaitElement();
+            $forfaitElementQuantite->deleteQuantiteFromRequest($validatedData, $id_element, $id_forfait);// Appeler la méthode de mise à jour dans le modèle
+
+            return back()->with('success', 'L’élément a été supprimé avec succès.');
+            
+        } catch (ValidationException $e) {
+            return redirect()
+                ->route('ref.forfait', ['forfait' => $id_forfait])
+                ->withErrors($e->errors(), 'del_element_errors')
+                ->with('openDeleteModal', true)
                 ->withInput();
         } catch (\Exception $e) {
             return redirect()
-                ->route('ref.forfait')
+                ->route('ref.forfait', ['forfait' => $id_forfait])
                 ->withErrors(['error_general' => $e->getMessage()])
+                ->with('openDeleteModal', true)
                 ->withInput();
         }
     }

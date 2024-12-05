@@ -62,40 +62,73 @@
                     <div class="col-xl-6">
                         <div class="card shadow">
                             <div class="card-body">
-                                <form id="edt_element_form" action="" method="post">
-                                    @csrf
-                                    <input type="hidden" id="edt_id_element" name="id_element">
-                                    <input type="hidden" id="edt_id_forfait" name="id_forfait">
+                                <form id="edt_element_form" action="" method="get">
+                                    <!-- Champs cachés -->
+                                    <input type="hidden" id="edt_id_element" name="edt_id_element" value="{{ old('edt_id_element') }}">
+                                    <input type="hidden" id="edt_id_forfait" name="edt_id_forfait" value="{{ old('edt_id_forfait') }}">
 
+                                    <!-- Champ Elément -->
                                     <div class="mb-3">
                                         <label class="form-label" for="edt_element"><strong>Elément</strong></label>
-                                        <input id="edt_element" class="form-control" type="text" name="element" readonly disabled>
+                                        <input 
+                                            id="edt_element" 
+                                            class="form-control @error('edt_element', 'edt_element_errors') is-invalid @enderror" 
+                                            type="text" 
+                                            name="edt_element" 
+                                            readonly 
+                                            value="{{ old('edt_element') }}">
+                                        @error('edt_element', 'edt_element_errors')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
                                     </div>
 
+                                    <!-- Champ Unité -->
                                     <div class="mb-3">
                                         <label class="form-label" for="edt_unite"><strong>Unité</strong></label>
-                                        <input id="edt_unite" class="form-control" type="text" name="unite" readonly disabled>
+                                        <input 
+                                            id="edt_unite" 
+                                            class="form-control @error('edt_unite', 'edt_element_errors') is-invalid @enderror" 
+                                            type="text" 
+                                            name="edt_unite" 
+                                            readonly 
+                                            value="{{ old('edt_unite') }}">
+                                        @error('edt_unite', 'edt_element_errors')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
                                     </div>
 
+                                    <!-- Champ Prix Unitaire -->
                                     <div class="mb-3">
                                         <label class="form-label" for="edt_pu"><strong>Prix Unitaire</strong></label>
                                         <div class="input-group">
-                                            <input id="edt_pu" class="form-control @error('edt_pu') is-invalid @enderror" type="number" name="edt_pu">
+                                            <input 
+                                                id="edt_pu" 
+                                                class="form-control @error('edt_pu', 'edt_element_errors') is-invalid @enderror" 
+                                                type="number" 
+                                                name="edt_pu" 
+                                                value="{{ old('edt_pu') }}">
                                             <span class="input-group-text">Ar</span>
-                                            @error('edt_pu')
-                                            <div class="invalid-feedback">{{ $message }}</div>
+                                            @error('edt_pu', 'edt_element_errors')
+                                                <div class="invalid-feedback">{{ $message }}</div>
                                             @enderror
                                         </div>
                                     </div>
 
+                                    <!-- Champ Quantité -->
                                     <div class="mb-3">
                                         <label class="form-label" for="edt_qu"><strong>Quantité</strong></label>
-                                        <input id="edt_qu" class="form-control @error('edt_qu') is-invalid @enderror" type="number" name="edt_qu" required>
-                                        @error('edt_qu')
-                                        <div class="invalid-feedback">{{ $message }}</div>
+                                        <input 
+                                            id="edt_qu" 
+                                            class="form-control @error('edt_qu', 'edt_element_errors') is-invalid @enderror" 
+                                            type="number" 
+                                            name="edt_qu" 
+                                            value="{{ old('edt_qu') }}" 
+                                            required>
+                                        @error('edt_qu', 'edt_element_errors')
+                                            <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
                                     </div>
-                                </form>
+                                </form>                               
                             </div>
                         </div>
                     </div>
@@ -125,14 +158,48 @@
                     <div class="col-xl-6">
                         <div class="card shadow">
                             <div class="card-body">
-                                <form id="del_element" action="del_element" method="get" style="color: #a0c8d8;">
-                                    <div class="mb-3"><label class="form-label" for="del_forfait"><strong>Forfait</strong></label><input id="del_forfait" class="form-control" type="text" name="del_forfait" value="Forfait 0" readonly disabled /></div>
-                                    <div class="mb-3"><label class="form-label" for="del_element"><strong>Elément</strong><br /></label><input id="del_element" class="form-control" type="text" name="del_element" value="Appel Flotte Initial" readonly disabled /></div>
-                                    <div class="mb-3"><label class="form-label" for="del_unite"><strong>Unité</strong></label><input id="del_unite" class="form-control" type="text" name="del_unite" value="Heures" readonly disabled /></div>
-                                    <div class="mb-3"><label class="form-label" for="del_pu"><strong>Prix Unitaire</strong><br /></label>
-                                        <div class="input-group"><input id="del_pu" class="form-control" type="number" placeholder="Entrer la quantité" name="del_pu" min="0" value="2160" required readonly disabled /><span class="input-group-text">Ar</span></div>
+                                <form id="del_element_form" action="" method="get">
+                                    @if ($errors->hasBag('del_element_errors'))
+                                        <div class="alert alert-danger">
+                                            <ul>
+                                                @foreach ($errors->del_element_errors->all() as $error)
+                                                    <li>{{ $error }}</li>
+                                                @endforeach
+                                            </ul>
+                                        </div>
+                                    @endif
+
+                                    <input type="hidden" id="del_id_element" name="del_id_element" value="{{ old('del_id_element') }}">
+                                    <input type="hidden" id="del_id_forfait" name="del_id_forfait" value="{{ old('del_id_forfait') }}">
+
+                                    <div class="mb-3">
+                                        <label class="form-label" for="del_element"><strong>Elément</strong></label>
+                                        <input id="del_element" class="form-control" type="text" name="del_element" readonly value="{{ old('del_element') }}">
                                     </div>
-                                    <div class="mb-3"><label class="form-label" for="del_qu"><strong>Quantité</strong></label><input id="del_qu" class="form-control" type="text" placeholder="Entrer la quantité" name="del_qu" value="0" readonly disabled /></div>
+
+                                    <div class="mb-3">
+                                        <label class="form-label" for="del_unite"><strong>Unité</strong></label>
+                                        <input id="del_unite" class="form-control" type="text" name="del_unite" readonly value="{{ old('del_unite') }}">
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label class="form-label" for="del_pu"><strong>Prix Unitaire</strong></label>
+                                        <div class="input-group">
+                                            <input id="del_pu" class="form-control @error('del_pu') is-invalid @enderror" type="number" name="del_pu" value="{{ old('del_pu') }}" readonly>
+                                            <span class="input-group-text">Ar</span>
+                                            @error('del_pu')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label class="form-label" for="del_qu"><strong>Quantité</strong></label>
+                                        <input id="del_qu" class="form-control @error('del_qu') is-invalid @enderror" type="number" name="del_qu" value="{{ old('del_qu') }}" readonly>
+                                        @error('del_qu')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
                                 </form>
                             </div>
                         </div>
@@ -142,7 +209,10 @@
                     </div>
                 </div>
             </div>
-            <div class="modal-footer"><button class="btn btn-warning" type="button" data-bs-dismiss="modal">Fermer</button><a class="btn btn-danger" role="button" form="del_element">Supprimer</a></div>
+            <div class="modal-footer">
+                <button class="btn btn-warning" type="button" data-bs-dismiss="modal">Fermer</button>
+                <button class="btn btn-danger" type="submit" form="del_element_form">Supprimer</button>
+            </div>
         </div>
     </div>
 </div>
