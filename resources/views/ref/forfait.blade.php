@@ -7,6 +7,60 @@
 
     <div class="container-fluid">
         <h3 class="text-dark"><i class="fas fa-money-check-alt" style="padding-right: 5px;"></i>Offres et forfaits</h3>
+        <!-- Toast container -->
+        <div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 1055;">
+            <!-- Toast for Success Message -->
+            @if (session('success'))
+                <div class="toast align-items-center text-bg-success border-0 show" role="alert" aria-live="assertive" aria-atomic="true">
+                    <div class="d-flex">
+                        <div class="toast-body">
+                            {{ session('success') }}
+                        </div>
+                        <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                    </div>
+                </div>
+            @endif
+
+            <!-- Toast for Error Message -->
+            @if (session('error'))
+                <div class="toast align-items-center text-bg-danger border-0 show" role="alert" aria-live="assertive" aria-atomic="true">
+                    <div class="d-flex">
+                        <div class="toast-body">
+                            {{ session('error') }}
+                        </div>
+                        <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                    </div>
+                </div>
+            @endif
+
+            <!-- Toast for Validation Errors -->
+            @if ($errors->any())
+                <div class="toast align-items-center text-bg-danger border-0 show" role="alert" aria-live="assertive" aria-atomic="true">
+                    <div class="d-flex">
+                        <div class="toast-body">
+                            <strong>Veuillez corriger les erreurs suivantes :</strong>
+                            <ul>
+                                @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                        <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                    </div>
+                </div>
+            @endif
+        </div>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', () => {
+                const toastElList = [].slice.call(document.querySelectorAll('.toast'));
+                const toastList = toastElList.map(function (toastEl) {
+                    return new bootstrap.Toast(toastEl, { delay: 5000 }); // Durée de 5 secondes
+                });
+
+                toastList.forEach(toast => toast.show());
+            });
+        </script>
         <div class="text-center mb-4"><a class="btn btn-primary btn-icon-split" role="button" data-bs-target="#ajouter_forfait" data-bs-toggle="modal"><span class="icon"><i class="fas fa-plus-circle" style="padding-top: 5px;"></i></span><span class="text">Ajouter un nouveau forfait</span></a></div>
         <div class="card shadow">
             <div class="card-header py-3">
@@ -17,8 +71,10 @@
                     <div class="col-xl-12">
                         <form action="{{ route('ref.forfait') }}" method="get">
                             <div class="btn-group" role="group">
-                                @foreach ($forfaits as $forfait)
-                                    <button class="btn btn-outline-primary {{ request('forfait') == $forfait->id_forfait ? 'active' : '' }}" 
+                                @foreach ($forfaits as $index => $forfait)
+                                    <button 
+                                        class="btn btn-outline-primary 
+                                        {{ (request('forfait') == $forfait->id_forfait || (is_null(request('forfait')) && $loop->first)) ? 'active' : '' }}" 
                                         type="submit"
                                         name="forfait"
                                         value="{{ $forfait->id_forfait }}">
@@ -26,7 +82,7 @@
                                     </button>
                                 @endforeach
                             </div>
-                        </form>
+                        </form>                        
                     </div>
                 </div>
                 <div class="row">
@@ -85,8 +141,18 @@
                                                 <td>{{ $element->prix_unitaire_element }}</td>
                                                 <td>{{ $element->prix_total_element }}</td>
                                                 <td class="text-center">
-                                                    <a class="text-decoration-none" href="#" data-bs-target="#modifier_element" data-bs-toggle="modal" style="margin-right: 10px;">
-                                                        <i class="fas fa-cogs text-info" style="font-size: 25px;" title="Modifier"></i>
+                                                    <a class="text-decoration-none" 
+                                                        href="#" 
+                                                        data-bs-target="#modifier_element" 
+                                                        data-bs-toggle="modal" 
+                                                        data-id_element="{{ $element->id_element }}"
+                                                        data-id_forfait="{{ request('forfait') }}"
+                                                        data-libelle="{{ $element->libelle }}"
+                                                        data-unite="{{ $element->unite }}"
+                                                        data-prix_unitaire="{{ $element->prix_unitaire_element }}"
+                                                        data-quantite="{{ $element->quantite }}"
+                                                        style="margin-right: 10px;">
+                                                            <i class="fas fa-cogs text-info" style="font-size: 25px;" title="Modifier"></i>
                                                     </a>
                                                     <a class="text-decoration-none" href="#" data-bs-target="#supprimer_element" data-bs-toggle="modal">
                                                         <i class="far fa-trash-alt text-danger" style="font-size: 25px;" title="Supprimer"></i>
@@ -109,5 +175,11 @@
 @section('modal_ref')
 
     @include('modals.forfaitModal')
+
+@endsection
+
+@section('scripts')
+
+    @include('js.forfaitJs')
 
 @endsection

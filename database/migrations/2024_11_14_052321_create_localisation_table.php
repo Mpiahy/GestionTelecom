@@ -53,9 +53,9 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('ue');
-        Schema::dropIfExists('service');
-        Schema::dropIfExists('imputation');
         Schema::dropIfExists('localisation');
+        Schema::dropIfExists('imputation');
+        Schema::dropIfExists('service');
+        Schema::dropIfExists('ue');
     }
 };

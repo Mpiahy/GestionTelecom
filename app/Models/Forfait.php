@@ -12,7 +12,7 @@ class Forfait extends Model
 
     protected $table = 'forfait';
     protected $primaryKey = 'id_forfait';
-    public $timestamps = true;
+    public $timestamps = false;
 
     protected $fillable = [
         'nom_forfait',
@@ -52,7 +52,7 @@ class Forfait extends Model
 
         return [
             'details' => $forfait->getDetails(),
-            'elements' => $forfait->elements,
+            'elements' => $forfait->elements()->orderBy('id_element', 'asc')->get(),
         ];
     }
 }

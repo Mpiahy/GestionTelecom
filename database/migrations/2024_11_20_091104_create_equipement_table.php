@@ -92,11 +92,11 @@ return new class extends Migration
      */
     public function down(): void
     {
+        Schema::dropIfExists('equipement');
         Schema::dropIfExists('statut_equipement');
         Schema::dropIfExists('type_equipement');
-        Schema::dropIfExists('marque');
         Schema::dropIfExists('modele');
-        Schema::dropIfExists('equipement');
+        Schema::dropIfExists('marque');
         Schema::dropIfExists('id_counters');
     }
 };

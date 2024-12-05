@@ -69,4 +69,5 @@ Route::middleware('check.session')->group(function() {
     Route::post('/box/hs', [BoxController::class, 'hsBox'])->name('box.hs');
 
     Route::get('/forfait', [ForfaitController::class, 'forfaitView'])->name('ref.forfait');
+    Route::post('/forfaits/update-element/{id_forfait}/{id_element}', [ForfaitController::class, 'updateElement'])->name('forfait.update.element');
 });
