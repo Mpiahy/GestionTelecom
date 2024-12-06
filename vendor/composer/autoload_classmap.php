@@ -49,6 +49,7 @@ return array(
     'App\\Models\\StatutEquipement' => $baseDir . '/app/Models/StatutEquipement.php',
     'App\\Models\\TypeEquipement' => $baseDir . '/app/Models/TypeEquipement.php',
     'App\\Models\\TypeUtilisateur' => $baseDir . '/app/Models/TypeUtilisateur.php',
+    'App\\Models\\Type_ligne' => $baseDir . '/app/Models/Type_ligne.php',
     'App\\Models\\UE' => $baseDir . '/app/Models/UE.php',
     'App\\Models\\User' => $baseDir . '/app/Models/User.php',
     'App\\Models\\Utilisateur' => $baseDir . '/app/Models/Utilisateur.php',

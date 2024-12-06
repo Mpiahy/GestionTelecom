@@ -691,6 +691,7 @@ class ComposerStaticInit9c491b8531eec05ba41a11d9276a5749
         'App\\Models\\StatutEquipement' => __DIR__ . '/../..' . '/app/Models/StatutEquipement.php',
         'App\\Models\\TypeEquipement' => __DIR__ . '/../..' . '/app/Models/TypeEquipement.php',
         'App\\Models\\TypeUtilisateur' => __DIR__ . '/../..' . '/app/Models/TypeUtilisateur.php',
+        'App\\Models\\Type_ligne' => __DIR__ . '/../..' . '/app/Models/Type_ligne.php',
         'App\\Models\\UE' => __DIR__ . '/../..' . '/app/Models/UE.php',
         'App\\Models\\User' => __DIR__ . '/../..' . '/app/Models/User.php',
         'App\\Models\\Utilisateur' => __DIR__ . '/../..' . '/app/Models/Utilisateur.php',

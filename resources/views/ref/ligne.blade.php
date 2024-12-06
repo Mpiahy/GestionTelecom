@@ -69,10 +69,10 @@
                                 <td class="text-center" style="padding-left: 0px;padding-right: 0px;"><a style="margin-right: 5px;" data-bs-target="#modal_react_ligne" data-bs-toggle="modal" title="Réactiver" href="react_ligne_mobile" data-toggle="tooltip"><i class="far fa-arrow-alt-circle-up text-success" style="font-size: 25px;"></i></a><a href="voir_ligne_mobile" style="margin-right: 5px;" data-bs-target="#modal_voir_ligne" data-bs-toggle="modal" title="Voir" data-toggle="tooltip"><i class="fas fa-search-plus text-primary" style="font-size: 25px;"></i></a><a href="edit_operateur" data-bs-target="#modal_edit_ligne" data-bs-toggle="modal" title="Modifier" dat data-toggle="tooltip"><i class="far fa-edit text-warning" style="font-size: 25px;"></i></a></td>
                             </tr>
                             <tr>
-                                <td>Non attribué</td>
-                                <td>Internet Mobile</td>
-                                <td>Wifiber PRO</td>
-                                <td>+261 32 59 599 53</td>
+                                <td>Inactif</td>
+                                <td>--</td>
+                                <td>--</td>
+                                <td>--</td>
                                 <td>35712365412354</td>
                                 <td>--<br /></td>
                                 <td>--</td>
