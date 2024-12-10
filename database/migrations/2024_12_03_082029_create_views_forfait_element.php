@@ -11,7 +11,7 @@ return new class extends Migration
     public function up(): void
     {
         DB::statement('
-            CREATE VIEW elementPrix AS
+            CREATE VIEW view_element_prix AS
             SELECT
                 fe.id_forfait,
                 e.id_element,
@@ -27,7 +27,7 @@ return new class extends Migration
         ');
 
         DB::statement('
-            CREATE VIEW forfaitPrix AS
+            CREATE VIEW view_forfait_prix AS
             SELECT
                 sub.id_forfait,
                 sub.nom_forfait,
@@ -59,7 +59,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        DB::statement('DROP VIEW IF EXISTS forfaitPrix CASCADE;');
-        DB::statement('DROP VIEW IF EXISTS elementPrix CASCADE;');
+        DB::statement('DROP VIEW IF EXISTS view_forfait_prix CASCADE;');
+        DB::statement('DROP VIEW IF EXISTS view_element_prix CASCADE;');
     }
 };

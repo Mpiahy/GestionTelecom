@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
-use App\Models\Operateur;
 use App\Models\ContactOperateur;
 
 class OperateurController extends Controller

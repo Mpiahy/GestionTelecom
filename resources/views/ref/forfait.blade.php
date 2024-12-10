@@ -68,8 +68,55 @@
             </div>
             <div class="card-body">
                 <div class="row mt-2">
+                    <div class="col">
+                        <form method="get" action="{{ route('ref.forfait') }}">
+                            <div class="input-group">
+                                <span class="input-group-text">Type de Forfait</span>
+                                <select name="filter_type_forfait" class="form-select">
+                                    @foreach ($types_forfait as $type_forfait)
+                                        <option value="{{ $type_forfait->id_type_forfait }}" {{ request('filter_type_forfait') == $type_forfait->id_type_forfait ? 'selected' : '' }}>
+                                            {{ $type_forfait->type_forfait }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                @foreach (['filter_operateur'] as $filter)
+                                    @if (request($filter))
+                                        <input type="hidden" name="{{ $filter }}" value="{{ request($filter) }}">
+                                    @endif
+                                @endforeach
+                                <button class="btn btn-primary" type="submit">Filtrer</button>
+                            </div>
+                        </form>                      
+                    </div>
+                    <div class="col">
+                        <form method="get" action="{{ route('ref.forfait') }}">
+                            <div class="input-group">
+                                <span class="input-group-text">Opérateur</span>
+                                <select name="filter_operateur" class="form-select">
+                                    <option value="" {{ !request('filter_operateur') ? 'selected' : '' }}>Tous les opérateurs</option>
+                                    @foreach ($operateurs as $operateur)
+                                        <option value="{{ $operateur->id_operateur }}" {{ request('filter_operateur') == $operateur->id_operateur ? 'selected' : '' }}>
+                                            {{ $operateur->nom_operateur }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                @foreach (['filter_type_forfait'] as $filter)
+                                    @if (request($filter))
+                                        <input type="hidden" name="{{ $filter }}" value="{{ request($filter) }}">
+                                    @endif
+                                @endforeach
+                                <button class="btn btn-primary" type="submit">Filtrer</button>
+                            </div>
+                        </form>                          
+                    </div>
+                </div>
+                <div class="row mt-2">
                     <div class="col-xl-12">
                         <form action="{{ route('ref.forfait') }}" method="get">
+                            <!-- Inclure les filtres actifs comme champs cachés -->
+                            <input type="hidden" name="filter_type_forfait" value="{{ request('filter_type_forfait') }}">
+                            <input type="hidden" name="filter_operateur" value="{{ request('filter_operateur') }}">
+
                             <div class="btn-group" role="group">
                                 @foreach ($forfaits as $index => $forfait)
                                     <button 

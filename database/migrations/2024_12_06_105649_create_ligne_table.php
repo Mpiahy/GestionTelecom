@@ -55,5 +55,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::dropIfExists('ligne');
+        Schema::dropIfExists('statut_ligne');
+        Schema::dropIfExists('type_ligne');
     }
 };

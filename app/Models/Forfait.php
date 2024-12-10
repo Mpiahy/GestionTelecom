@@ -16,6 +16,8 @@ class Forfait extends Model
 
     protected $fillable = [
         'nom_forfait',
+        'id_type_forfait',
+        'id_operateur',
     ];
 
     /**
@@ -55,4 +57,38 @@ class Forfait extends Model
             'elements' => $forfait->elements()->orderBy('id_element', 'asc')->get(),
         ];
     }
+
+    /**
+     * Récupère les forfaits avec des filtres optionnels.
+     * Si aucun type de forfait n'est fourni, sélectionne le premier type de forfait par défaut.
+     *
+     * @param array $filters
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    public static function getFilteredForfaits(array $filters = [])
+    {
+        // Initialiser la requête
+        $query = self::query();
+
+        // Si aucun type de forfait n'est fourni, utiliser le premier type de forfait
+        if (empty($filters['filter_type_forfait'])) {
+            $firstTypeForfait = TypeForfait::first(); // Récupérer le premier type de forfait
+            if ($firstTypeForfait) {
+                $filters['filter_type_forfait'] = $firstTypeForfait->id_type_forfait;
+            }
+        }
+
+        // Appliquer les filtres si disponibles
+        if (!empty($filters['filter_type_forfait'])) {
+            $query->where('id_type_forfait', $filters['filter_type_forfait']);
+        }
+
+        if (!empty($filters['filter_operateur'])) {
+            $query->where('id_operateur', $filters['filter_operateur']);
+        }
+
+        // Exécuter et retourner les résultats
+        return $query->orderBy('id_forfait', 'asc')->get();
+    }
+
 }

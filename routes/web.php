@@ -53,6 +53,9 @@ Route::middleware('check.session')->group(function() {
     Route::post('/operateur/modifier', [OperateurController::class, 'modifierOperateur'])->name('operateur.modifier');
 
     Route::get('/ligne', [LigneController::class, 'ligneView'])->name('ref.ligne');
+    Route::post('/ligne/save', [LigneController::class, 'saveLigne'])->name('ligne.save');
+
+
     Route::get('/fibre', [FibreController::class, 'fibreView'])->name('ref.fibre');
 
     Route::get('/phone', [PhoneController::class, 'phoneView'])->name('ref.phone');

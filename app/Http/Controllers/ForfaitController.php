@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\Session;
 use App\Models\Forfait;
 use App\Models\ForfaitElement;
 use App\Models\Element;
+use App\Models\Operateur;
+use App\Models\TypeForfait;
 use Illuminate\Validation\ValidationException;
 
 class ForfaitController extends Controller
@@ -17,7 +19,15 @@ class ForfaitController extends Controller
     public function forfaitView(Request $request)
     {
         $login = Session::get('login');
-        $forfaits = Forfait::all(); // Récupérer tous les forfaits pour les boutons
+        
+        // Obtenir les filtres actifs depuis la requête
+        $filters = $request->only(['filter_type_forfait', 'filter_operateur']);
+
+        // Appliquer les filtres pour récupérer les forfaits
+        $forfaits = Forfait::getFilteredForfaits($filters);
+
+        $types_forfait = TypeForfait::all();
+        $operateurs = Operateur::all();
 
         // Récupérer l'ID du forfait sélectionné ou prendre le premier forfait par défaut
         $selectedForfaitId = $request->get('forfait') ?? $forfaits->first()?->id_forfait;
@@ -35,7 +45,16 @@ class ForfaitController extends Controller
             }
         }
 
-        return view('ref.forfait', compact('login', 'forfaits', 'forfaitDetails', 'elements', 'selectedForfaitId'));
+        // Retourner la vue avec les données nécessaires
+        return view('ref.forfait', compact(
+            'login',
+            'forfaits',
+            'forfaitDetails',
+            'elements',
+            'selectedForfaitId',
+            'types_forfait',
+            'operateurs'
+        ));
     }
 
     /**

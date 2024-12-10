@@ -12,6 +12,6 @@ class TypeLigne extends Model
     public $timestamps = false;
     protected $primaryKey = 'id_type_ligne';
     protected $fillable = ['type_ligne'];
-    const TYPE_VOIX = 1;
+    const TYPE_STANDARD = 1;
     const TYPE_INTERNET = 2;
 }

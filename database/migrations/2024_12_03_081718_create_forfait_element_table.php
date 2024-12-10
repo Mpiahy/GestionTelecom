@@ -11,11 +11,18 @@ return new class extends Migration
      */
     public function up(): void
     {
+        // TABLE type_forfait
+        Schema::create('type_forfait', function (Blueprint $table) {
+            $table->id('id_type_forfait');
+            $table->string('type_forfait', 20);
+            $table->timestamps();
+        });
+        
         // TABLE element
         Schema::create('element', function (Blueprint $table) {
             $table->id('id_element');
             $table->string('libelle', 50);
-            $table->string('unite', 10);
+            $table->string('unite', 50);
             $table->double('prix_unitaire_element');
             $table->timestamps();
         });
@@ -23,7 +30,21 @@ return new class extends Migration
         // TABLE forfait
         Schema::create('forfait', function (Blueprint $table) {
             $table->id('id_forfait');
-            $table->string('nom_forfait', 20);
+            $table->string('nom_forfait', 50);
+            $table->unsignedBigInteger('id_type_forfait');
+            $table->unsignedBigInteger('id_operateur');
+            
+            // Clés étrangères
+            $table->foreign('id_type_forfait')
+                ->references('id_type_forfait')
+                ->on('type_forfait')
+                ->onDelete('cascade');
+
+            $table->foreign('id_operateur')
+                ->references('id_operateur')
+                ->on('operateur')
+                ->onDelete('cascade');
+            
             $table->timestamps();
         });
 
@@ -55,5 +76,6 @@ return new class extends Migration
         Schema::dropIfExists('forfait_element');
         Schema::dropIfExists('forfait');
         Schema::dropIfExists('element');
+        Schema::dropIfExists('type_forfait');
     }
 };

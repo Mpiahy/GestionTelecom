@@ -24,23 +24,23 @@ class Modele extends Model
     }
 
     /**
-     * Méthode statique pour récupérer les modèles Box (via la vue `modeleBox`).
+     * Méthode statique pour récupérer les modèles Box (via la vue `view_modele_box`).
      *
      * @return \Illuminate\Database\Eloquent\Builder
      */
     public static function modeleBox()
     {
-        return static::query()->whereRaw('id_modele IN (SELECT id_modele FROM modeleBox)');
+        return static::query()->whereRaw('id_modele IN (SELECT id_modele FROM view_modele_box)');
     }
 
     /**
-     * Méthode statique pour récupérer les modèles Phone (via la vue `modelePhone`).
+     * Méthode statique pour récupérer les modèles Phone (via la vue `view_modele_phone`).
      *
      * @return \Illuminate\Database\Eloquent\Builder
      */
     public static function modelePhone()
     {
-        return static::query()->whereRaw('id_modele IN (SELECT id_modele FROM modelePhone)');
+        return static::query()->whereRaw('id_modele IN (SELECT id_modele FROM view_modele_phone)');
     }
 
     public static function generateId($marqueId)

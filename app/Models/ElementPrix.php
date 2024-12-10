@@ -9,7 +9,7 @@ class ElementPrix extends Model
 {
     use HasFactory;
 
-    protected $table = 'elementprix';
+    protected $table = 'view_element_prix';
     public $timestamps = false;
     protected $primaryKey = null; // Pas de clé primaire
     public $incrementing = false; // Pas d'auto-incrément

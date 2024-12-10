@@ -18,23 +18,23 @@ class Marque extends Model
     ];
 
     /**
-     * Méthode statique pour récupérer les marques Box (via la vue `marqueBox`).
+     * Méthode statique pour récupérer les marques Box (via la vue `view_marque_box`).
      *
      * @return \Illuminate\Database\Eloquent\Builder
      */
     public static function marqueBox()
     {
-        return static::query()->whereRaw('id_marque IN (SELECT id_marque FROM marqueBox)');
+        return static::query()->whereRaw('id_marque IN (SELECT id_marque FROM view_marque_box)');
     }
 
     /**
-     * Méthode statique pour récupérer les marques Phone (via la vue `marquePhone`).
+     * Méthode statique pour récupérer les marques Phone (via la vue `view_marque_phone`).
      *
      * @return \Illuminate\Database\Eloquent\Builder
      */
     public static function marquePhone()
     {
-        return static::query()->whereRaw('id_marque IN (SELECT id_marque FROM marquePhone)');
+        return static::query()->whereRaw('id_marque IN (SELECT id_marque FROM view_marque_phone)');
     }
 
     public static function generateId($typeEquipementId)

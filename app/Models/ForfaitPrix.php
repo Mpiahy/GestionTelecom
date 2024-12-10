@@ -9,7 +9,7 @@ class ForfaitPrix extends Model
 {
     use HasFactory;
 
-    protected $table = 'forfaitprix';
+    protected $table = 'view_forfait_prix';
     public $timestamps = false;
     protected $primaryKey = null; // Pas de clé primaire
     public $incrementing = false; // Pas d'auto-incrément    
