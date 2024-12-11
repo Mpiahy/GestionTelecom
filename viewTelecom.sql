@@ -32,6 +32,7 @@ SELECT *
 FROM modele
 WHERE id_modele >= 3000000 AND id_modele < 4000000;
 
+-- View pour prix_total_element = prix_unitaire_element * quantite_element
 CREATE or REPLACE VIEW view_element_prix AS
 SELECT
     fe.id_forfait,
@@ -46,6 +47,7 @@ FROM
 JOIN
     element e ON fe.id_element = e.id_element;
 
+-- View pour prix_forfait_ht = prix_forfait_ht_non_remise + droit_d_accise - remise_pied_de_page
 CREATE or REPLACE VIEW view_forfait_prix AS
 SELECT
     sub.id_forfait,
@@ -71,18 +73,24 @@ FROM (
         f.id_forfait, f.nom_forfait
 ) sub;                
 
+-- View pour détails d'une ligne
 CREATE OR REPLACE VIEW view_ligne_details AS
 SELECT 
     ligne.id_ligne,
     ligne.num_ligne,
     ligne.num_sim,
+    ligne.id_forfait,
+    forfait.nom_forfait,
+    ligne.id_statut_ligne,
     statut_ligne.statut_ligne,
     ligne.id_type_ligne,
     type_ligne.type_ligne,
+    ligne.id_operateur,
     operateur.nom_operateur,
     contact_operateur.email AS contact_email
 FROM 
     ligne
+LEFT JOIN forfait ON ligne.id_forfait = forfait.id_forfait
 LEFT JOIN statut_ligne ON ligne.id_statut_ligne = statut_ligne.id_statut_ligne
 LEFT JOIN type_ligne ON ligne.id_type_ligne = type_ligne.id_type_ligne
 LEFT JOIN operateur ON ligne.id_operateur = operateur.id_operateur

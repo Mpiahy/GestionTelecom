@@ -173,7 +173,7 @@
                                         <tr>
                                             <th>Éléments</th>
                                             <th>Quantité</th>
-                                            <th>Unité</th>
+                                            <th>Unité (Débit)</th>
                                             <th>Prix Unitaire</th>
                                             <th>Prix Total</th>
                                             <th class="text-center">Action</th>

@@ -130,13 +130,13 @@
                             <button class="btn btn-outline-info {{ request('filter_statut') == 1 ? 'active' : '' }}" type="submit" name="filter_statut" value="1">Nouveau</button>
                             <button class="btn btn-outline-success {{ request('filter_statut') == 2 ? 'active' : '' }}" type="submit" name="filter_statut" value="2">Attribué</button>
                             <button class="btn btn-outline-warning {{ request('filter_statut') == 3 ? 'active' : '' }}" type="submit" name="filter_statut" value="3">Retourné</button>
+                            <button class="btn btn-outline-danger {{ request('filter_statut') == 4 ? 'active' : '' }}" type="submit" name="filter_statut" value="4">HS</button>
 
                             <!-- Champs cachés pour conserver les autres filtres -->
                             <input type="hidden" name="filter_marque" value="{{ request('filter_marque') }}">
                             <input type="hidden" name="search_imei" value="{{ request('search_imei') }}">
                             <input type="hidden" name="search_sn" value="{{ request('search_sn') }}">
 
-                            <button class="btn btn-outline-danger {{ request('filter_statut') == 4 ? 'active' : '' }}" type="submit" name="filter_statut" value="4">HS</button>
                         </div>
                     </form>
 

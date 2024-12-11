@@ -60,18 +60,43 @@
             </div>
             <div class="card-body">
                 <div class="row mt-2">
+                     <!-- Formulaire pour rechercher par numéro de ligne -->
                     <div class="col">
-                        <form action="search_ligne_num">
-                            <div class="input-group"><span class="input-group-text">Ligne</span>
-                                <input class="form-control" type="text" placeholder="Rechercher par Ligne" name="search_ligne_num" />
+                        <form action="{{ route('ref.ligne') }}" method="get">
+                            <div class="input-group">
+                                <span class="input-group-text">Ligne</span>
+                                <input 
+                                    class="form-control" 
+                                    type="text" 
+                                    placeholder="Rechercher par Ligne" 
+                                    name="search_ligne_num" 
+                                    value="{{ request('reset_filters') == 'reset' ? '' : request('search_ligne_num') }}" />
+                                
+                                <!-- Inputs cachés pour conserver les autres filtres/recherches -->
+                                <input type="hidden" name="search_ligne_sim" value="{{ request('search_ligne_sim') }}">
+                                <input type="hidden" name="statut" value="{{ request('statut') }}">
+
                                 <button class="btn btn-primary" type="submit">Rechercher</button>
                             </div>
                         </form>
                     </div>
+                    
+                    <!-- Formulaire pour rechercher par numéro de SIM -->
                     <div class="col">
-                        <form action="search_ligne_sim">
-                            <div class="input-group"><span class="input-group-text">SIM</span>
-                                <input class="form-control" type="text" placeholder="Rechercher par SIM" name="search_ligne_sim" />
+                        <form action="{{ route('ref.ligne') }}" method="get">
+                            <div class="input-group">
+                                <span class="input-group-text">SIM</span>
+                                <input 
+                                    class="form-control" 
+                                    type="text" 
+                                    placeholder="Rechercher par SIM" 
+                                    name="search_ligne_sim" 
+                                    value="{{ request('reset_filters') == 'reset' ? '' : request('search_ligne_sim') }}" />
+                                
+                                <!-- Inputs cachés pour conserver les autres filtres/recherches -->
+                                <input type="hidden" name="search_ligne_num" value="{{ request('search_ligne_num') }}">
+                                <input type="hidden" name="statut" value="{{ request('statut') }}">
+
                                 <button class="btn btn-primary" type="submit">Rechercher</button>
                             </div>
                         </form>
@@ -79,7 +104,36 @@
                 </div>
                 <div class="row mt-2">
                     <div class="col">
-                        <div class="btn-group" role="group"><button class="btn btn-outline-primary active" type="button" style="margin-right: 0px;">Tout</button><button class="btn btn-outline-info" type="button">Attribué</button><button class="btn btn-outline-secondary" type="button">Non attribué</button><button class="btn btn-outline-warning" type="button">En attente</button><button class="btn btn-outline-danger" type="button">Résilié</button></div>
+                        <form action="{{ route('ref.ligne') }}" method="get">
+                            <div class="btn-group" role="group">
+                                {{-- Bouton "Tout" pour réinitialiser les filtres --}}
+                                <button 
+                                    class="btn btn-outline-primary {{ is_null(request('statut')) ? 'active' : '' }}" 
+                                    type="submit" 
+                                    name="reset_filters" 
+                                    value="reset">
+                                    Tout
+                                </button>
+
+                                <!-- Bouton "Tout" pour réinitialiser les filtres -->
+                                <input type="hidden" name="search_ligne_num" value="{{ request('search_ligne_num') }}">
+                                <input type="hidden" name="search_ligne_sim" value="{{ request('search_ligne_sim') }}">
+                        
+                                {{-- Boutons dynamiques pour chaque statut --}}
+                                @foreach ($statuts as $statut)
+                                    @php
+                                        $colorClass = App\Models\StatutLigne::getBootstrapClass($statut->id_statut_ligne);
+                                    @endphp
+                                    <button 
+                                        class="btn btn-outline-{{ $colorClass }} {{ request('statut') == $statut->id_statut_ligne ? 'active' : '' }}" 
+                                        type="submit" 
+                                        name="statut" 
+                                        value="{{ $statut->id_statut_ligne }}">
+                                        {{ $statut->statut_ligne }}
+                                    </button>
+                                @endforeach
+                            </div>
+                        </form>
                     </div>
                     <div class="col">
                         <form action="search_ligne_user">
@@ -120,7 +174,7 @@
                                 </td>                                
                                 <td>{{ $ligne->statut_ligne }}</td>
                                 <td>{{ $ligne->type_ligne }}</td>
-                                <td>--</td>
+                                <td>{{ $ligne->nom_forfait }}</td>
                                 <td>{{ $ligne->num_ligne ?? 'En attente' }}</td>
                                 <td>{{ $ligne->num_sim }}</td>
                                 <td>--</td>
@@ -138,47 +192,6 @@
                                 </td>
                             </tr>
                             @endforeach
-                            
-                            {{-- <tr>
-                                <td>Attribué</td>
-                                <td>Voix Mobile</td>
-                                <td>Forfait 0</td>
-                                <td>+261 34 49 599 53</td>
-                                <td>35412365845632</td>
-                                <td>Randriamanivo Andriamahaleo Mpiahisoa</td>
-                                <td>PROJET MASAY IMMEUBLE R+6 PHASE 00</td>
-                                <td class="text-center" style="padding-left: 1px;padding-right: 0px;"><a style="margin-right: 5px;" data-bs-target="#modal_resil_ligne" data-bs-toggle="modal" href="#" data-toggle="tooltip" title="Résilier"><i class="far fa-window-close text-danger" style="font-size: 25px;"></i></a><a href="voir_ligne_mobile" style="margin-right: 5px;" data-bs-target="#modal_voir_ligne" title="Voir" data-toggle="tootlip" data-bs-toggle="modal"><i class="fas fa-search-plus text-primary" style="font-size: 25px;"></i></a><a href="edit_operateur" data-bs-target="#modal_edit_ligne" data-bs-toggle="modal" data-toggle="tooltip" title="Modifier"><i class="far fa-edit text-warning" style="font-size: 25px;"></i></a></td>
-                            </tr>
-                            <tr>
-                                <td>Résilié</td>
-                                <td>Voix Fixe</td>
-                                <td>Forfait 0</td>
-                                <td>+261 20 22 599 53</td>
-                                <td>35412365845632</td>
-                                <td>--</td>
-                                <td>--</td>
-                                <td class="text-center" style="padding-left: 0px;padding-right: 0px;"><a style="margin-right: 5px;" data-bs-target="#modal_react_ligne" data-bs-toggle="modal" title="Réactiver" href="react_ligne_mobile" data-toggle="tooltip"><i class="far fa-arrow-alt-circle-up text-success" style="font-size: 25px;"></i></a><a href="voir_ligne_mobile" style="margin-right: 5px;" data-bs-target="#modal_voir_ligne" data-bs-toggle="modal" title="Voir" data-toggle="tooltip"><i class="fas fa-search-plus text-primary" style="font-size: 25px;"></i></a><a href="edit_operateur" data-bs-target="#modal_edit_ligne" data-bs-toggle="modal" title="Modifier" dat data-toggle="tooltip"><i class="far fa-edit text-warning" style="font-size: 25px;"></i></a></td>
-                            </tr>
-                            <tr>
-                                <td>Inactif</td>
-                                <td>--</td>
-                                <td>--</td>
-                                <td>--</td>
-                                <td>35712365412354</td>
-                                <td>--<br /></td>
-                                <td>--</td>
-                                <td class="text-center" style="padding-left: 0px;padding-right: 0px;"><a href="attr_ligne_mobile" style="margin-right: 5px;" data-bs-target="#modal_attr_ligne" data-bs-toggle="modal" title="Attribuer" data-toggle="tooltip"><i class="fas fa-bars text-info" style="font-size: 25px;"></i></a><a href="voir_ligne_mobile" style="margin-right: 5px;" data-bs-target="#modal_voir_ligne" title="Voir" data-toggle="tooltip" data-bs-toggle="modal"><i class="fas fa-search-plus text-primary" style="font-size: 25px;"></i></a><a href="edit_operateur" data-bs-target="#modal_edit_ligne" data-bs-toggle="modal" title="Modifier" data-toggle="tooltip"><i class="far fa-edit text-warning" style="font-size: 25px;"></i></a></td>
-                            </tr>
-                            <tr>
-                                <td>En attente</td>
-                                <td>Voix Mobile</td>
-                                <td>Forfait 4</td>
-                                <td>--</td>
-                                <td>35712365412354</td>
-                                <td>--<br /></td>
-                                <td>--</td>
-                                <td class="text-center" style="padding-left: 0px;padding-right: 0px;"><a href="attr_ligne_mobile" style="margin-right: 5px;" data-bs-target="#modal_enr_ligne" data-bs-toggle="modal" title="Enregistrer" data-toggle="tooltip"><i class="far fa-save text-info" style="font-size: 25px;"></i></a><a href="voir_ligne_mobile" style="margin-right: 5px;" data-bs-target="#modal_voir_ligne" title="Voir" data-toggle="tooltip" data-bs-toggle="modal"><i class="fas fa-search-plus text-primary" style="font-size: 25px;"></i></a><a href="edit_operateur" data-bs-target="#modal_edit_ligne" data-bs-toggle="modal" title="Modifier" data-toggle="tooltip"><i class="far fa-edit text-warning" style="font-size: 25px;"></i></a></td>
-                            </tr> --}}
                         </tbody>
                     </table>
                 </div>

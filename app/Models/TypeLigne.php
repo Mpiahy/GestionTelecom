@@ -14,4 +14,10 @@ class TypeLigne extends Model
     protected $fillable = ['type_ligne'];
     const TYPE_STANDARD = 1;
     const TYPE_INTERNET = 2;
+    const TYPE_FIXE = 3;
+
+    public static function getLignesTypes()
+    {
+        return self::whereIn('id_type_ligne', [self::TYPE_STANDARD, self::TYPE_INTERNET])->get();
+    }
 }

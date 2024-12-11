@@ -16,13 +16,18 @@ return new class extends Migration
                 ligne.id_ligne,
                 ligne.num_ligne,
                 ligne.num_sim,
+                ligne.id_forfait,
+                forfait.nom_forfait,
+                ligne.id_statut_ligne,
                 statut_ligne.statut_ligne,
                 ligne.id_type_ligne,
                 type_ligne.type_ligne,
+                ligne.id_operateur,
                 operateur.nom_operateur,
                 contact_operateur.email AS contact_email
             FROM 
                 ligne
+            LEFT JOIN forfait ON ligne.id_forfait = forfait.id_forfait
             LEFT JOIN statut_ligne ON ligne.id_statut_ligne = statut_ligne.id_statut_ligne
             LEFT JOIN type_ligne ON ligne.id_type_ligne = type_ligne.id_type_ligne
             LEFT JOIN operateur ON ligne.id_operateur = operateur.id_operateur

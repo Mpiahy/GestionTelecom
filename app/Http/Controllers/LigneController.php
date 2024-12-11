@@ -8,23 +8,41 @@ use App\Models\ContactOperateur;
 use App\Models\TypeLigne;
 use App\Models\Forfait;
 use App\Models\Ligne;
-use App\Helpers\MailHelper;
+use App\Models\StatutLigne;
 
 class LigneController extends Controller
 {
     // Load ligne View
-    public function ligneView()
+    public function ligneView(Request $request)
     {
         $login = Session::get('login');
 
-        // Charge les opérateurs avec leurs contacts associés
         $contactsOperateurs = ContactOperateur::with('operateur')->get();
-
-        $types = TypeLigne::all();
+        
+        $types = TypeLigne::getLignesTypes();
         $forfaits = Forfait::all();
-        $lignes = Ligne::getLignesWithDetails();
+        $statuts = StatutLigne::all();
+        
+        // Vérifier si le bouton "Tout" a été cliqué
+        if ($request->has('reset_filters') && $request->input('reset_filters') == 'reset') {
+            // Réinitialiser tous les filtres
+            $filters = [
+                'statut' => null,
+                'search_ligne_num' => null,
+                'search_ligne_sim' => null,
+            ];
+        } else {
+            // Sinon, appliquer les filtres existants
+            $filters = [
+                'statut' => $request->input('statut'),
+                'search_ligne_num' => $request->input('search_ligne_num'),
+                'search_ligne_sim' => $request->input('search_ligne_sim'),
+            ];
+        }
 
-        return view('ref.ligne', compact('login','lignes','contactsOperateurs', 'types', 'forfaits'));
+        $lignes = Ligne::getLignesWithDetails($filters);
+
+        return view('ref.ligne', compact('login','lignes','contactsOperateurs', 'types', 'forfaits', 'statuts'));
     }
 
     public function saveLigne(Request $request)
@@ -34,7 +52,7 @@ class LigneController extends Controller
                 'act_sim' => 'required|string|max:20',
                 'act_operateur' => 'required|exists:contact_operateur,id_operateur',
                 'act_type' => 'required|exists:type_ligne,id_type_ligne',
-                'act_forfait' => 'nullable|exists:forfait,id_forfait',
+                'act_forfait' => 'required|exists:forfait,id_forfait',
             ]);
 
             Ligne::createLigneWithDetails($validatedData);

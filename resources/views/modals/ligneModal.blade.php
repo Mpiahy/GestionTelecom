@@ -131,7 +131,7 @@
     <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="modal-title text-primary">Demande d&#39;activation d&#39;une ligne</h4>
+                <h4 class="modal-title text-primary">Demande d'activation d'une ligne</h4>
                 <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -144,19 +144,27 @@
                             <div class="card-body">
                                 <form id="form_act_mobile" action="{{ route('ligne.save') }}" method="POST" style="color: #a0c8d8;">
                                     @csrf <!-- Protection CSRF -->
+
+                                    <!-- Numéro SIM -->
                                     <div class="mb-3">
                                         <label class="form-label" for="act_sim"><strong>Numéro SIM</strong></label>
                                         <input id="act_sim" class="form-control" type="text" name="act_sim" placeholder="Numéro SIM" required />
                                     </div>
+
+                                    <!-- Opérateur -->
                                     <div class="mb-3">
                                         <label class="form-label" for="act_operateur"><strong>Opérateur</strong></label>
                                         <select id="act_operateur" class="form-select" name="act_operateur" required>
                                             <option value="" selected disabled>Choisir l'opérateur</option>
                                             @foreach ($contactsOperateurs as $contact)
-                                                <option value="{{ $contact->id_operateur }}" data-email="{{ $contact->email }}">{{ $contact->operateur->nom_operateur }}</option>
+                                                <option value="{{ $contact->id_operateur }}" data-email="{{ $contact->email }}">
+                                                    {{ $contact->operateur->nom_operateur }}
+                                                </option>
                                             @endforeach
                                         </select>
                                     </div>
+
+                                    <!-- Type -->
                                     <div class="mb-3">
                                         <label class="form-label" for="act_type"><strong>Type</strong></label>
                                         <select id="act_type" class="form-select" name="act_type" required>
@@ -166,12 +174,18 @@
                                             @endforeach
                                         </select>
                                     </div>
+
+                                    <!-- Forfait -->
                                     <div class="mb-3">
                                         <label class="form-label" for="act_forfait"><strong>Forfait</strong></label>
-                                        <select id="act_forfait" class="form-select" name="act_forfait">
+                                        <select id="act_forfait" class="form-select" name="act_forfait" disabled>
                                             <option value="" selected disabled>Choisir le forfait</option>
                                             @foreach ($forfaits as $forfait)
-                                                <option value="{{ $forfait->id_forfait }}">{{ $forfait->nom_forfait }}</option>
+                                                <option value="{{ $forfait->id_forfait }}" 
+                                                        data-id-operateur="{{ $forfait->id_operateur }}" 
+                                                        data-id-type-forfait="{{ $forfait->id_type_forfait }}">
+                                                    {{ $forfait->nom_forfait }}
+                                                </option>
                                             @endforeach
                                         </select>
                                     </div>
@@ -186,7 +200,7 @@
             </div>
             <div class="modal-footer">
                 <button class="btn btn-warning" type="button" data-bs-dismiss="modal">Fermer</button>
-                <button class="btn btn-primary" type="submit" form="form_act_mobile">Demander</button>
+                <button id="btn_demander" class="btn btn-primary" type="submit" form="form_act_mobile" disabled>Demander</button>
             </div>
         </div>
     </div>

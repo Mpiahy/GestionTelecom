@@ -30,11 +30,17 @@ return new class extends Migration
             $table->id('id_ligne');
             $table->string('num_ligne', 30)->nullable();
             $table->string('num_sim', 30);
+            $table->unsignedBigInteger('id_forfait');
             $table->unsignedBigInteger('id_statut_ligne');
             $table->unsignedBigInteger('id_type_ligne');
             $table->unsignedBigInteger('id_operateur');
 
             // Clés étrangères
+            $table->foreign('id_forfait')
+                ->references('id_forfait')
+                ->on('forfait')
+                ->onDelete('cascade');
+
             $table->foreign('id_statut_ligne')
                 ->references('id_statut_ligne')
                 ->on('statut_ligne')

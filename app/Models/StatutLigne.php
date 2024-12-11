@@ -16,4 +16,19 @@ class StatutLigne extends Model
     const STATUT_EN_ATTENTE = 2;
     const STATUT_ATTRIBUE = 3;
     const STATUT_RESILIE = 4;
+    
+    public static function getBootstrapClass($id_statut_ligne)
+    {
+        switch ($id_statut_ligne) {
+            case self::STATUT_INACTIF:
+                return 'warning';
+            case self::STATUT_EN_ATTENTE:
+                return 'info';
+            case self::STATUT_ATTRIBUE:
+                return 'success';
+            case self::STATUT_RESILIE:
+                return 'danger';
+        }
+    }
+
 }

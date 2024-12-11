@@ -74,3 +74,59 @@
     });
 
 </script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const operateurSelect = document.getElementById('act_operateur');
+        const typeSelect = document.getElementById('act_type');
+        const forfaitSelect = document.getElementById('act_forfait');
+        const simInput = document.getElementById('act_sim');
+        const demanderButton = document.getElementById('btn_demander');
+
+        function filterForfaits() {
+            const selectedOperateur = operateurSelect.value;
+            const selectedType = typeSelect.value;
+
+            let hasVisibleForfaits = false;
+
+            Array.from(forfaitSelect.options).forEach(option => {
+                const operateurId = option.getAttribute('data-id-operateur');
+                const typeForfaitId = option.getAttribute('data-id-type-forfait');
+                const isVisible =
+                    (operateurId === selectedOperateur || !selectedOperateur) &&
+                    (typeForfaitId === selectedType || !selectedType);
+
+                option.style.display = isVisible ? '' : 'none';
+                if (isVisible) hasVisibleForfaits = true;
+            });
+
+            forfaitSelect.disabled = !hasVisibleForfaits;
+            if (!hasVisibleForfaits) forfaitSelect.value = '';
+        }
+
+        function toggleDemanderButton() {
+            const isFormComplete =
+                simInput.value.trim() &&
+                operateurSelect.value &&
+                typeSelect.value &&
+                forfaitSelect.value &&
+                !forfaitSelect.disabled;
+
+            demanderButton.disabled = !isFormComplete;
+        }
+
+        function handleInputChange() {
+            filterForfaits();
+            toggleDemanderButton();
+        }
+
+        [operateurSelect, typeSelect].forEach(el =>
+            el.addEventListener('change', handleInputChange)
+        );
+        forfaitSelect.addEventListener('change', toggleDemanderButton);
+        simInput.addEventListener('input', toggleDemanderButton);
+
+        filterForfaits();
+        toggleDemanderButton();
+    });
+</script>

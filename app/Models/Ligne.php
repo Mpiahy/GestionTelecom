@@ -17,21 +17,41 @@ class Ligne extends Model
     protected $fillable = [
         'num_ligne',
         'num_sim',
+        'id_forfait',
         'id_statut_ligne',
         'id_type_ligne',
         'id_operateur',
     ];
 
-    public static function getLignesWithDetails()
+    public static function getLignesWithDetails($filters = [])
     {
-        return DB::table('view_ligne_details')->get(); // Utilise la vue SQL
+        $query = DB::table('view_ligne_details');
+
+        // Filtre par statut
+        if (!empty($filters['statut'])) {
+            $query->where('id_statut_ligne', $filters['statut']);
+        }
+
+        // Recherche par numéro de ligne
+        if (!empty($filters['search_ligne_num'])) {
+            $query->where('num_ligne', 'like', '%' . $filters['search_ligne_num'] . '%');
+        }
+
+        // Recherche par numéro de SIM
+        if (!empty($filters['search_ligne_sim'])) {
+            $query->where('num_sim', 'like', '%' . $filters['search_ligne_sim'] . '%');
+        }
+
+        return $query->get();
     }
+
 
     public static function createLigneWithDetails($data)
     {
         $ligne = self::create([
             'num_ligne' => null,
             'num_sim' => $data['act_sim'],
+            'id_forfait' => $data['act_forfait'],
             'id_statut_ligne' => StatutLigne::STATUT_EN_ATTENTE,
             'id_type_ligne' => $data['act_type'],
             'id_operateur' => $data['act_operateur'],
