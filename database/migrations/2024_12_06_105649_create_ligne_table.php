@@ -45,6 +45,11 @@ return new class extends Migration
                 ->references('id_statut_ligne')
                 ->on('statut_ligne')
                 ->onDelete('cascade');
+
+            $table->foreign('id_type_ligne')
+                ->references('id_type_ligne')
+                ->on('type_ligne')
+                ->onDelete('cascade');
             
             $table->foreign('id_operateur')
                 ->references('id_operateur')

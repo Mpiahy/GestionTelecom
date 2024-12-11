@@ -205,25 +205,52 @@
         </div>
     </div>
 </div>
-<div id="modal_enr_ligne" class="modal" role="dialog" tabindex="-1">
-    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+<div id="modal_enr_ligne" class="modal show" role="dialog" tabindex="-1" style="display: block;">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="modal-title text-primary">Enregistrer une ligne</h4><button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
+                <h4 class="modal-title text-primary">Enregistrer une ligne</h4>
+                <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <div class="row">
                     <div class="col">
                         <div></div>
                     </div>
-                    <div class="col-xl-6">
+                    <div class="col-xl-7">
                         <div class="card shadow">
                             <div class="card-body">
                                 <form id="form_enr_ligne" action="enr_mobile" method="get" style="color: #a0c8d8;">
-                                    <div class="mb-3"><label class="form-label" for="enr_ligne"><strong>Numéro Ligne</strong></label><input id="enr_ligne" class="form-control" type="text" name="enr_ligne" placeholder="Numéro Ligne" /></div>
-                                    <div class="mb-3"><label class="form-label" for="enr_sim"><strong>Numéro SIM</strong></label><input id="enr_sim" class="form-control" type="text" name="enr_sim" value="45236514279865" /></div>
-                                    <div class="mb-3"><label class="form-label" for="enr_ip"><strong>Adresse IP</strong></label><input id="enr_ip" class="form-control" type="text" placeholder="Adresse IP" name="enr_ip" /></div>
-                                    <div class="mb-3"><label class="form-label" for="enr_forfait"><strong>Forfait</strong></label><input id="enr_sims" class="form-control" type="text" name="enr_sim" readonly value="Forfait 0" /></div>
+                                    <div class="mb-3">
+                                        <label class="form-label" for="enr_sim">
+                                            <strong>Numéro SIM</strong>
+                                        </label>
+                                        <input id="enr_sim" class="form-control" type="text" name="enr_sim" value="45236514279865" readonly /></div>
+                                    <div class="mb-3">
+                                        <label class="form-label" for="enr_forfait">
+                                            <strong>Forfait</strong>
+                                        </label>
+                                        <input id="enr_forfait" class="form-control" type="text" name="enr_forfait" readonly value="Forfait 0" /></div>
+                                    <div class="mb-3">
+                                        <label class="form-label" for="enr_ligne">
+                                            <strong>Numéro Ligne</strong>
+                                        </label>
+                                        <input id="enr_ligne" class="form-control" type="text" name="enr_ligne" placeholder="Entrer le numéro ligne" /></div>
+                                    <div class="mb-3">
+                                        <label class="form-label" for="enr_user">
+                                            <strong>Utilisateur</strong>
+                                        </label>
+                                        <input id="search_enr_user" class="form-control mb-1" type="text" name="search_enr_user" placeholder="Rechercher un utilisateur" /><select id="enr_user" class="form-select" name="enr_user">
+                                            <option value="0" selected>Choisir un utilisateur</option>
+                                            <option value="1">Randriamanivo Andriamahaleo Mpiahisoa</option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label" for="enr_date">
+                                            <strong>Date d&#39;affectation</strong>
+                                        </label>
+                                        <input id="enr_date" class="form-control" name="enr_date" type="date" />
+                                    </div>
                                 </form>
                             </div>
                         </div>
@@ -233,7 +260,10 @@
                     </div>
                 </div>
             </div>
-            <div class="modal-footer"><button class="btn btn-warning" type="button" data-bs-dismiss="modal">Fermer</button><button class="btn btn-primary" type="submit" form="enr_sim">Enregistrer</button></div>
+            <div class="modal-footer">
+                <button class="btn btn-warning" type="button" data-bs-dismiss="modal">Fermer</button>
+                <button class="btn btn-primary" type="submit" form="form_enr_ligne">Enregistrer</button>
+            </div>
         </div>
     </div>
 </div>
