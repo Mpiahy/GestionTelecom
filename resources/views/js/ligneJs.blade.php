@@ -4,9 +4,11 @@
         const mailtoLinks = document.querySelectorAll('.mailto-link');
 
         mailtoLinks.forEach(link => {
+            // Récupération des attributs personnalisés (email et numéro SIM)
             const email = link.dataset.email;
             const numSim = link.dataset.numSim;
 
+            // Définition du sujet et du corps du mail avec encodage URI
             const subject = encodeURIComponent("Demande d'activation d'une ligne");
             const body = encodeURIComponent(
                 `Bonjour,
@@ -18,7 +20,7 @@
                 Cordialement,`
             );
 
-            // Générer le lien `mailto`
+            // Générer et assigner le lien `mailto` dynamique
             link.href = `mailto:${email}?subject=${subject}&body=${body}`;
         });
 
@@ -36,18 +38,19 @@
                 const typeSelect = document.getElementById('act_type');
                 const forfaitSelect = document.getElementById('act_forfait');
 
+                // Récupération des valeurs et validation des champs
                 const operateur = operateurSelect.options[operateurSelect.selectedIndex]?.text || '';
                 const email = operateurSelect.options[operateurSelect.selectedIndex]?.dataset.email || '';
                 const type = typeSelect.options[typeSelect.selectedIndex]?.text || '';
                 const forfait = forfaitSelect.options[forfaitSelect.selectedIndex]?.text || '';
 
-                // Vérifie si un e-mail est défini
+                // Vérifie si un e-mail est défini pour l'opérateur sélectionné
                 if (!email) {
                     alert('Veuillez sélectionner un opérateur avec une adresse e-mail valide.');
                     return;
                 }
 
-                // Sujet et contenu de l'e-mail
+                // Préparation du lien mailto avec les données encodées
                 const subject = encodeURIComponent("Demande d'activation d'une ligne");
                 const body = encodeURIComponent(
                     `Bonjour,
@@ -61,10 +64,9 @@
                     Cordialement,`
                 );
 
-                // Génère le lien mailto
                 const mailtoLink = `mailto:${email}?subject=${subject}&body=${body}`;
 
-                // Ouvre le client de messagerie avec le lien mailto
+                // Ouvre le client de messagerie par défaut avec le lien généré
                 window.location.href = mailtoLink;
 
                 // Optionnel : soumettre le formulaire après avoir ouvert le client de messagerie
@@ -72,7 +74,6 @@
             });
         }
     });
-
 </script>
 
 <script>
@@ -83,12 +84,14 @@
         const simInput = document.getElementById('act_sim');
         const demanderButton = document.getElementById('btn_demander');
 
+        // Fonction pour filtrer les forfaits en fonction de l'opérateur et du type sélectionnés
         function filterForfaits() {
             const selectedOperateur = operateurSelect.value;
             const selectedType = typeSelect.value;
 
             let hasVisibleForfaits = false;
 
+            // Parcourt les options de forfaits et applique un filtrage conditionnel
             Array.from(forfaitSelect.options).forEach(option => {
                 const operateurId = option.getAttribute('data-id-operateur');
                 const typeForfaitId = option.getAttribute('data-id-type-forfait');
@@ -96,14 +99,17 @@
                     (operateurId === selectedOperateur || !selectedOperateur) &&
                     (typeForfaitId === selectedType || !selectedType);
 
+                // Affiche ou masque l'option selon le filtre
                 option.style.display = isVisible ? '' : 'none';
                 if (isVisible) hasVisibleForfaits = true;
             });
 
+            // Active ou désactive le menu déroulant selon les options disponibles
             forfaitSelect.disabled = !hasVisibleForfaits;
             if (!hasVisibleForfaits) forfaitSelect.value = '';
         }
 
+        // Active ou désactive le bouton "Demander" selon la validité du formulaire
         function toggleDemanderButton() {
             const isFormComplete =
                 simInput.value.trim() &&
@@ -115,18 +121,70 @@
             demanderButton.disabled = !isFormComplete;
         }
 
+        // Gère les changements d'entrée utilisateur pour filtrer et valider les données
         function handleInputChange() {
             filterForfaits();
             toggleDemanderButton();
         }
 
+        // Ajoute les écouteurs sur les sélecteurs et les champs d'entrée
         [operateurSelect, typeSelect].forEach(el =>
             el.addEventListener('change', handleInputChange)
         );
         forfaitSelect.addEventListener('change', toggleDemanderButton);
         simInput.addEventListener('input', toggleDemanderButton);
 
+        // Initialise l'état des forfaits et du bouton au chargement de la page
         filterForfaits();
         toggleDemanderButton();
+    });
+
+</script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // Vérifie si des erreurs sont présentes dans `act_ligne_errors` (backend Laravel)
+        @if ($errors->hasBag('act_ligne_errors') && $errors->act_ligne_errors->any())
+            const modalActLigne = new bootstrap.Modal(document.getElementById('modal_act_ligne'));
+            modalActLigne.show(); // Affiche automatiquement le modal pour corriger les erreurs
+        @endif
+    });
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // Sélectionne tous les boutons pour fermer le modal
+        const closeModalButtons = document.querySelectorAll('#close_modal');
+
+        closeModalButtons.forEach(button => {
+            button.addEventListener('click', function () {
+                // Sélectionne le formulaire dans le modal
+                const form = document.getElementById('form_act_mobile');
+
+                if (form) {
+                    // Réinitialise les champs du formulaire
+                    form.reset();
+
+                    // Réinitialise manuellement les sélecteurs si nécessaire
+                    const selects = form.querySelectorAll('select');
+                    selects.forEach(select => {
+                        select.value = ''; // Réinitialise le champ
+                        select.dispatchEvent(new Event('change')); // Notifie les autres scripts éventuels
+                    });
+
+                    // Supprime les classes CSS d'erreur des champs
+                    const invalidFields = form.querySelectorAll('.is-invalid');
+                    invalidFields.forEach(field => {
+                        field.classList.remove('is-invalid');
+                    });
+
+                    // Supprime les messages d'erreur affichés
+                    const errorMessages = form.querySelectorAll('.invalid-feedback');
+                    errorMessages.forEach(error => {
+                        error.textContent = '';
+                    });
+                }
+            });
+        });
     });
 </script>

@@ -132,7 +132,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h4 class="modal-title text-primary">Demande d'activation d'une ligne</h4>
-                <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button id="close_modal" class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <div class="row">
@@ -144,50 +144,73 @@
                             <div class="card-body">
                                 <form id="form_act_mobile" action="{{ route('ligne.save') }}" method="POST" style="color: #a0c8d8;">
                                     @csrf <!-- Protection CSRF -->
+                                    <input type="hidden" id="enr_mailto" value="{{ session('enr_mailto') ? 'true' : 'false' }}">
 
                                     <!-- Numéro SIM -->
                                     <div class="mb-3">
                                         <label class="form-label" for="act_sim"><strong>Numéro SIM</strong></label>
-                                        <input id="act_sim" class="form-control" type="text" name="act_sim" placeholder="Numéro SIM" required />
+                                        <input id="act_sim" class="form-control @error('act_sim', 'act_ligne_errors') is-invalid @enderror" 
+                                            type="text" name="act_sim" placeholder="Numéro SIM" 
+                                            value="{{ old('act_sim') }}" required />
+                                        @error('act_sim', 'act_ligne_errors')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
                                     </div>
 
                                     <!-- Opérateur -->
                                     <div class="mb-3">
                                         <label class="form-label" for="act_operateur"><strong>Opérateur</strong></label>
-                                        <select id="act_operateur" class="form-select" name="act_operateur" required>
-                                            <option value="" selected disabled>Choisir l'opérateur</option>
+                                        <select id="act_operateur" class="form-select @error('act_operateur', 'act_ligne_errors') is-invalid @enderror" 
+                                                name="act_operateur" required>
+                                            <option value="" disabled {{ old('act_operateur') ? '' : 'selected' }}>Choisir l'opérateur</option>
                                             @foreach ($contactsOperateurs as $contact)
-                                                <option value="{{ $contact->id_operateur }}" data-email="{{ $contact->email }}">
+                                                <option value="{{ $contact->id_operateur }}" data-email="{{ $contact->email }}"
+                                                    {{ old('act_operateur') == $contact->id_operateur ? 'selected' : '' }}>
                                                     {{ $contact->operateur->nom_operateur }}
                                                 </option>
                                             @endforeach
                                         </select>
+                                        @error('act_operateur', 'act_ligne_errors')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
                                     </div>
 
                                     <!-- Type -->
                                     <div class="mb-3">
                                         <label class="form-label" for="act_type"><strong>Type</strong></label>
-                                        <select id="act_type" class="form-select" name="act_type" required>
-                                            <option value="" selected disabled>Choisir le type</option>
+                                        <select id="act_type" class="form-select @error('act_type', 'act_ligne_errors') is-invalid @enderror" 
+                                                name="act_type" required>
+                                            <option value="" disabled {{ old('act_type') ? '' : 'selected' }}>Choisir le type</option>
                                             @foreach ($types as $type)
-                                                <option value="{{ $type->id_type_ligne }}">{{ $type->type_ligne }}</option>
+                                                <option value="{{ $type->id_type_ligne }}"
+                                                    {{ old('act_type') == $type->id_type_ligne ? 'selected' : '' }}>
+                                                    {{ $type->type_ligne }}
+                                                </option>
                                             @endforeach
                                         </select>
+                                        @error('act_type', 'act_ligne_errors')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
                                     </div>
 
                                     <!-- Forfait -->
                                     <div class="mb-3">
                                         <label class="form-label" for="act_forfait"><strong>Forfait</strong></label>
-                                        <select id="act_forfait" class="form-select" name="act_forfait" disabled>
-                                            <option value="" selected disabled>Choisir le forfait</option>
+                                        <select id="act_forfait" class="form-select @error('act_forfait', 'act_ligne_errors') is-invalid @enderror" 
+                                                name="act_forfait" {{ old('act_forfait') ? '' : 'disabled' }}>
+                                            <option value="" disabled {{ old('act_forfait') ? '' : 'selected' }}>Choisir le forfait</option>
                                             @foreach ($forfaits as $forfait)
                                                 <option value="{{ $forfait->id_forfait }}" 
                                                         data-id-operateur="{{ $forfait->id_operateur }}" 
-                                                        data-id-type-forfait="{{ $forfait->id_type_forfait }}">
+                                                        data-id-type-forfait="{{ $forfait->id_type_forfait }}"
+                                                    {{ old('act_forfait') == $forfait->id_forfait ? 'selected' : '' }}>
                                                     {{ $forfait->nom_forfait }}
                                                 </option>
                                             @endforeach
                                         </select>
+                                        @error('act_forfait', 'act_ligne_errors')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
                                     </div>
                                 </form>                                
                             </div>
@@ -199,13 +222,13 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button class="btn btn-warning" type="button" data-bs-dismiss="modal">Fermer</button>
+                <button id="close_modal" class="btn btn-warning" type="button" data-bs-dismiss="modal">Fermer</button>
                 <button id="btn_demander" class="btn btn-primary" type="submit" form="form_act_mobile" disabled>Demander</button>
             </div>
         </div>
     </div>
 </div>
-<div id="modal_enr_ligne" class="modal show" role="dialog" tabindex="-1" style="display: block;">
+<div id="modal_enr_ligne" class="modal" role="dialog" tabindex="-1">
     <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -225,22 +248,26 @@
                                         <label class="form-label" for="enr_sim">
                                             <strong>Numéro SIM</strong>
                                         </label>
-                                        <input id="enr_sim" class="form-control" type="text" name="enr_sim" value="45236514279865" readonly /></div>
+                                        <input id="enr_sim" class="form-control" type="text" name="enr_sim" value="45236514279865" readonly />
+                                    </div>
                                     <div class="mb-3">
                                         <label class="form-label" for="enr_forfait">
                                             <strong>Forfait</strong>
                                         </label>
-                                        <input id="enr_forfait" class="form-control" type="text" name="enr_forfait" readonly value="Forfait 0" /></div>
+                                        <input id="enr_forfait" class="form-control" type="text" name="enr_forfait" readonly value="Forfait 0" />
+                                    </div>
                                     <div class="mb-3">
                                         <label class="form-label" for="enr_ligne">
                                             <strong>Numéro Ligne</strong>
                                         </label>
-                                        <input id="enr_ligne" class="form-control" type="text" name="enr_ligne" placeholder="Entrer le numéro ligne" /></div>
+                                        <input id="enr_ligne" class="form-control" type="text" name="enr_ligne" placeholder="Entrer le numéro ligne" />
+                                    </div>
                                     <div class="mb-3">
                                         <label class="form-label" for="enr_user">
                                             <strong>Utilisateur</strong>
                                         </label>
-                                        <input id="search_enr_user" class="form-control mb-1" type="text" name="search_enr_user" placeholder="Rechercher un utilisateur" /><select id="enr_user" class="form-select" name="enr_user">
+                                        <input id="search_enr_user" class="form-control mb-1" type="text" name="search_enr_user" placeholder="Rechercher un utilisateur" />
+                                        <select id="enr_user" class="form-select" name="enr_user">
                                             <option value="0" selected>Choisir un utilisateur</option>
                                             <option value="1">Randriamanivo Andriamahaleo Mpiahisoa</option>
                                         </select>

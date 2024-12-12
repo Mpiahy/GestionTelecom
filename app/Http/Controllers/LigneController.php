@@ -49,25 +49,35 @@ class LigneController extends Controller
     {
         try {
             $validatedData = $request->validate([
-                'act_sim' => 'required|string|max:20',
+                'act_sim' => 'required|integer|unique:ligne,num_sim',
                 'act_operateur' => 'required|exists:contact_operateur,id_operateur',
                 'act_type' => 'required|exists:type_ligne,id_type_ligne',
                 'act_forfait' => 'required|exists:forfait,id_forfait',
             ]);
 
+            // Création de la ligne avec les détails
             Ligne::createLigneWithDetails($validatedData);
 
-            return redirect()->route('ref.ligne')->with('success', 'Ligne ajoutée avec succès.');
+            $enr_mailto = true;
+
+            return redirect()
+                ->route('ref.ligne')
+                ->with('success', 'Ligne ajoutée avec succès.')
+                ->with('enr_mailto', $enr_mailto);
         } catch (\Illuminate\Validation\ValidationException $e) {
+            // Si une erreur de validation survient, on envoie `enr_mailto` à false
             return redirect()
                 ->route('ref.ligne')
-                ->withErrors($e->errors())
-                ->withInput();
+                ->withErrors($e->errors(), 'act_ligne_errors')
+                ->withInput()
+                ->with('enr_mailto', false);
         } catch (\Exception $e) {
+            // Si une erreur générale survient, on envoie également `enr_mailto` à false
             return redirect()
                 ->route('ref.ligne')
-                ->withErrors(['error' => 'Une erreur inattendue est survenue: ' . $e->getMessage()])
-                ->withInput();
+                ->withErrors(['error' => 'Une erreur inattendue est survenue: ' . $e->getMessage()], 'act_ligne_errors')
+                ->withInput()
+                ->with('enr_mailto', false);
         }
     }
 }
