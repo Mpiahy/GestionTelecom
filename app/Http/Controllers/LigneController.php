@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 use App\Models\ContactOperateur;
@@ -9,6 +10,8 @@ use App\Models\TypeLigne;
 use App\Models\Forfait;
 use App\Models\Ligne;
 use App\Models\StatutLigne;
+use App\Models\Utilisateur;
+use App\Models\Affectation;
 
 class LigneController extends Controller
 {
@@ -22,6 +25,7 @@ class LigneController extends Controller
         $types = TypeLigne::getLignesTypes();
         $forfaits = Forfait::all();
         $statuts = StatutLigne::all();
+        $utilisateurs = Utilisateur::all();
         
         // Vérifier si le bouton "Tout" a été cliqué
         if ($request->has('reset_filters') && $request->input('reset_filters') == 'reset') {
@@ -42,7 +46,7 @@ class LigneController extends Controller
 
         $lignes = Ligne::getLignesWithDetails($filters);
 
-        return view('ref.ligne', compact('login','lignes','contactsOperateurs', 'types', 'forfaits', 'statuts'));
+        return view('ref.ligne', compact('login','lignes','contactsOperateurs', 'types', 'forfaits', 'statuts', 'utilisateurs'));
     }
 
     public function saveLigne(Request $request)
@@ -55,29 +59,85 @@ class LigneController extends Controller
                 'act_forfait' => 'required|exists:forfait,id_forfait',
             ]);
 
-            // Création de la ligne avec les détails
             Ligne::createLigneWithDetails($validatedData);
-
-            $enr_mailto = true;
 
             return redirect()
                 ->route('ref.ligne')
-                ->with('success', 'Ligne ajoutée avec succès.')
-                ->with('enr_mailto', $enr_mailto);
+                ->with('success', 'Ligne ajoutée avec succès.');
         } catch (\Illuminate\Validation\ValidationException $e) {
-            // Si une erreur de validation survient, on envoie `enr_mailto` à false
             return redirect()
                 ->route('ref.ligne')
                 ->withErrors($e->errors(), 'act_ligne_errors')
-                ->withInput()
-                ->with('enr_mailto', false);
-        } catch (\Exception $e) {
-            // Si une erreur générale survient, on envoie également `enr_mailto` à false
+                ->withInput();
+        } catch (Exception $e) {
             return redirect()
                 ->route('ref.ligne')
                 ->withErrors(['error' => 'Une erreur inattendue est survenue: ' . $e->getMessage()], 'act_ligne_errors')
-                ->withInput()
-                ->with('enr_mailto', false);
+                ->withInput();
+        }
+    }
+
+    public function enrLigne(Request $request)
+    {
+        try {
+            $validatedData = $request->validate([
+                'enr_ligne' => 'required|string|max:15|unique:ligne,num_ligne', //+2613xxxxxxxx
+                'enr_date' => 'required|date',
+                'enr_id_ligne' => 'required|integer|exists:ligne,id_ligne', //id_ligne correspondant
+                'enr_user' => 'required|string|exists:utilisateur,matricule',
+            ]);
+
+            $idLigne = $validatedData['enr_id_ligne'];
+            $ligne = Ligne::findOrFail($idLigne);
+
+            $ligne->enrLigne($validatedData['enr_ligne']);
+
+            Affectation::creerAffectation(
+                $validatedData['enr_date'],
+                $idLigne,
+                $validatedData['enr_user']
+            );
+
+            return redirect()
+                ->route('ref.ligne')
+                ->with('success', 'Affectation créée avec succès.');
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return redirect()
+                ->route('ref.ligne')
+                ->withErrors($e->errors(), 'enr_ligne_errors')
+                ->withInput();
+        } catch (Exception $e) {
+            return redirect()
+                ->route('ref.ligne')
+                ->withErrors(['error' => 'Une erreur inattendue est survenue: ' . $e->getMessage()], 'enr_ligne_errors')
+                ->withInput();
+        }
+    }
+
+    public function searchUser(Request $request)
+    {
+        try {
+            $term = $request->input('query');
+
+            // Si aucun terme n'est fourni, retourner une réponse vide
+            if (empty($term)) {
+                return response()->json([], 200);
+            }
+
+            // Rechercher les utilisateurs correspondants
+            $utilisateurs = Utilisateur::where('nom', 'ILIKE', "%{$term}%")
+                ->orWhere('prenom', 'ILIKE', "%{$term}%")
+                ->orWhere('login', 'ILIKE', "%{$term}%")
+                ->orWhere('matricule', 'ILIKE', "%{$term}%")
+                ->get();
+
+            // Retourner les résultats
+            return response()->json($utilisateurs, 200);
+        } catch (Exception $e) {
+            // En cas d'erreur, retourner un message d'erreur avec un code 500
+            return response()->json([
+                'error' => 'Une erreur est survenue : ' . $e->getMessage()
+            ], 500);
         }
     }
 }

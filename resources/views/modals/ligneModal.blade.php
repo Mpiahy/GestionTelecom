@@ -243,40 +243,60 @@
                     <div class="col-xl-7">
                         <div class="card shadow">
                             <div class="card-body">
-                                <form id="form_enr_ligne" action="enr_mobile" method="get" style="color: #a0c8d8;">
+                                <form id="form_enr_ligne" action="{{ route('ligne.enr') }}" method="post" style="color: #a0c8d8;">
+                                    @csrf
+                                    <div class="mb-3">
+                                        <input id="enr_id_ligne" class="form-control" type="hidden" name="enr_id_ligne" value="{{ old('enr_id_ligne') }}"/>
+                                    </div>                                    
                                     <div class="mb-3">
                                         <label class="form-label" for="enr_sim">
                                             <strong>Numéro SIM</strong>
                                         </label>
-                                        <input id="enr_sim" class="form-control" type="text" name="enr_sim" value="45236514279865" readonly />
+                                        <input id="enr_sim" class="form-control" type="text" name="enr_sim" readonly value="{{ old('enr_sim') }}"/>
                                     </div>
                                     <div class="mb-3">
                                         <label class="form-label" for="enr_forfait">
                                             <strong>Forfait</strong>
                                         </label>
-                                        <input id="enr_forfait" class="form-control" type="text" name="enr_forfait" readonly value="Forfait 0" />
+                                        <input id="enr_forfait" class="form-control" type="text" name="enr_forfait" readonly value="{{ old('enr_forfait') }}"/>
                                     </div>
                                     <div class="mb-3">
                                         <label class="form-label" for="enr_ligne">
                                             <strong>Numéro Ligne</strong>
                                         </label>
-                                        <input id="enr_ligne" class="form-control" type="text" name="enr_ligne" placeholder="Entrer le numéro ligne" />
+                                        <input id="enr_ligne" class="form-control @error('enr_ligne', 'enr_ligne_errors') is-invalid @enderror" 
+                                               type="text" name="enr_ligne" placeholder="Entrer le numéro ligne" value="{{ old('enr_ligne') }}" />
+                                        @error('enr_ligne', 'enr_ligne_errors')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
                                     </div>
                                     <div class="mb-3">
                                         <label class="form-label" for="enr_user">
                                             <strong>Utilisateur</strong>
                                         </label>
-                                        <input id="search_enr_user" class="form-control mb-1" type="text" name="search_enr_user" placeholder="Rechercher un utilisateur" />
-                                        <select id="enr_user" class="form-select" name="enr_user">
-                                            <option value="0" selected>Choisir un utilisateur</option>
-                                            <option value="1">Randriamanivo Andriamahaleo Mpiahisoa</option>
+                                        <input id="search_enr_user" class="form-control mb-1" type="text" name="search_enr_user" placeholder="Rechercher un utilisateur" value="{{ old('search_enr_user') }}" />
+                                        <div id="loadingSpinner" style="display: none;"><small>Recherche en cours...</small></div>
+                                        <select id="enr_user" class="form-select @error('enr_user', 'enr_ligne_errors') is-invalid @enderror" name="enr_user">
+                                            <option value="0" disabled {{ old('enr_user') ? '' : 'selected' }}>Choisir un utilisateur</option>
+                                            @foreach ($utilisateurs as $utilisateur)
+                                            <option value="{{ $utilisateur->matricule }}" {{ old('enr_user') == $utilisateur->matricule ? 'selected' : '' }}>
+                                                {{ $utilisateur->nom }} {{ $utilisateur->prenom }}
+                                            </option>
+                                            @endforeach
                                         </select>
+                                        @error('enr_user', 'enr_ligne_errors')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
                                     </div>
                                     <div class="mb-3">
                                         <label class="form-label" for="enr_date">
                                             <strong>Date d&#39;affectation</strong>
                                         </label>
-                                        <input id="enr_date" class="form-control" name="enr_date" type="date" />
+                                        <input id="enr_date" class="form-control @error('enr_date', 'enr_ligne_errors') is-invalid @enderror" 
+                                               name="enr_date" type="date" value="{{ old('enr_date') }}" />
+                                        @error('enr_date', 'enr_ligne_errors')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
                                     </div>
                                 </form>
                             </div>

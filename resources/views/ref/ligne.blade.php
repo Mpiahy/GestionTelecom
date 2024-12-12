@@ -180,10 +180,21 @@
                                 <td>--</td>
                                 <td>--</td>
                                 <td class="text-center" style="padding-left: 0px;padding-right: 0px;">
-                                    <a class="text-decoration-none" href="attr_ligne_mobile" style="margin-right: 5px;" data-bs-target="#modal_enr_ligne" data-bs-toggle="modal" title="Enregistrer" data-toggle="tooltip">
+                                    <a 
+                                        id="btn_enr_ligne" 
+                                        class="text-decoration-none" 
+                                        href="enr_ligne" 
+                                        style="margin-right: 5px;" 
+                                        data-bs-target="#modal_enr_ligne" 
+                                        data-bs-toggle="modal" 
+                                        title="Enregistrer" 
+                                        data-toggle="tooltip"
+                                        data-sim-enr="{{ $ligne->num_sim }}" 
+                                        data-forfait-enr="{{ $ligne->nom_forfait }}" 
+                                        data-id-enr="{{ $ligne->id_ligne }}">
                                         <i class="far fa-save text-info" style="font-size: 25px;"></i>
                                     </a>
-                                    <a class="text-decoration-none" href="voir_ligne_mobile" style="margin-right: 5px;" data-bs-target="#modal_voir_ligne" title="Voir" data-toggle="tooltip" data-bs-toggle="modal">
+                                    <a class="text-decoration-none" href="voir_ligne" style="margin-right: 5px;" data-bs-target="#modal_voir_ligne" title="Voir" data-toggle="tooltip" data-bs-toggle="modal">
                                         <i class="fas fa-search-plus text-primary" style="font-size: 25px;"></i>
                                     </a>
                                     <a class="text-decoration-none" href="edit_operateur" data-bs-target="#modal_edit_ligne" data-bs-toggle="modal" title="Modifier" data-toggle="tooltip">

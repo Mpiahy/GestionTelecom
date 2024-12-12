@@ -45,7 +45,6 @@ class Ligne extends Model
         return $query->get();
     }
 
-
     public static function createLigneWithDetails($data)
     {
         $ligne = self::create([
@@ -57,5 +56,13 @@ class Ligne extends Model
             'id_operateur' => $data['act_operateur'],
         ]);
         return $ligne;
+    }
+
+    public function enrLigne($numLigne)
+    {
+        $this->update([
+            'num_ligne' => $numLigne,
+            'id_statut_ligne' => StatutLigne::STATUT_ATTRIBUE,
+        ]);
     }
 }

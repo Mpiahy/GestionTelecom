@@ -36,7 +36,6 @@ class Utilisateur extends Model
         return self::create($data); // Utilise les colonnes définies dans $fillable
     }
 
-
     public function scopeFilterByType($query, $type)
     {
         if ($type) {

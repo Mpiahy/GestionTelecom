@@ -1,3 +1,5 @@
+{{-- ACTIVATION LIGNE --}}
+
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         // Gestion des liens mailto statiques dans le HTML
@@ -187,4 +189,100 @@
             });
         });
     });
+</script>
+
+{{-- ENREGISTREMENT LIGNE --}}
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Sélectionne tous les boutons ayant l'id "btn_enr_ligne"
+        document.querySelectorAll('#btn_enr_ligne').forEach(function (button) {
+            button.addEventListener('click', function (event) {
+                event.preventDefault(); // Empêche le comportement par défaut du lien
+
+                // Récupérer les données des attributs data-*
+                const simEnr = button.getAttribute('data-sim-enr'); // Numéro SIM
+                const forfaitEnr = button.getAttribute('data-forfait-enr'); // Forfait
+                const idEnr = button.getAttribute('data-id-enr'); // ID Ligne
+
+                // Injecter les valeurs dans le formulaire du modal
+                document.getElementById('enr_sim').value = simEnr || ''; // Numéro SIM
+                document.getElementById('enr_forfait').value = forfaitEnr || ''; // Forfait
+                document.getElementById('enr_id_ligne').value = idEnr || ''; // ID Ligne
+            });
+        });
+    });
+</script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // Vérifie si des erreurs sont présentes dans `enr_ligne_errors` (backend Laravel)
+        @if ($errors->hasBag('enr_ligne_errors') && $errors->enr_ligne_errors->any())
+            const modalEnrLigne = new bootstrap.Modal(document.getElementById('modal_enr_ligne'));
+            modalEnrLigne.show(); // Affiche automatiquement le modal pour corriger les erreurs
+        @endif
+    });
+</script>
+
+{{-- searchUser --}}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const searchInput = document.getElementById('search_enr_user');
+        const userSelect = document.getElementById('enr_user');
+        const spinner = document.createElement('div'); // Spinner ou indication de chargement
+        spinner.innerHTML = '<small>Recherche en cours...</small>';
+        spinner.style.display = 'none';
+        searchInput.parentNode.appendChild(spinner); // Ajouter le spinner sous le champ de recherche
+
+        let timeout = null; // Timer pour éviter les requêtes excessives
+
+        searchInput.addEventListener('input', function () {
+            clearTimeout(timeout); // Réinitialiser le timer à chaque nouvelle saisie
+
+            const query = searchInput.value.trim();
+
+            if (query.length >= 2) {
+                // Afficher le spinner après un court délai
+                spinner.style.display = 'block';
+
+                timeout = setTimeout(() => {
+                    fetch(`/ligne/searchUser?query=${query}`)
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error('Erreur lors de la récupération des utilisateurs.');
+                            }
+                            return response.json();
+                        })
+                        .then(data => {
+                            spinner.style.display = 'none'; // Masquer le spinner
+
+                            userSelect.innerHTML = '<option value="0" disabled>Choisir un utilisateur</option>';
+                            if (data.length > 0) {
+                                data.forEach(user => {
+                                    const option = document.createElement('option');
+                                    option.value = user.matricule;
+                                    option.textContent = `${user.nom} ${user.prenom}`;
+                                    userSelect.appendChild(option);
+                                });
+                            } else {
+                                const noResultOption = document.createElement('option');
+                                noResultOption.value = "0";
+                                noResultOption.textContent = "Aucun utilisateur trouvé";
+                                userSelect.appendChild(noResultOption);
+                            }
+                        })
+                        .catch(error => {
+                            spinner.style.display = 'none'; // Masquer le spinner
+                            console.error('Erreur lors de la recherche des utilisateurs:', error);
+                            userSelect.innerHTML = '<option value="0" disabled>Erreur lors du chargement</option>';
+                        });
+                }, 300); // Délais pour éviter les requêtes excessives (300ms)
+            } else {
+                // Réinitialiser le contenu du select et masquer le spinner
+                spinner.style.display = 'none';
+                userSelect.innerHTML = '<option value="0" disabled>Choisir un utilisateur</option>';
+            }
+        });
+    });
+
 </script>

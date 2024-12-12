@@ -19,4 +19,15 @@ class Affectation extends Model
         'id_equipement',
         'matricule',
     ];
+
+    public static function creerAffectation($dateDebut, $idLigne, $matricule)
+    {
+        self::create([
+            'debut_affectation' => $dateDebut,
+            'fin_affectation' => null,
+            'id_ligne' => $idLigne,
+            'id_equipement' => null,
+            'matricule' => $matricule,
+        ]);
+    }
 }
