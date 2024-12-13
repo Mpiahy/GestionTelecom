@@ -89,7 +89,8 @@ SELECT
     operateur.nom_operateur,
     contact_operateur.email AS contact_email,
     affectation.matricule,
-    utilisateur.login
+    utilisateur.login,
+    affectation.debut_affectation
 FROM 
     ligne
 LEFT JOIN forfait ON ligne.id_forfait = forfait.id_forfait

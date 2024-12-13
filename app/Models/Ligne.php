@@ -79,4 +79,22 @@ class Ligne extends Model
             'id_statut_ligne' => StatutLigne::STATUT_ATTRIBUE,
         ]);
     }
+
+    public static function updateLigne(int $idLigne, array $data)
+    {
+        $updateData = [
+            'num_sim' => $data['edt_sim'],
+            'id_operateur' => $data['edt_operateur'],
+            'id_type_ligne' => $data['edt_type'],
+            'id_forfait' => $data['edt_forfait'],
+        ];
+
+        // Inclure `num_ligne` uniquement s'il est présent
+        if (!empty($data['edt_ligne'])) {
+            $updateData['num_ligne'] = $data['edt_ligne'];
+        }
+
+        return self::where('id_ligne', $idLigne)->update($updateData);
+    }
+
 }

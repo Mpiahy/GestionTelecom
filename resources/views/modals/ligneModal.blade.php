@@ -51,11 +51,12 @@
     </div>
 </div>
 
-<div id="modal_edit_ligne" class="modal" role="dialog" tabindex="-1">
-    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+<div id="modal_edt_ligne" class="modal" role="dialog" tabindex="-1">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="modal-title text-primary">Modifier cette ligne</h4><button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
+                <h4 class="modal-title text-primary">Modifier cette ligne</h4>
+                <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <div class="row">
@@ -65,50 +66,118 @@
                     <div class="col-xl-8">
                         <div class="card shadow">
                             <div class="card-body">
-                                <form id="form_edt_mobile" action="edit_mobile" method="get" style="color: #a0c8d8;">
+                                <form id="form_edt_ligne" action="{{ route('ligne.edt') }}" method="get" style="color: #a0c8d8;">
                                     <div class="mb-3">
-                                        <label class="form-label" for="edt_ligne">
-                                            <strong>Numéro d&#39;appel</strong></label>
-                                            <input id="edt_ligne" class="form-control" type="text" name="edt_ligne" value="+261 34 49 599 53" readonly />
-                                        </div>
+                                        <input id="edt_id_ligne" class="form-control" type="hidden" name="edt_id_ligne" value="{{ old('edt_id_ligne') }}"/>
+                                    </div>                                 
+                                    
+                                    <!-- STATUT -->
+                                    <div class="mb-3">
+                                        <label class="form-label" for="edt_statut">
+                                            <strong>Statut</strong>
+                                        </label>
+                                        <input id="edt_statut" class="form-control @error('edt_statut', 'edt_ligne_errors') is-invalid @enderror" type="text" name="edt_statut" value="{{ old('edt_statut') }}" readonly/>
+                                        @error('edt_statut', 'edt_ligne_errors')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+
+                                    <!-- SIM -->
                                     <div class="mb-3">
                                         <label class="form-label" for="edt_sim">
                                             <strong>Numéro SIM</strong>
                                         </label>
-                                        <input id="edt_sim" class="form-control" type="text" name="edt_sim" value="64587932145698" readonly />
+                                        <input id="edt_sim" class="form-control @error('edt_sim', 'edt_ligne_errors') is-invalid @enderror" type="text" name="edt_sim" value="{{ old('edt_sim') }}"  />
+                                        @error('edt_sim', 'edt_ligne_errors')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
                                     </div>
+
+                                    <!-- Ligne -->                                    
+                                    <div class="mb-3">
+                                        <label class="form-label" for="edt_ligne">
+                                            <strong>Numéro ligne</strong></label>
+                                            <input id="edt_ligne" class="form-control @error('edt_ligne', 'edt_ligne_errors') is-invalid @enderror" type="text" name="edt_ligne" value="{{ old('edt_ligne') }}" />
+                                        @error('edt_ligne', 'edt_ligne_errors')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                        </div>
+
+                                    <!-- Operateur -->                                    
                                     <div class="mb-3">
                                         <label class="form-label" for="edt_operateur">
                                             <strong>Opérateur</strong>
                                         </label>
-                                        <input id="edt_operateur" class="form-control" type="text" name="edt_operateur" value="TELMA" readonly />
-                                    </div>
-                                    <div class="mb-3">
-                                        <label class="form-label" for="edt_forfait">
-                                            <strong>Forfait</strong>
-                                        </label>
-                                        <select id="edt_forfait" class="form-select" name="edt_forfait">
-                                            <option value="0">Choisir le forfait</option>
-                                            <option value="1" selected>Forfait 0</option>
-                                            <option value="2">Forfait 1</option>
+                                        <select id="edt_operateur" class="form-select @error('edt_operateur', 'edt_ligne_errors') is-invalid @enderror" 
+                                                name="edt_operateur" required>
+                                            <option value="" disabled {{ old('edt_operateur') ? '' : 'selected' }}>Choisir l'opérateur</option>
+                                            @foreach ($contactsOperateurs as $contact)
+                                                <option value="{{ $contact->id_operateur }}"
+                                                    {{ old('edt_operateur') == $contact->id_operateur ? 'selected' : '' }}>
+                                                    {{ $contact->operateur->nom_operateur }}
+                                                </option>
+                                            @endforeach
                                         </select>
+                                        @error('edt_operateur', 'edt_ligne_errors')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
                                     </div>
+
+                                    <!-- Type -->
+                                    <div class="mb-3">
+                                        <label class="form-label" for="edt_type"><strong>Type</strong></label>
+                                        <select id="edt_type" class="form-select @error('edt_type', 'edt_ligne_errors') is-invalid @enderror" 
+                                                name="edt_type" required>
+                                            <option value="" disabled {{ old('edt_type') ? '' : 'selected' }}>Choisir le type</option>
+                                            @foreach ($types as $type)
+                                                <option value="{{ $type->id_type_ligne }}"
+                                                    {{ old('edt_type') == $type->id_type_ligne ? 'selected' : '' }}>
+                                                    {{ $type->type_ligne }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                        @error('edt_type', 'edt_ligne_errors')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+
+                                    <!-- Forfait -->
+                                    <div class="mb-3">
+                                        <label class="form-label" for="edt_forfait"><strong>Forfait</strong></label>
+                                        <select id="edt_forfait" class="form-select @error('edt_forfait', 'edt_ligne_errors') is-invalid @enderror" 
+                                                name="edt_forfait" {{ old('edt_forfait') }}>
+                                            <option value="" {{ old('edt_forfait') ? '' : 'selected' }}>Choisir le forfait</option>
+                                            @foreach ($forfaits as $forfait)
+                                                <option value="{{ $forfait->id_forfait }}" 
+                                                        data-id-operateur-edt="{{ $forfait->id_operateur }}" 
+                                                        data-id-type-forfait-edt="{{ $forfait->id_type_forfait }}"
+                                                    {{ old('edt_forfait') == $forfait->id_forfait ? 'selected' : '' }}>
+                                                    {{ $forfait->nom_forfait }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                        @error('edt_forfait', 'edt_ligne_errors')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+
+                                    <!-- Responsable -->                                   
                                     <div class="mb-3">
                                         <label class="form-label" for="edt_resp">
                                             <strong>Responsable</strong>
                                         </label>
-                                        <select id="edt_resp" class="form-select" name="edt_resp">
-                                            <option value="0">Choisir le responsable</option>
-                                            <option value="1" selected>Randriamanivo Andriamahaleo Mpiahisoa</option>
-                                            <option value="2">Odilon</option>
-                                            <option value="3">Mirindra</option>
-                                        </select>
+                                        <input id="edt_resp" class="form-control" type="text" name="edt_resp" value="{{ old('edt_resp') }}" readonly/>
                                     </div>
+
+                                    <!-- Date d'affectation -->                                    
                                     <div class="mb-3">
                                         <label class="form-label" for="edt_date">
                                             <strong>Date d&#39;affectation</strong>
                                         </label>
-                                        <input id="edt_date" class="form-control" type="date" name="edt_date" />
+                                        <input id="edt_date" class="form-control @error('edt_date', 'edt_ligne_errors') is-invalid @enderror" type="date" name="edt_date" value="{{ old('edt_date') }}" />
+                                        @error('edt_date', 'edt_ligne_errors')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
                                     </div>
                                 </form>
                             </div>
@@ -121,7 +190,7 @@
             </div>
             <div class="modal-footer">
                 <button class="btn btn-warning" type="button" data-bs-dismiss="modal">Fermer</button>
-                <button class="btn btn-primary" type="submit" form="form_edt_mobile">Modifier</button>
+                <button id="btn_modifier" class="btn btn-primary" type="submit" form="form_edt_ligne" >Modifier</button>
             </div>
         </div>
     </div>
@@ -143,7 +212,6 @@
                             <div class="card-body">
                                 <form id="form_act_ligne" action="{{ route('ligne.save') }}" method="POST" style="color: #a0c8d8;">
                                     @csrf <!-- Protection CSRF -->
-                                    <input type="hidden" id="enr_mailto" value="{{ session('enr_mailto') ? 'true' : 'false' }}">
 
                                     <!-- Numéro SIM -->
                                     <div class="mb-3">
@@ -276,7 +344,7 @@
                                         <input id="search_enr_user" class="form-control mb-1" type="text" name="search_enr_user" placeholder="Rechercher un utilisateur" value="{{ old('search_enr_user') }}" />
                                         <div id="loadingSpinner" style="display: none;"><small>Recherche en cours...</small></div>
                                         <select id="enr_user" class="form-select @error('enr_user', 'enr_ligne_errors') is-invalid @enderror" name="enr_user">
-                                            <option value="0" disabled {{ old('enr_user') ? '' : 'selected' }}>Choisir un utilisateur</option>
+                                            <option value="0" disabled disabled {{ old('enr_user') ? '' : 'selected' }}>Choisir un utilisateur</option>
                                             @foreach ($utilisateurs as $utilisateur)
                                             <option value="{{ $utilisateur->matricule }}" {{ old('enr_user') == $utilisateur->matricule ? 'selected' : '' }}>
                                                 {{ $utilisateur->nom }} {{ $utilisateur->prenom }}
@@ -366,7 +434,7 @@
                                     <div class="mb-3"><label class="form-label" for="react_operateur"><strong>Opérateur</strong></label><input id="react_operateur" class="form-control" type="text" name="react_operateur" value="Orange" readonly /></div>
                                     <div class="mb-3"><label class="form-label" for="react_type"><strong>Type</strong></label><input id="react_type" class="form-control" type="text" name="react_type" value="Internet mobile" readonly /></div>
                                     <div class="mb-3"><label class="form-label" for="react_forfait"><strong>Forfait</strong></label><select id="react_forfait" class="form-select" name="react_forfait">
-                                            <option value="0" selected>Choisir le forfait</option>
+                                            <option value="0" disabled selected>Choisir le forfait</option>
                                             <option value="1">Forfait 0</option>
                                             <option value="2">Forfait 1</option>
                                         </select></div>

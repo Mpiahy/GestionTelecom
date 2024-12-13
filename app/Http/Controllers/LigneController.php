@@ -12,6 +12,7 @@ use App\Models\Ligne;
 use App\Models\StatutLigne;
 use App\Models\Utilisateur;
 use App\Models\Affectation;
+use Illuminate\Validation\Rule;
 
 class LigneController extends Controller
 {
@@ -150,4 +151,57 @@ class LigneController extends Controller
             ], 500);
         }
     }
+
+    public function edtLigne(Request $request)
+    {
+        try {
+            $statutEdt = $request->input('edt_statut');
+
+            $rules = [
+                'edt_id_ligne' => 'required|exists:ligne,id_ligne',
+                'edt_sim' => [
+                    'required',
+                    'integer',
+                    Rule::unique('ligne', 'num_sim')->ignore($request->edt_id_ligne, 'id_ligne'),
+                ],
+                'edt_operateur' => 'required|exists:operateur,id_operateur',
+                'edt_type' => 'required|exists:type_ligne,id_type_ligne',
+                'edt_forfait' => 'required|exists:forfait,id_forfait',
+            ];
+
+            if ($statutEdt !== 'En attente') {
+                $rules['edt_ligne'] = [
+                    'required',
+                    'string',
+                    'max:15',
+                    Rule::unique('ligne', 'num_ligne')->ignore($request->edt_id_ligne, 'id_ligne'),
+                ];
+                $rules['edt_date'] = 'required|date';
+            }
+
+            $validatedData = $request->validate($rules);
+
+            Ligne::updateLigne($validatedData['edt_id_ligne'], $validatedData);
+
+            // if date_affectation existe
+            if (!empty($validatedData['edt_date'])) {
+                Affectation::updateAffectation($validatedData['edt_id_ligne'], $validatedData['edt_date']);
+            }
+
+            return redirect()
+                ->route('ref.ligne')
+                ->with('success', 'Ligne mise à jour avec succès.');
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return redirect()
+                ->route('ref.ligne')
+                ->withErrors($e->errors(), 'edt_ligne_errors')
+                ->withInput();
+        } catch (Exception $e) {
+            return redirect()
+                ->route('ref.ligne')
+                ->withErrors(['error' => 'Une erreur inattendue est survenue: ' . $e->getMessage()], 'edt_ligne_errors')
+                ->withInput();
+        }
+    }
+
 }

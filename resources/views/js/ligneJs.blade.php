@@ -140,7 +140,6 @@
         filterForfaits();
         toggleDemanderButton();
     });
-
 </script>
 
 <script>
@@ -201,14 +200,14 @@
                 event.preventDefault(); // Empêche le comportement par défaut du lien
 
                 // Récupérer les données des attributs data-*
-                const simEnr = button.getAttribute('data-sim-enr'); // Numéro SIM
-                const forfaitEnr = button.getAttribute('data-forfait-enr'); // Forfait
-                const idEnr = button.getAttribute('data-id-enr'); // ID Ligne
+                const simEnr = button.getAttribute('data-sim-enr'); 
+                const forfaitEnr = button.getAttribute('data-forfait-enr');
+                const idEnr = button.getAttribute('data-id-enr');
 
                 // Injecter les valeurs dans le formulaire du modal
-                document.getElementById('enr_sim').value = simEnr || ''; // Numéro SIM
-                document.getElementById('enr_forfait').value = forfaitEnr || ''; // Forfait
-                document.getElementById('enr_id_ligne').value = idEnr || ''; // ID Ligne
+                document.getElementById('enr_sim').value = simEnr || ''; 
+                document.getElementById('enr_forfait').value = forfaitEnr || '';
+                document.getElementById('enr_id_ligne').value = idEnr || '';
             });
         });
     });
@@ -337,8 +336,8 @@
             btn.addEventListener('click', function (event) {
                 event.preventDefault(); // Empêche la redirection normale
 
-                // Récupère l'ID de la ligne depuis l'attribut `data-id_voir`
-                const idLigne = this.getAttribute('data-id_voir');
+                // Récupère l'ID de la ligne depuis l'attribut `data-id-voir`
+                const idLigne = this.getAttribute('data-id-voir');
 
                 // Vérifie que l'ID est valide
                 if (!idLigne) {
@@ -381,5 +380,112 @@
             document.querySelector('#modal_voir_ligne .modal-body [data-field="localisation"]').textContent = data.localisation;
             document.querySelector('#modal_voir_ligne .modal-body [data-field="debut_affectation"]').textContent = data.debut_affectation;
         }
+    });
+</script>
+
+
+{{-- MODIFICATION LIGNE --}}
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const operateurSelect = document.getElementById('edt_operateur');
+        const typeSelect = document.getElementById('edt_type');
+        const forfaitSelect = document.getElementById('edt_forfait');
+
+        // Fonction pour filtrer les forfaits en fonction de l'opérateur et du type sélectionnés
+        function filterForfaits() {
+            const selectedOperateur = operateurSelect.value;
+            const selectedType = typeSelect.value;
+
+            // Variable pour suivre si au moins une option reste visible
+            let hasVisibleOption = false;
+
+            // Parcourt les options de forfaits et applique un filtrage conditionnel
+            Array.from(forfaitSelect.options).forEach(option => {
+                const operateurId = option.getAttribute('data-id-operateur-edt');
+                const typeForfaitId = option.getAttribute('data-id-type-forfait-edt');
+                const isVisible =
+                    (operateurId === selectedOperateur || !selectedOperateur) &&
+                    (typeForfaitId === selectedType || !selectedType);
+
+                // Affiche ou masque l'option selon le filtre
+                option.style.display = isVisible ? '' : 'none';
+
+                // Si l'option est visible, mettre à jour le drapeau
+                if (isVisible) {
+                    hasVisibleOption = true;
+                }
+            });
+
+            // Désactiver le sélecteur si aucune option n'est visible
+            forfaitSelect.disabled = !hasVisibleOption;
+        }
+
+        // Gestion des boutons pour l'ouverture du modal
+        document.querySelectorAll('#btn_edt_ligne').forEach(function (button) {
+            button.addEventListener('click', function (event) {
+                event.preventDefault(); // Empêche le comportement par défaut du lien
+
+                // Récupérer les données des attributs data-*
+                const simEdt = button.getAttribute('data-sim-edt'); 
+                const ligneEdt = button.getAttribute('data-ligne-edt');
+                const operateurEdt = button.getAttribute('data-operateur-edt'); 
+                const typeEdt = button.getAttribute('data-type-edt'); 
+                const forfaitEdt = button.getAttribute('data-forfait-edt'); 
+                const respEdt = button.getAttribute('data-responsable-edt'); 
+                const dateEdt = button.getAttribute('data-date-edt');
+                const idEdt = button.getAttribute('data-id-edt');
+                const statutEdt = button.getAttribute('data-statut-edt');
+
+                // Injecter les valeurs dans le formulaire du modal
+                document.getElementById('edt_sim').value = simEdt || ''; 
+                document.getElementById('edt_ligne').value = ligneEdt || ''; 
+                document.getElementById('edt_operateur').value = operateurEdt || ''; 
+                document.getElementById('edt_type').value = typeEdt || ''; 
+                document.getElementById('edt_forfait').value = forfaitEdt || '';
+                document.getElementById('edt_resp').value = respEdt || '';
+                document.getElementById('edt_date').value = dateEdt || '';
+                document.getElementById('edt_id_ligne').value = idEdt || '';
+                document.getElementById('edt_statut').value = statutEdt || '';
+
+                // Gérer l'affichage des champs en fonction du statut
+                const ligneInputGroup = document.getElementById('edt_ligne').closest('.mb-3');
+                const respInputGroup = document.getElementById('edt_resp').closest('.mb-3');
+                const dateInputGroup = document.getElementById('edt_date').closest('.mb-3');
+
+                if (statutEdt === 'En attente') {
+                    // Masquer les champs pour les lignes en attente
+                    ligneInputGroup.style.display = 'none';
+                    respInputGroup.style.display = 'none';
+                    dateInputGroup.style.display = 'none';
+                } else {
+                    // Afficher les champs pour les autres statuts
+                    ligneInputGroup.style.display = '';
+                    respInputGroup.style.display = '';
+                    dateInputGroup.style.display = '';
+                }
+
+                // Filtrer les options de forfaits après l'injection des valeurs
+                filterForfaits();
+            });
+        });
+
+        // Ajoute les écouteurs sur les sélecteurs pour actualiser le filtrage lorsque l'utilisateur change les sélections
+        [operateurSelect, typeSelect].forEach(el =>
+            el.addEventListener('change', filterForfaits)
+        );
+
+        // Filtrer les forfaits au chargement initial (utile si le formulaire est déjà rempli)
+        filterForfaits();
+    });
+</script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // Vérifie si des erreurs sont présentes dans `edt_ligne_errors` (backend Laravel)
+        @if ($errors->hasBag('edt_ligne_errors') && $errors->edt_ligne_errors->any())
+            const modalEdtLigne = new bootstrap.Modal(document.getElementById('modal_edt_ligne'));
+            modalEdtLigne.show(); // Affiche automatiquement le modal pour corriger les erreurs
+        @endif
     });
 </script>

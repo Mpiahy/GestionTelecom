@@ -30,4 +30,16 @@ class Affectation extends Model
             'matricule' => $matricule,
         ]);
     }
+
+    public static function updateAffectation(int $idLigne, ?string $date)
+    {
+        if (!empty($date)) {
+            return self::where('id_ligne', $idLigne)->update([
+                'debut_affectation' => $date,
+            ]);
+        }
+
+        return false;
+    }
+
 }

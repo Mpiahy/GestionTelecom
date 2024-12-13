@@ -27,11 +27,11 @@
                                     <form method="post" action="{{ url('/loginCheck') }}" class="user">
                                         @csrf
                                         <div class="mb-3">
-                                            <input value="andriamahaleompiahisoa.randriamanivo@colas-mg.com" name="identifiant" class="form-control form-control-user" type="text" placeholder="Adresse e-mail ou login" required>
+                                            <input value="telecom@telecom.mg" name="identifiant" class="form-control form-control-user" type="text" placeholder="Adresse e-mail ou login" required>
                                         </div>
                                         
                                         <div class="mb-3">
-                                            <input value="mdpmpiahy" name="password" class="form-control form-control-user" type="password" placeholder="Mot de passe" required>
+                                            <input value="telecom" name="password" class="form-control form-control-user" type="password" placeholder="Mot de passe" required>
                                         </div>
                                         
                                         @if ($errors->any())

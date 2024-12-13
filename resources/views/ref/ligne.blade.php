@@ -178,19 +178,42 @@
                                     </a>
                                 </td>                                
                                 <td class="text-center" style="padding-left: 0px;padding-right: 0px;">
-                                    <a href="#"
-                                        id="btn_enr_ligne" 
-                                        class="text-decoration-none"
-                                        style="margin-right: 5px;" 
-                                        data-bs-target="#modal_enr_ligne" 
-                                        data-bs-toggle="modal" 
-                                        title="Enregistrer" 
-                                        data-toggle="tooltip"
-                                        data-sim-enr="{{ $ligne->num_sim }}" 
-                                        data-forfait-enr="{{ $ligne->nom_forfait }}" 
-                                        data-id-enr="{{ $ligne->id_ligne }}">
-                                        <i class="far fa-save text-info" style="font-size: 25px;"></i>
-                                    </a>
+                                    {{-- Boutons spécifiques au statut --}}
+                                    @if ($ligne->statut_ligne === 'Inactif' || $ligne->statut_ligne === 'Resilie')
+                                        <a id="btn_react_ligne"
+                                            class="text-decoration-none"
+                                            style="margin-right: 5px;" 
+                                            data-bs-target="#modal_react_ligne" 
+                                            data-bs-toggle="modal" 
+                                            title="Réactiver" 
+                                            href="#">
+                                            <i class="far fa-arrow-alt-circle-up text-success" style="font-size: 25px;"></i>
+                                        </a>
+                                    @elseif ($ligne->statut_ligne === 'En attente')    
+                                        <a href="#"
+                                            id="btn_enr_ligne"
+                                            class="text-decoration-none"
+                                            style="margin-right: 5px;" 
+                                            data-bs-target="#modal_enr_ligne" 
+                                            data-bs-toggle="modal" 
+                                            title="Enregistrer" 
+                                            data-sim-enr="{{ $ligne->num_sim }}" 
+                                            data-forfait-enr="{{ $ligne->nom_forfait }}" 
+                                            data-id-enr="{{ $ligne->id_ligne }}">
+                                            <i class="far fa-save text-info" style="font-size: 25px;"></i>
+                                        </a>
+                                    @elseif ($ligne->statut_ligne === 'Attribue')
+                                        <a id="btn_resil_ligne" 
+                                            style="margin-right: 5px;"
+                                            class="text-decoration-none"
+                                            data-bs-target="#modal_resil_ligne" 
+                                            data-bs-toggle="modal" 
+                                            href="#" 
+                                            title="Résilier">
+                                            <i class="far fa-window-close text-danger" style="font-size: 25px;"></i>
+                                        </a>
+                                    @endif
+                                    {{-- Boutons en commun --}}
                                     <a href="{{ url('/ligne/detailLigne/' . $ligne->id_ligne) }}"
                                         id="btn_voir_ligne"
                                         class="text-decoration-none"
@@ -198,10 +221,25 @@
                                         data-bs-target="#modal_voir_ligne" 
                                         title="Plus d'information"
                                         data-bs-toggle="modal"
-                                        data-id_voir="{{ $ligne->id_ligne }}">
+                                        data-id-voir="{{ $ligne->id_ligne }}">
                                         <i class="fas fa-info-circle text-primary" style="font-size: 25px;"></i>
                                     </a>                                 
-                                    <a class="text-decoration-none" href="edit_operateur" data-bs-target="#modal_edit_ligne" data-bs-toggle="modal" title="Modifier" data-toggle="tooltip">
+                                    <a href="#"
+                                        id="btn_edt_ligne"
+                                        class="text-decoration-none"
+                                        data-bs-target="#modal_edt_ligne" 
+                                        data-bs-toggle="modal" 
+                                        title="Modifier"
+                                        data-sim-edt="{{ $ligne->num_sim }}"
+                                        data-ligne-edt="{{ $ligne->num_ligne }}"
+                                        data-operateur-edt="{{ $ligne->id_operateur }}"
+                                        data-type-edt="{{ $ligne->id_type_ligne }}"
+                                        data-forfait-edt="{{ $ligne->id_forfait }}"
+                                        data-responsable-edt="{{ $ligne->login }}"
+                                        data-date-edt="{{ $ligne->debut_affectation }}"
+                                        data-id-edt="{{ $ligne->id_ligne }}"
+                                        data-statut-edt="{{ $ligne->statut_ligne }}"
+                                        > 
                                         <i class="far fa-edit text-warning" style="font-size: 25px;"></i>
                                     </a>
                                 </td>

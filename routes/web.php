@@ -57,6 +57,7 @@ Route::middleware('check.session')->group(function() {
     Route::post('/ligne/enr', [LigneController::class, 'enrLigne'])->name('ligne.enr');
     Route::get('/ligne/searchUser', [LigneController::class, 'searchUser'])->name('ligne.searchUser');
     Route::get('/ligne/detailLigne/{id_ligne}', [LigneController::class, 'detailLigne'])->name('ligne.detailLigne');
+    Route::get('/ligne/edt', [LigneController::class, 'edtLigne'])->name('ligne.edt');
 
     Route::get('/fibre', [FibreController::class, 'fibreView'])->name('ref.fibre');
 
