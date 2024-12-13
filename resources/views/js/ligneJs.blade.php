@@ -156,12 +156,12 @@
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         // Sélectionne tous les boutons pour fermer le modal
-        const closeModalButtons = document.querySelectorAll('#close_modal');
+        const closeModalButtons = document.querySelectorAll('#close_modal_act');
 
         closeModalButtons.forEach(button => {
             button.addEventListener('click', function () {
                 // Sélectionne le formulaire dans le modal
-                const form = document.getElementById('form_act_mobile');
+                const form = document.getElementById('form_act_ligne');
 
                 if (form) {
                     // Réinitialise les champs du formulaire
@@ -229,10 +229,7 @@
     document.addEventListener('DOMContentLoaded', function () {
         const searchInput = document.getElementById('search_enr_user');
         const userSelect = document.getElementById('enr_user');
-        const spinner = document.createElement('div'); // Spinner ou indication de chargement
-        spinner.innerHTML = '<small>Recherche en cours...</small>';
-        spinner.style.display = 'none';
-        searchInput.parentNode.appendChild(spinner); // Ajouter le spinner sous le champ de recherche
+        const spinner = document.getElementById('loadingSpinner'); // On utilise l'élément déjà existant
 
         let timeout = null; // Timer pour éviter les requêtes excessives
 
@@ -242,8 +239,7 @@
             const query = searchInput.value.trim();
 
             if (query.length >= 2) {
-                // Afficher le spinner après un court délai
-                spinner.style.display = 'block';
+                spinner.style.display = 'block'; // Afficher le texte "Recherche en cours..."
 
                 timeout = setTimeout(() => {
                     fetch(`/ligne/searchUser?query=${query}`)
@@ -254,10 +250,13 @@
                             return response.json();
                         })
                         .then(data => {
-                            spinner.style.display = 'none'; // Masquer le spinner
+                            spinner.style.display = 'none'; // Masquer le spinner après réception des données
 
+                            // Réinitialiser le contenu du select
                             userSelect.innerHTML = '<option value="0" disabled>Choisir un utilisateur</option>';
+
                             if (data.length > 0) {
+                                // Ajouter les options correspondant aux résultats
                                 data.forEach(user => {
                                     const option = document.createElement('option');
                                     option.value = user.matricule;
@@ -265,6 +264,7 @@
                                     userSelect.appendChild(option);
                                 });
                             } else {
+                                // Aucun résultat trouvé
                                 const noResultOption = document.createElement('option');
                                 noResultOption.value = "0";
                                 noResultOption.textContent = "Aucun utilisateur trouvé";
@@ -272,17 +272,114 @@
                             }
                         })
                         .catch(error => {
-                            spinner.style.display = 'none'; // Masquer le spinner
+                            spinner.style.display = 'none'; // Masquer le spinner en cas d'erreur
                             console.error('Erreur lors de la recherche des utilisateurs:', error);
+
+                            // Afficher un message d'erreur dans le select
                             userSelect.innerHTML = '<option value="0" disabled>Erreur lors du chargement</option>';
                         });
-                }, 300); // Délais pour éviter les requêtes excessives (300ms)
+                }, 300); // Attente de 300ms pour limiter les requêtes fréquentes
             } else {
-                // Réinitialiser le contenu du select et masquer le spinner
+                // Réinitialiser le contenu du select et masquer le spinner si la saisie est courte
                 spinner.style.display = 'none';
                 userSelect.innerHTML = '<option value="0" disabled>Choisir un utilisateur</option>';
             }
         });
     });
+</script>
 
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // Sélectionne tous les boutons pour fermer le modal
+        const closeModalButtons = document.querySelectorAll('#close_modal_enr');
+
+        closeModalButtons.forEach(button => {
+            button.addEventListener('click', function () {
+                // Sélectionne le formulaire dans le modal
+                const form = document.getElementById('form_enr_ligne');
+
+                if (form) {
+                    // Réinitialise les champs du formulaire
+                    form.reset();
+
+                    // Réinitialise manuellement les sélecteurs si nécessaire
+                    const selects = form.querySelectorAll('select');
+                    selects.forEach(select => {
+                        select.value = ''; // Réinitialise le champ
+                        select.dispatchEvent(new Event('change')); // Notifie les autres scripts éventuels
+                    });
+
+                    // Supprime les classes CSS d'erreur des champs
+                    const invalidFields = form.querySelectorAll('.is-invalid');
+                    invalidFields.forEach(field => {
+                        field.classList.remove('is-invalid');
+                    });
+
+                    // Supprime les messages d'erreur affichés
+                    const errorMessages = form.querySelectorAll('.invalid-feedback');
+                    errorMessages.forEach(error => {
+                        error.textContent = '';
+                    });
+                }
+            });
+        });
+    });
+</script>
+
+{{-- VOIR PLUS LIGNE --}}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Sélectionne tous les boutons pour voir les détails
+        const voirLigneBtns = document.querySelectorAll('#btn_voir_ligne');
+
+        // Ajoute un gestionnaire d'événements à chaque bouton
+        voirLigneBtns.forEach(btn => {
+            btn.addEventListener('click', function (event) {
+                event.preventDefault(); // Empêche la redirection normale
+
+                // Récupère l'ID de la ligne depuis l'attribut `data-id_voir`
+                const idLigne = this.getAttribute('data-id_voir');
+
+                // Vérifie que l'ID est valide
+                if (!idLigne) {
+                    alert("ID de ligne non valide !");
+                    return;
+                }
+
+                // Appelle l'API pour récupérer les données
+                fetch(`/ligne/detailLigne/${idLigne}`)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Erreur lors de la récupération des données.');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        // Injecte les données dans le contenu du modal
+                        populateModal(data);
+
+                        // Affiche le modal
+                        const modal = new bootstrap.Modal(document.getElementById('modal_voir_ligne'));
+                        modal.show();
+                    })
+                    .catch(error => {
+                        console.error('Erreur:', error);
+                        alert('Une erreur est survenue lors de la récupération des détails de la ligne.');
+                    });
+            });
+        });
+
+        // Fonction pour injecter les données dans le modal
+        function populateModal(data) {
+            // Remplace les valeurs dans le tableau du modal
+            document.querySelector('#modal_voir_ligne .modal-body [data-field="num_ligne"]').textContent = data.num_ligne;
+            document.querySelector('#modal_voir_ligne .modal-body [data-field="num_sim"]').textContent = data.num_sim;
+            document.querySelector('#modal_voir_ligne .modal-body [data-field="type_ligne"]').textContent = data.type_ligne;
+            document.querySelector('#modal_voir_ligne .modal-body [data-field="nom_forfait"]').textContent = data.nom_forfait;
+            document.querySelector('#modal_voir_ligne .modal-body [data-field="prix_forfait_ht"]').textContent = data.prix_forfait_ht + " Ar";
+            document.querySelector('#modal_voir_ligne .modal-body [data-field="login"]').textContent = data.login;
+            document.querySelector('#modal_voir_ligne .modal-body [data-field="localisation"]').textContent = data.localisation;
+            document.querySelector('#modal_voir_ligne .modal-body [data-field="debut_affectation"]').textContent = data.debut_affectation;
+        }
+    });
 </script>

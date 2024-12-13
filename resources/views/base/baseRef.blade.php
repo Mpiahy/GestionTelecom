@@ -11,6 +11,58 @@
     <link rel="stylesheet" href="{{asset('/assets/css/animate.min.css')}}">
 </head>
 
+<style>
+    /* Styles pour la modal */
+#modal_voir_ligne .modal-content {
+    border-radius: 8px; /* Coins arrondis pour moderniser */
+}
+
+#modal_voir_ligne .modal-header {
+    background: #007bff; /* Couleur primaire Bootstrap */
+    color: white;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+}
+
+#modal_voir_ligne .modal-body {
+    background-color: #f8f9fa; /* Arrière-plan clair pour le corps */
+    padding: 20px;
+}
+
+#modal_voir_ligne table {
+    border-collapse: separate;
+    border-spacing: 0 10px; /* Espacement entre les lignes */
+}
+
+#modal_voir_ligne th {
+    font-weight: 600;
+    text-align: left;
+    background-color: #e9ecef; /* Fond léger pour les en-têtes */
+    border: none;
+    padding: 10px 15px;
+    vertical-align: middle;
+}
+
+#modal_voir_ligne td {
+    border: none;
+    padding: 10px 15px;
+    vertical-align: middle;
+    color: #495057; /* Couleur du texte des cellules */
+    background-color: white; /* Fond blanc des cellules */
+    border-left: 4px solid #007bff; /* Petite bordure colorée à gauche pour différencier */
+}
+
+/* Responsive design pour les petites résolutions */
+@media (max-width: 768px) {
+    #modal_voir_ligne table th,
+    #modal_voir_ligne table td {
+        font-size: 14px;
+        padding: 8px 10px;
+    }
+}
+
+</style>
+
 <body id="page-top">
     <div id="wrapper">
         <nav class="navbar navbar-dark align-items-start sidebar sidebar-dark accordion bg-gradient-primary p-0" style="color: var(--bs-accordion-active-color);background: rgb(10,72,102);">

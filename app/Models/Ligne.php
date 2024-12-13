@@ -45,6 +45,20 @@ class Ligne extends Model
         return $query->get();
     }
 
+    public static function getLignesWithBigDetails($id_ligne)
+    {
+        $sql = "SELECT * FROM view_ligne_big_details";
+        
+        // Ajout de la clause WHERE si $id_ligne est fourni
+        if (!empty($id_ligne)) {
+            $sql .= " WHERE id_ligne = :id_ligne";
+            return DB::select($sql, ['id_ligne' => $id_ligne]);
+        }
+
+        return DB::select($sql);
+    }
+    
+
     public static function createLigneWithDetails($data)
     {
         $ligne = self::create([

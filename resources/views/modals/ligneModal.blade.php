@@ -1,57 +1,56 @@
 <div id="modal_voir_ligne" class="modal" role="dialog" tabindex="-1">
     <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h4 class="modal-title text-primary">Plus d&#39;information pour cette ligne</h4><button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
+        <div class="modal-content border-0 shadow">
+            <!-- Header de la modal -->
+            <div class="modal-header bg-primary text-white">
+                <h4 class="modal-title">Plus d&#39;information pour cette ligne</h4>
             </div>
-            <div class="modal-body">
+            
+            <!-- Corps de la modal -->
+            <div class="modal-body bg-light">
                 <div id="dataTable-2" class="table-responsive table mt-2" role="grid" aria-describedby="dataTable_info">
-                    <table id="dataTable" class="table table-hover my-0">
+                    <table id="dataTable" class="table table-hover table-bordered align-middle">
                         <tbody>
                             <tr>
-                                <th class="table-primary">Numéro d&#39;Appel</th>
-                                <td class="text-dark">+261 49 599 53</td>
+                                <th class="table-primary text-start">Numéro d&#39;Appel</th>
+                                <td class="text-dark text-start" data-field="num_ligne"></td>
                             </tr>
                             <tr>
-                                <th class="table-primary">Numéro SIM</th>
-                                <td class="text-dark">1234567890123456789</td>
+                                <th class="table-primary text-start">Numéro SIM</th>
+                                <td class="text-dark text-start" data-field="num_sim"></td>
                             </tr>
                             <tr>
-                                <th class="table-primary">Adresse IP</th>
-                                <td class="text-dark">--</td>
+                                <th class="table-primary text-start">Type</th>
+                                <td class="text-dark text-start" data-field="type_ligne"></td>
                             </tr>
                             <tr>
-                                <th class="table-primary">Type</th>
-                                <td class="text-dark">Voix Mobile</td>
+                                <th class="table-primary text-start">Forfait</th>
+                                <td class="text-dark text-start" data-field="nom_forfait"></td>
                             </tr>
                             <tr>
-                                <th class="table-primary">Forfait</th>
-                                <td class="text-dark">Forfait 0</td>
+                                <th class="table-primary text-start">Prix HT mensuel</th>
+                                <td class="text-dark text-start" data-field="prix_forfait_ht"></td>
                             </tr>
                             <tr>
-                                <th class="table-primary">Prix HT</th>
-                                <td class="text-dark">19 764 Ar</td>
+                                <th class="table-primary text-start">Responsable</th>
+                                <td class="text-dark text-start" data-field="login"></td>
                             </tr>
                             <tr>
-                                <th class="table-primary">Responsable</th>
-                                <td class="text-dark">Randriamanivo Andriamahaleo Mpiahisoa</td>
+                                <th class="table-primary text-start">Localisation</th>
+                                <td class="text-dark text-start" data-field="localisation"></td>
                             </tr>
                             <tr>
-                                <th class="table-primary">Localisation</th>
-                                <td class="text-dark">Dépôt Anosibe</td>
+                                <th class="table-primary text-start">Date d&#39;affectation</th>
+                                <td class="text-dark text-start" data-field="debut_affectation"></td>
                             </tr>
-                            <tr>
-                                <th class="table-primary">Date d&#39;affectation</th>
-                                <td class="text-dark">25-10-2024</td>
-                            </tr>
-                        </tbody>
+                        </tbody>                        
                     </table>
                 </div>
             </div>
-            <div class="modal-footer"><button class="btn btn-warning" type="button" data-bs-dismiss="modal">Fermer</button></div>
         </div>
     </div>
 </div>
+
 <div id="modal_edit_ligne" class="modal" role="dialog" tabindex="-1">
     <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
         <div class="modal-content">
@@ -132,7 +131,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h4 class="modal-title text-primary">Demande d'activation d'une ligne</h4>
-                <button id="close_modal" class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button id="close_modal_act" class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <div class="row">
@@ -142,7 +141,7 @@
                     <div class="col-xl-6">
                         <div class="card shadow">
                             <div class="card-body">
-                                <form id="form_act_mobile" action="{{ route('ligne.save') }}" method="POST" style="color: #a0c8d8;">
+                                <form id="form_act_ligne" action="{{ route('ligne.save') }}" method="POST" style="color: #a0c8d8;">
                                     @csrf <!-- Protection CSRF -->
                                     <input type="hidden" id="enr_mailto" value="{{ session('enr_mailto') ? 'true' : 'false' }}">
 
@@ -222,7 +221,7 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button id="close_modal" class="btn btn-warning" type="button" data-bs-dismiss="modal">Fermer</button>
+                <button id="close_modal_act" class="btn btn-warning" type="button" data-bs-dismiss="modal">Fermer</button>
                 <button id="btn_demander" class="btn btn-primary" type="submit" form="form_act_mobile" disabled>Demander</button>
             </div>
         </div>
@@ -233,7 +232,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h4 class="modal-title text-primary">Enregistrer une ligne</h4>
-                <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button id="close_modal_enr" class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <div class="row">
@@ -265,7 +264,7 @@
                                             <strong>Numéro Ligne</strong>
                                         </label>
                                         <input id="enr_ligne" class="form-control @error('enr_ligne', 'enr_ligne_errors') is-invalid @enderror" 
-                                               type="text" name="enr_ligne" placeholder="Entrer le numéro ligne" value="{{ old('enr_ligne') }}" />
+                                               type="text" name="enr_ligne" placeholder="Entrer le numéro ligne" value="{{ old('enr_ligne') ?? '+261'}}" />
                                         @error('enr_ligne', 'enr_ligne_errors')
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
@@ -288,6 +287,7 @@
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
                                     </div>
+                                    
                                     <div class="mb-3">
                                         <label class="form-label" for="enr_date">
                                             <strong>Date d&#39;affectation</strong>
@@ -308,53 +308,9 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button class="btn btn-warning" type="button" data-bs-dismiss="modal">Fermer</button>
+                <button id="close_modal_enr" class="btn btn-warning" type="button" data-bs-dismiss="modal">Fermer</button>
                 <button class="btn btn-primary" type="submit" form="form_enr_ligne">Enregistrer</button>
             </div>
-        </div>
-    </div>
-</div>
-<div id="modal_attr_ligne" class="modal" role="dialog" tabindex="-1">
-    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h4 class="modal-title text-primary">Attribuer une ligne</h4><button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <div class="row">
-                    <div class="col">
-                        <div></div>
-                    </div>
-                    <div class="col-xl-7">
-                        <div class="card shadow">
-                            <div class="card-body">
-                                <form id="form_attr_mobile" action="attr_mobile" method="get" style="color: #a0c8d8;">
-                                    <div class="mb-3"><label class="form-label" for="attr_ligne"><strong>Numéro d&#39;appel</strong></label><input id="attr_ligne" class="form-control" type="text" name="attr_ligne" value="+261 32 59 599 53" readonly /></div>
-                                    <div class="mb-3"><label class="form-label" for="attr_sim"><strong>Numéro SIM</strong></label><input id="attr_sim" class="form-control" type="text" name="attr_sim" value="98745632145698" readonly /></div>
-                                    <div class="mb-3"><label class="form-label" for="attr_operateur"><strong>Opérateur</strong></label><input id="attr_operateur" class="form-control" type="text" name="attr_operateur" value="Orange" readonly /></div>
-                                    <div class="mb-3"><label class="form-label" for="attr_type"><strong>Type</strong></label><input id="attr_type" class="form-control" type="text" name="attr_type" value="Internet mobile" readonly /></div>
-                                    <div class="mb-3"><label class="form-label" for="attr_forfait"><strong>Forfait</strong></label><input id="attr_forfait" class="form-control" type="text" name="attr_forfait" value="Forfait 0" readonly /></div>
-                                    <div class="mb-3"><label class="form-label" for="attr_resp"><strong>Responsable</strong></label><select id="attr_resp" class="form-select" name="attr_resp">
-                                            <option value="0" selected>Choisir le responsable</option>
-                                            <optgroup label="Dépôt Anosibe">
-                                                <option value="1" selected>Randriamanivo Mpiahisoa</option>
-                                                <option value="2">Razafindrasoava Mirindra</option>
-                                            </optgroup>
-                                            <optgroup label="DTAMA">
-                                                <option value="3">Tantelison Odilon</option>
-                                            </optgroup>
-                                        </select></div>
-                                    <div class="mb-3"><label class="form-label" for="attr_date"><strong>Date d&#39;affectation</strong></label><input id="attr_date" class="form-control" type="datetime-local" name="attr_date" /></div>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col">
-                        <div></div>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer"><button class="btn btn-warning" type="button" data-bs-dismiss="modal">Fermer</button><button class="btn btn-primary" type="submit" form="form_attr_mobile">Attribuer</button></div>
         </div>
     </div>
 </div>

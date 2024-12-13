@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class Utilisateur extends Model
 {
@@ -71,5 +72,15 @@ class Utilisateur extends Model
                         ->orWhere('prenom', 'ILIKE', '%' . $name . '%');
         }
         return $query;
+    }
+
+    public static function searchUser($term)
+    {
+        return DB::table('utilisateur')
+            ->where('nom', 'ILIKE', "%{$term}%")
+            ->orWhere('prenom', 'ILIKE', "%{$term}%")
+            ->orWhere('login', 'ILIKE', "%{$term}%")
+            ->orWhere('matricule', 'ILIKE', "%{$term}%")
+            ->get();
     }
 }

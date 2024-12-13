@@ -148,20 +148,25 @@
                     <table id="dataTable" class="table table-hover my-0">
                         <thead>
                             <tr>
-                                <th>Opérateur</th>
                                 <th>Statut</th>
                                 <th>Type</th>
                                 <th>Forfait</th>
                                 <th>Numéro Ligne</th>
                                 <th>Numéro SIM</th>
                                 <th>Utilisateur</th>
-                                <th>Localisation</th>
+                                <th>Opérateur</th>
                                 <th class="text-center" style="padding-right: 30px;padding-left: 30px;">Action</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach ($lignes as $ligne)
                             <tr>
+                                <td>{{ $ligne->statut_ligne }}</td>
+                                <td>{{ $ligne->type_ligne }}</td>
+                                <td>{{ $ligne->nom_forfait }}</td>
+                                <td>{{ $ligne->num_ligne ?? '--' }}</td>
+                                <td>{{ $ligne->num_sim }}</td>
+                                <td>{{ $ligne->login ?? '--' }}</td>
                                 <td>
                                     <a href="#" 
                                         class="mailto-link text-decoration-none"
@@ -172,18 +177,10 @@
                                         {{ $ligne->nom_operateur }}
                                     </a>
                                 </td>                                
-                                <td>{{ $ligne->statut_ligne }}</td>
-                                <td>{{ $ligne->type_ligne }}</td>
-                                <td>{{ $ligne->nom_forfait }}</td>
-                                <td>{{ $ligne->num_ligne ?? 'En attente' }}</td>
-                                <td>{{ $ligne->num_sim }}</td>
-                                <td>--</td>
-                                <td>--</td>
                                 <td class="text-center" style="padding-left: 0px;padding-right: 0px;">
-                                    <a 
+                                    <a href="#"
                                         id="btn_enr_ligne" 
-                                        class="text-decoration-none" 
-                                        href="enr_ligne" 
+                                        class="text-decoration-none"
                                         style="margin-right: 5px;" 
                                         data-bs-target="#modal_enr_ligne" 
                                         data-bs-toggle="modal" 
@@ -194,9 +191,16 @@
                                         data-id-enr="{{ $ligne->id_ligne }}">
                                         <i class="far fa-save text-info" style="font-size: 25px;"></i>
                                     </a>
-                                    <a class="text-decoration-none" href="voir_ligne" style="margin-right: 5px;" data-bs-target="#modal_voir_ligne" title="Voir" data-toggle="tooltip" data-bs-toggle="modal">
-                                        <i class="fas fa-search-plus text-primary" style="font-size: 25px;"></i>
-                                    </a>
+                                    <a href="{{ url('/ligne/detailLigne/' . $ligne->id_ligne) }}"
+                                        id="btn_voir_ligne"
+                                        class="text-decoration-none"
+                                        style="margin-right: 5px;" 
+                                        data-bs-target="#modal_voir_ligne" 
+                                        title="Plus d'information"
+                                        data-bs-toggle="modal"
+                                        data-id_voir="{{ $ligne->id_ligne }}">
+                                        <i class="fas fa-info-circle text-primary" style="font-size: 25px;"></i>
+                                    </a>                                 
                                     <a class="text-decoration-none" href="edit_operateur" data-bs-target="#modal_edit_ligne" data-bs-toggle="modal" title="Modifier" data-toggle="tooltip">
                                         <i class="far fa-edit text-warning" style="font-size: 25px;"></i>
                                     </a>

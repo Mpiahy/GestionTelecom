@@ -49,6 +49,21 @@ class LigneController extends Controller
         return view('ref.ligne', compact('login','lignes','contactsOperateurs', 'types', 'forfaits', 'statuts', 'utilisateurs'));
     }
 
+    // Voir plus ligne
+    public function detailLigne($id_ligne)
+    {
+        // Appel de la méthode optimisée pour récupérer les détails de la ligne
+        $lignesBig = Ligne::getLignesWithBigDetails($id_ligne);
+
+        // Vérifie si aucun résultat n'a été trouvé
+        if (empty($lignesBig)) {
+            return response()->json(['error' => 'Détails de la ligne introuvables.'], 404);
+        }
+
+        // Retourne le premier résultat trouvé (si applicable)
+        return response()->json($lignesBig[0]);
+    }
+
     public function saveLigne(Request $request)
     {
         try {
@@ -125,13 +140,8 @@ class LigneController extends Controller
             }
 
             // Rechercher les utilisateurs correspondants
-            $utilisateurs = Utilisateur::where('nom', 'ILIKE', "%{$term}%")
-                ->orWhere('prenom', 'ILIKE', "%{$term}%")
-                ->orWhere('login', 'ILIKE', "%{$term}%")
-                ->orWhere('matricule', 'ILIKE', "%{$term}%")
-                ->get();
+            $utilisateurs = Utilisateur::searchUser($term);
 
-            // Retourner les résultats
             return response()->json($utilisateurs, 200);
         } catch (Exception $e) {
             // En cas d'erreur, retourner un message d'erreur avec un code 500
