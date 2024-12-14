@@ -15,9 +15,9 @@ class TypeUtilisateurSeeder extends Seeder
         TypeUtilisateur::truncate();
 
         TypeUtilisateur::insert([
-            ['type_utilisateur' => 'Collaborateur'],
-            ['type_utilisateur' => 'Prestataire'],
-            ['type_utilisateur' => 'Stagiaire'],
+            ['type_utilisateur' => 'COLLABORATEUR'],
+            ['type_utilisateur' => 'PRESTATAIRE'],
+            ['type_utilisateur' => 'STAGIAIRE'],
         ]);
     }
 }

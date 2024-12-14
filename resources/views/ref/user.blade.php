@@ -153,7 +153,7 @@
                         <tbody>
                             @foreach ($utilisateurs as $utilisateur)
                                 <tr class="utilisateur-row {{ strtolower($utilisateur->typeUtilisateur->type_utilisateur) }}">
-                                    <td class="text-center">{{ $utilisateur->matricule }}</td>
+                                    <td class="text-center">{{ $utilisateur->matricule ?? 'N/A' }}</td>
                                     <td>{{ $utilisateur->nom }} {{ $utilisateur->prenom }}</td>
                                     <td>{{ $utilisateur->login }}</td>
                                     <td>{{ $utilisateur->typeUtilisateur->type_utilisateur ?? 'N/A' }}</td>
@@ -170,7 +170,8 @@
                                             class="text-decoration-none edit-user-btn"
                                             data-bs-toggle="modal"
                                             data-bs-target="#modal_edit_emp"
-                                            data-id="{{ $utilisateur->matricule }}"
+                                            data-id="{{ $utilisateur->id_utilisateur }}"
+                                            data-matricule="{{ $utilisateur->matricule }}"
                                             data-nom="{{ $utilisateur->nom }}"
                                             data-prenom="{{ $utilisateur->prenom }}"
                                             data-login="{{ $utilisateur->login }}"
@@ -184,7 +185,8 @@
                                             title="Départ"
                                             data-bs-target="#supprimer_utilisateur"
                                             data-bs-toggle="modal"
-                                            data-id="{{ $utilisateur->matricule }}"
+                                            data-id="{{ $utilisateur->id_utilisateur }}"
+                                            data-matricule="{{ $utilisateur->matricule }}"
                                             data-name="{{ $utilisateur->nom }} {{ $utilisateur->prenom }}"
                                             data-login="{{ $utilisateur->login }}"
                                             data-type="{{ $utilisateur->typeUtilisateur->type_utilisateur }}"

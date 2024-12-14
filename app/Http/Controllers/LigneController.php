@@ -100,8 +100,19 @@ class LigneController extends Controller
                 'enr_ligne' => 'required|string|max:15|unique:ligne,num_ligne', //+2613xxxxxxxx
                 'enr_date' => 'required|date',
                 'enr_id_ligne' => 'required|integer|exists:ligne,id_ligne', //id_ligne correspondant
-                'enr_user' => 'required|string|exists:utilisateur,matricule',
+                'enr_user' => 'nullable|integer|exists:utilisateur,id_utilisateur', // Nullable pour gérer la récupération depuis le champ caché
+                'selected_user' => 'nullable|integer|exists:utilisateur,id_utilisateur', // Champ caché
             ]);
+
+            // Si `enr_user` est vide, utilise `selected_user`
+            $validatedData['enr_user'] = $validatedData['enr_user'] ?? $validatedData['selected_user'];
+
+            if (!$validatedData['enr_user']) {
+                return redirect()
+                    ->route('ref.ligne')
+                    ->withErrors(['enr_user' => 'Aucun utilisateur valide sélectionné.'], 'enr_ligne_errors')
+                    ->withInput();
+            }
 
             $idLigne = $validatedData['enr_id_ligne'];
             $ligne = Ligne::findOrFail($idLigne);

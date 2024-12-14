@@ -25,7 +25,7 @@ return new class extends Migration
                 ligne.id_operateur,
                 operateur.nom_operateur,
                 contact_operateur.email AS contact_email,
-                affectation.matricule,
+                affectation.id_utilisateur,
                 utilisateur.login,
                 affectation.debut_affectation
             FROM 
@@ -36,7 +36,7 @@ return new class extends Migration
             LEFT JOIN operateur ON ligne.id_operateur = operateur.id_operateur
             LEFT JOIN contact_operateur ON ligne.id_operateur = contact_operateur.id_operateur
             LEFT JOIN affectation ON ligne.id_ligne = affectation.id_ligne
-            LEFT JOIN utilisateur ON affectation.matricule = utilisateur.matricule;
+            LEFT JOIN utilisateur ON affectation.id_utilisateur = utilisateur.id_utilisateur;
         ');
         DB::statement('
             CREATE OR REPLACE VIEW view_ligne_big_details AS
@@ -56,7 +56,7 @@ return new class extends Migration
             FROM 
                 view_ligne_details vld
             LEFT JOIN view_forfait_prix vfp ON vld.id_forfait = vfp.id_forfait
-            LEFT JOIN utilisateur u ON vld.matricule = u.matricule
+            LEFT JOIN utilisateur u ON vld.id_utilisateur = u.id_utilisateur
             LEFT JOIN localisation loc ON u.id_localisation = loc.id_localisation
             LEFT JOIN affectation aff ON vld.id_ligne = aff.id_ligne;
         ');

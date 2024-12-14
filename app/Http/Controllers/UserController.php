@@ -35,23 +35,15 @@ class UserController extends Controller
     {
         try {
             $validatedData = $request->validate([
-                'matricule' => 'required|unique:utilisateur,matricule',
-                'nom' => 'required|string|max:50',
-                'prenom' => 'required|string|max:50',
-                'login' => 'required|string|max:20|unique:utilisateur,login',
-                'id_type_utilisateur' => 'required|exists:type_utilisateur,id_type_utilisateur',
-                'id_localisation' => 'required|exists:localisation,id_localisation',
+                'matricule_add' => 'nullable|unique:utilisateur,matricule',
+                'nom_add' => 'required|string|max:50',
+                'prenom_add' => 'required|string|max:50',
+                'login_add' => 'required|string|max:40|unique:utilisateur,login',
+                'id_type_utilisateur_add' => 'required|exists:type_utilisateur,id_type_utilisateur',
+                'id_localisation_add' => 'required|exists:localisation,id_localisation',
                 'new_fonction' => 'nullable|string|max:50',
-            ], [], [
-                'matricule' => __('Matricule'),
-                'nom' => __('Nom'),
-                'prenom' => __('Prénom'),
-                'login' => __('Login'),
-                'id_type_utilisateur' => __('Type utilisateur'),
-                'id_localisation' => __('Localisation'),
-                'new_fonction' => __('Nouvelle fonction'),
             ]);
-
+              
             if ($request->id_fonction === 'new') {
                 $request->validate(['new_fonction' => 'required|string|max:50']);
                 $fonction = Fonction::create(['fonction' => $request->new_fonction]);
@@ -61,7 +53,8 @@ class UserController extends Controller
                 $validatedData['id_fonction'] = $request->id_fonction;
             }
 
-            Utilisateur::create($validatedData);
+            Utilisateur::ajouterUtilisateur($validatedData);
+
             return redirect()->route('ref.user')->with('success', __('Utilisateur ajouté avec succès !'));
         } catch (\Illuminate\Validation\ValidationException $e) {
             return redirect()->route('ref.user')
@@ -75,35 +68,28 @@ class UserController extends Controller
     public function modifierUtilisateur(Request $request)
     {
         try {
+            // Validation des données
             $validated = $request->validate([
-                'matricule' => 'required|exists:utilisateur,matricule',
+                'matricule' => 'nullable|exists:utilisateur,matricule', // Nullable pour éviter d'obliger la saisie
                 'nom' => 'required|string|max:255',
                 'prenom' => 'required|string|max:255',
-                'login' => 'required|string|max:255|unique:utilisateur,login,' . $request->matricule . ',matricule',
+                'login' => 'required|string|max:255|unique:utilisateur,login,' . $request->id . ',id_utilisateur',
                 'id_type_utilisateur' => 'required|exists:type_utilisateur,id_type_utilisateur',
                 'id_fonction' => 'required|exists:fonction,id_fonction',
                 'id_localisation' => 'required|exists:localisation,id_localisation',
-            ], [], [
-                'matricule' => __('Matricule'),
-                'nom' => __('Nom'),
-                'prenom' => __('Prénom'),
-                'login' => __('Login'),
-                'id_type_utilisateur' => __('Type utilisateur'),
-                'id_fonction' => __('Fonction'),
-                'id_localisation' => __('Localisation'),
             ]);
-    
-            $utilisateur = Utilisateur::findOrFail($request->matricule);
-            $utilisateur->update($validated);
-    
+
+            Utilisateur::modifierUtilisateur($request->id, $validated);
+
             return redirect()->route('ref.user')->with('success', __('Utilisateur modifié avec succès.'));
         } catch (\Illuminate\Validation\ValidationException $e) {
+            // Redirection en cas d'erreurs de validation
             return redirect()->route('ref.user')
                 ->withErrors($e->validator)
                 ->withInput()
                 ->with('modal_with_error', 'modal_edit_emp');
         }
-    }        
+    } 
 
     // Suppression d'un utilisateur
     public function supprimerUtilisateur($id)

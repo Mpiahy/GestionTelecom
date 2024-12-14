@@ -27,7 +27,7 @@
         });
 
         // Gestion du formulaire pour générer un lien mailto dynamique
-        const form = document.getElementById('form_act_mobile');
+        const form = document.getElementById('form_act_ligne');
 
         if (form) {
             form.addEventListener('submit', function (event) {
@@ -228,17 +228,17 @@
     document.addEventListener('DOMContentLoaded', function () {
         const searchInput = document.getElementById('search_enr_user');
         const userSelect = document.getElementById('enr_user');
-        const spinner = document.getElementById('loadingSpinner'); // On utilise l'élément déjà existant
+        const hiddenInput = document.getElementById('selected_user_hidden');
+        const spinner = document.getElementById('loadingSpinner');
 
-        let timeout = null; // Timer pour éviter les requêtes excessives
+        let timeout = null;
 
         searchInput.addEventListener('input', function () {
-            clearTimeout(timeout); // Réinitialiser le timer à chaque nouvelle saisie
-
+            clearTimeout(timeout);
             const query = searchInput.value.trim();
 
             if (query.length >= 2) {
-                spinner.style.display = 'block'; // Afficher le texte "Recherche en cours..."
+                spinner.style.display = 'block';
 
                 timeout = setTimeout(() => {
                     fetch(`/ligne/searchUser?query=${query}`)
@@ -249,40 +249,47 @@
                             return response.json();
                         })
                         .then(data => {
-                            spinner.style.display = 'none'; // Masquer le spinner après réception des données
-
-                            // Réinitialiser le contenu du select
+                            spinner.style.display = 'none';
                             userSelect.innerHTML = '<option value="0" disabled>Choisir un utilisateur</option>';
 
                             if (data.length > 0) {
-                                // Ajouter les options correspondant aux résultats
-                                data.forEach(user => {
+                                data.forEach((user, index) => {
                                     const option = document.createElement('option');
-                                    option.value = user.matricule;
-                                    option.textContent = `${user.nom} ${user.prenom}`;
+                                    option.value = user.id_utilisateur;
+                                    option.textContent = `${user.nom} ${user.prenom} | ${user.login}`;
                                     userSelect.appendChild(option);
+
+                                    if (index === 0) {
+                                        option.selected = true;
+                                        hiddenInput.value = user.id_utilisateur; // Mettre à jour le champ caché
+                                    }
                                 });
                             } else {
-                                // Aucun résultat trouvé
                                 const noResultOption = document.createElement('option');
                                 noResultOption.value = "0";
                                 noResultOption.textContent = "Aucun utilisateur trouvé";
                                 userSelect.appendChild(noResultOption);
+
+                                hiddenInput.value = ""; // Réinitialiser le champ caché
                             }
                         })
                         .catch(error => {
-                            spinner.style.display = 'none'; // Masquer le spinner en cas d'erreur
+                            spinner.style.display = 'none';
                             console.error('Erreur lors de la recherche des utilisateurs:', error);
-
-                            // Afficher un message d'erreur dans le select
                             userSelect.innerHTML = '<option value="0" disabled>Erreur lors du chargement</option>';
+                            hiddenInput.value = ""; // Réinitialiser le champ caché
                         });
-                }, 300); // Attente de 300ms pour limiter les requêtes fréquentes
+                }, 300);
             } else {
-                // Réinitialiser le contenu du select et masquer le spinner si la saisie est courte
                 spinner.style.display = 'none';
                 userSelect.innerHTML = '<option value="0" disabled>Choisir un utilisateur</option>';
+                hiddenInput.value = ""; // Réinitialiser le champ caché
             }
+        });
+
+        // Synchronise le champ caché avec le champ <select> lorsqu'une option est sélectionnée
+        userSelect.addEventListener('change', function () {
+            hiddenInput.value = userSelect.value;
         });
     });
 </script>

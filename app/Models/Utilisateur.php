@@ -10,9 +10,8 @@ class Utilisateur extends Model
 {
     use HasFactory;
 
-    protected $table = 'utilisateur'; // Nom de la table
-    protected $primaryKey = 'matricule'; // Clé primaire
-    public $incrementing = false; // Car 'matricule' est un entier non auto-incrémenté
+    protected $table = 'utilisateur';
+    protected $primaryKey = 'id_utilisateur';
     protected $fillable = ['matricule', 'nom', 'prenom', 'login', 'id_type_utilisateur', 'id_fonction', 'id_localisation'];
 
     // Relations avec les autres tables
@@ -34,7 +33,34 @@ class Utilisateur extends Model
     // Fonction d'insertion d'utilisateur
     public static function ajouterUtilisateur($data)
     {
-        return self::create($data); // Utilise les colonnes définies dans $fillable
+        return self::create([
+            'matricule' => $data['matricule_add'] ?? null, 
+            'nom' => $data['nom_add'],
+            'prenom' => $data['prenom_add'],
+            'login' => $data['login_add'],
+            'id_type_utilisateur' => $data['id_type_utilisateur_add'],
+            'id_fonction' => $data['id_fonction'],
+            'id_localisation' => $data['id_localisation_add'],
+        ]);
+    }
+
+    public static function modifierUtilisateur($id, $data)
+    {
+        // Récupération de l'utilisateur par ID
+        $utilisateur = self::findOrFail($id);
+
+        // Mise à jour des données
+        $utilisateur->update([
+            'matricule' => $data['matricule'] ?? $utilisateur->matricule, // Garde l'ancien matricule si non fourni
+            'nom' => $data['nom'],
+            'prenom' => $data['prenom'],
+            'login' => $data['login'],
+            'id_type_utilisateur' => $data['id_type_utilisateur'],
+            'id_fonction' => $data['id_fonction'],
+            'id_localisation' => $data['id_localisation'],
+        ]);
+
+        return $utilisateur;
     }
 
     public function scopeFilterByType($query, $type)

@@ -18,7 +18,7 @@ return new class extends Migration
             $table->date('fin_affectation')->nullable();
             $table->unsignedBigInteger('id_ligne')->nullable();
             $table->unsignedBigInteger('id_equipement')->nullable();
-            $table->unsignedBigInteger('matricule')->nullable();
+            $table->unsignedBigInteger('id_utilisateur')->nullable();
 
             // Clés étrangères
             $table->foreign('id_ligne')
@@ -31,8 +31,8 @@ return new class extends Migration
                 ->on('equipement')
                 ->onDelete('cascade');
 
-            $table->foreign('matricule')
-                ->references('matricule')
+            $table->foreign('id_utilisateur')
+                ->references('id_utilisateur')
                 ->on('utilisateur')
                 ->onDelete('cascade');
 

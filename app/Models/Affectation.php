@@ -17,17 +17,17 @@ class Affectation extends Model
         'fin_affectation',
         'id_ligne',
         'id_equipement',
-        'matricule',
+        'id_utilisateur',
     ];
 
-    public static function creerAffectation($dateDebut, $idLigne, $matricule)
+    public static function creerAffectation($dateDebut, $idLigne, $idUtilisateur)
     {
         self::create([
             'debut_affectation' => $dateDebut,
             'fin_affectation' => null,
             'id_ligne' => $idLigne,
             'id_equipement' => null,
-            'matricule' => $matricule,
+            'id_utilisateur' => $idUtilisateur,
         ]);
     }
 

@@ -25,10 +25,11 @@ return new class extends Migration
         });
         // TABLE utilisateur
         Schema::create('utilisateur', function (Blueprint $table) {
-            $table->id('matricule'); // Utiliser 'matricule' comme clé primaire
+            $table->id('id_utilisateur');
+            $table->unsignedBigInteger('matricule')->nullable();
             $table->string('nom', 50);
             $table->string('prenom', 50);
-            $table->string('login', 20);
+            $table->string('login', 40);
             $table->unsignedBigInteger('id_type_utilisateur');
             $table->unsignedBigInteger('id_fonction');
             $table->unsignedBigInteger('id_localisation');
@@ -36,6 +37,7 @@ return new class extends Migration
             $table->foreign('id_fonction')->references('id_fonction')->on('fonction')->onDelete('cascade');
             $table->foreign('id_localisation')->references('id_localisation')->on('localisation')->onDelete('cascade');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

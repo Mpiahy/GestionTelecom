@@ -39,6 +39,7 @@
             button.addEventListener("click", function () {
                 // Récupérer les données utilisateur
                 const userId = this.getAttribute("data-id");
+                const userMatricule = this.getAttribute("data-matricule");
                 const userNom = this.getAttribute("data-nom");
                 const userPrenom = this.getAttribute("data-prenom");
                 const userLogin = this.getAttribute("data-login");
@@ -48,6 +49,7 @@
 
                 // Vérifier que les champs existent avant de les modifier
                 const fields = {
+                    id: document.querySelector("#edt_emp_id"),
                     matricule: document.querySelector("#edt_emp_matricule"),
                     nom: document.querySelector("#edt_emp_nom"),
                     prenom: document.querySelector("#edt_emp_prenom"),
@@ -57,7 +59,8 @@
                     chantier: document.querySelector("#chantier-select"),
                 };
 
-                if (fields.matricule) fields.matricule.value = userId;
+                if (fields.id) fields.id.value = userId;
+                if (fields.matricule) fields.matricule.value = userMatricule;
                 if (fields.nom) fields.nom.value = userNom;
                 if (fields.prenom) fields.prenom.value = userPrenom;
                 if (fields.login) fields.login.value = userLogin;
@@ -85,6 +88,7 @@
                 // Récupérer les données utilisateur
                 const id = this.getAttribute("data-id");
                 const name = this.getAttribute("data-name");
+                const matricule = this.getAttribute("data-matricule");
                 const login = this.getAttribute("data-login");
                 const type = this.getAttribute("data-type");
                 const fonction = this.getAttribute("data-fonction");
@@ -92,8 +96,9 @@
 
                 // Mettre à jour les champs de la modale
                 const modal = {
-                    nom: document.querySelector("#supprimer_utilisateur .modal-body #utilisateur_nom"),
                     id: document.querySelector("#supprimer_utilisateur .modal-body #utilisateur_id"),
+                    nom: document.querySelector("#supprimer_utilisateur .modal-body #utilisateur_nom"),
+                    matricule: document.querySelector("#supprimer_utilisateur .modal-body #utilisateur_matricule"),
                     login: document.querySelector("#supprimer_utilisateur .modal-body #utilisateur_login"),
                     type: document.querySelector("#supprimer_utilisateur .modal-body #utilisateur_type"),
                     fonction: document.querySelector("#supprimer_utilisateur .modal-body #utilisateur_fonction"),
@@ -101,8 +106,9 @@
                     confirmButton: document.querySelector("#supprimer_utilisateur .modal-footer #confirm_delete_utilisateur"),
                 };
 
-                if (modal.nom) modal.nom.textContent = name;
                 if (modal.id) modal.id.textContent = id;
+                if (modal.nom) modal.nom.textContent = name;
+                if (modal.matricule) modal.matricule.textContent = matricule;
                 if (modal.login) modal.login.textContent = login;
                 if (modal.type) modal.type.textContent = type;
                 if (modal.fonction) modal.fonction.textContent = fonction;

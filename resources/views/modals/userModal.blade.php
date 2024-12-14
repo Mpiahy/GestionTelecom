@@ -50,9 +50,18 @@
                             <div class="card-body">
                                 <form id="edit_emp" action="{{ route('modifier.utilisateur') }}" method="POST">
                                     @csrf
-                                    <!-- Matricule (caché pour ne pas être modifiable) -->
-                                    <input type="hidden" id="edt_emp_matricule" name="matricule" />
+                                    <!-- id_utilisateur (caché pour ne pas être modifiable) -->
+                                    <input type="hidden" id="edt_emp_id" name="id" />
 
+                                    <!-- Matricule -->
+                                    <div class="mb-3">
+                                        <label class="form-label" for="edt_emp_matricule"><strong>Matricule</strong></label>
+                                        <input id="edt_emp_matricule" class="form-control @error('matricule') is-invalid @enderror" type="text" name="matricule" placeholder="Matricule de l'utilisateur" value="{{ old('matricule') }}" />
+                                        @error('nom')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                    
                                     <!-- Nom -->
                                     <div class="mb-3">
                                         <label class="form-label" for="edt_emp_nom"><strong>Nom</strong></label>
@@ -162,14 +171,14 @@
                                     <div class="mb-3">
                                         <label class="form-label"><strong>Nom</strong></label>
                                         <input
-                                            class="form-control @error('nom') is-invalid @enderror"
+                                            class="form-control @error('nom_add') is-invalid @enderror"
                                             type="text"
-                                            name="nom"
+                                            name="nom_add"
                                             placeholder="Nom de l'utilisateur"
-                                            value="{{ old('nom') }}"
+                                            value="{{ old('nom_add') }}"
                                             required
                                         />
-                                        @error('nom')
+                                        @error('nom_add')
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
                                     </div>
@@ -178,14 +187,14 @@
                                     <div class="mb-3">
                                         <label class="form-label"><strong>Prénom(s)</strong></label>
                                         <input
-                                            class="form-control @error('prenom') is-invalid @enderror"
+                                            class="form-control @error('prenom_add') is-invalid @enderror"
                                             type="text"
-                                            name="prenom"
+                                            name="prenom_add"
                                             placeholder="Prénom(s) de l'utilisateur"
-                                            value="{{ old('prenom') }}"
+                                            value="{{ old('prenom_add') }}"
                                             required
                                         />
-                                        @error('prenom')
+                                        @error('prenom_add')
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
                                     </div>
@@ -194,14 +203,14 @@
                                     <div class="mb-3">
                                         <label class="form-label"><strong>Login</strong></label>
                                         <input
-                                            class="form-control @error('login') is-invalid @enderror"
+                                            class="form-control @error('login_add') is-invalid @enderror"
                                             type="text"
-                                            name="login"
+                                            name="login_add"
                                             placeholder="Login de l'utilisateur"
-                                            value="{{ old('login') }}"
+                                            value="{{ old('login_add') }}"
                                             required
                                         />
-                                        @error('login')
+                                        @error('login_add')
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
                                     </div>
@@ -210,14 +219,13 @@
                                     <div class="mb-3">
                                         <label class="form-label"><strong>Matricule</strong></label>
                                         <input
-                                            class="form-control @error('matricule') is-invalid @enderror"
+                                            class="form-control @error('matricule_add') is-invalid @enderror"
                                             type="number"
-                                            name="matricule"
+                                            name="matricule_add"
                                             placeholder="Matricule de l'utilisateur"
-                                            value="{{ old('matricule') }}"
-                                            required
+                                            value="{{ old('matricule_add') }}"
                                         />
-                                        @error('matricule')
+                                        @error('matricule_add')
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
                                     </div>
@@ -225,17 +233,17 @@
                                     <!-- Type d'utilisateur -->
                                     <div class="mb-3">
                                         <label class="form-label"><strong>Type</strong></label>
-                                        <select class="form-select @error('id_type_utilisateur') is-invalid @enderror"
-                                        name="id_type_utilisateur"
+                                        <select class="form-select @error('id_type_utilisateur_add') is-invalid @enderror"
+                                        name="id_type_utilisateur_add"
                                         required>
                                             <option value="" selected disabled>Type</option>
                                             @foreach ($types as $type)
-                                                <option value="{{ $type->id_type_utilisateur }}" {{ old('id_type_utilisateur') == $type->id_type_utilisateur ? 'selected' : '' }}>
+                                                <option value="{{ $type->id_type_utilisateur }}" {{ old('id_type_utilisateur_add') == $type->id_type_utilisateur ? 'selected' : '' }}>
                                                     {{ $type->type_utilisateur }}
                                                 </option>
                                             @endforeach
                                         </select>
-                                        @error('id_type_utilisateur')
+                                        @error('id_type_utilisateur_add')
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
                                     </div>
@@ -281,15 +289,15 @@
                                     <div class="mb-3">
                                         <label class="form-label" for="chantier-select"><strong>Chantier</strong></label>
                                         <input class="form-control mb-2" type="text" id="search-chantier" placeholder="Rechercher un chantier...">
-                                        <select id="chantier-select" class="form-select @error('id_localisation') is-invalid @enderror" name="id_localisation" required>
+                                        <select id="chantier-select" class="form-select @error('id_localisation_add') is-invalid @enderror" name="id_localisation_add" required>
                                             <option value="" selected disabled>Chantier</option>
                                             @foreach ($chantiers as $chantier)
-                                                <option value="{{ $chantier->id_localisation }}" {{ old('id_localisation') == $chantier->id_localisation ? 'selected' : '' }}>
+                                                <option value="{{ $chantier->id_localisation }}" {{ old('id_localisation_add') == $chantier->id_localisation ? 'selected' : '' }}>
                                                     {{ $chantier->localisation }}
                                                 </option>
                                             @endforeach
                                         </select>
-                                        @error('id_localisation')
+                                        @error('id_localisation_add')
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
                                     </div>
@@ -317,8 +325,9 @@
                 <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
+                <p class="text-dark">Id: <strong id="utilisateur_id"></strong></p>
                 <p class="text-dark">Utilisateur: <strong id="utilisateur_nom"></strong></p>
-                <p class="text-dark">Matricule: <strong id="utilisateur_id"></strong></p>
+                <p class="text-dark">Matricule: <strong id="utilisateur_matricule"></strong></p>
                 <p class="text-dark">Login: <strong id="utilisateur_login"></strong></p>
                 <p class="text-dark">Type: <strong id="utilisateur_type"></strong></p>
                 <p class="text-dark">Fonction: <strong id="utilisateur_fonction"></strong></p>

@@ -1,3 +1,197 @@
+{{-- Demander l'activation --}}
+<div id="modal_act_ligne" class="modal" role="dialog" tabindex="-1">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title text-primary">Demande d'activation d'une ligne</h4>
+                <button id="close_modal_act" class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col">
+                        <div></div>
+                    </div>
+                    <div class="col-xl-6">
+                        <div class="card shadow">
+                            <div class="card-body">
+                                <form id="form_act_ligne" action="{{ route('ligne.save') }}" method="POST" style="color: #a0c8d8;">
+                                    @csrf <!-- Protection CSRF -->
+
+                                    <!-- Numéro SIM -->
+                                    <div class="mb-3">
+                                        <label class="form-label" for="act_sim"><strong>Numéro SIM</strong></label>
+                                        <input id="act_sim" class="form-control @error('act_sim', 'act_ligne_errors') is-invalid @enderror" 
+                                            type="text" name="act_sim" placeholder="Numéro SIM" 
+                                            value="{{ old('act_sim') }}" required />
+                                        @error('act_sim', 'act_ligne_errors')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+
+                                    <!-- Opérateur -->
+                                    <div class="mb-3">
+                                        <label class="form-label" for="act_operateur"><strong>Opérateur</strong></label>
+                                        <select id="act_operateur" class="form-select @error('act_operateur', 'act_ligne_errors') is-invalid @enderror" 
+                                                name="act_operateur" required>
+                                            <option value="" disabled {{ old('act_operateur') ? '' : 'selected' }}>Choisir l'opérateur</option>
+                                            @foreach ($contactsOperateurs as $contact)
+                                                <option value="{{ $contact->id_operateur }}" data-email="{{ $contact->email }}"
+                                                    {{ old('act_operateur') == $contact->id_operateur ? 'selected' : '' }}>
+                                                    {{ $contact->operateur->nom_operateur }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                        @error('act_operateur', 'act_ligne_errors')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+
+                                    <!-- Type -->
+                                    <div class="mb-3">
+                                        <label class="form-label" for="act_type"><strong>Type</strong></label>
+                                        <select id="act_type" class="form-select @error('act_type', 'act_ligne_errors') is-invalid @enderror" 
+                                                name="act_type" required>
+                                            <option value="" disabled {{ old('act_type') ? '' : 'selected' }}>Choisir le type</option>
+                                            @foreach ($types as $type)
+                                                <option value="{{ $type->id_type_ligne }}"
+                                                    {{ old('act_type') == $type->id_type_ligne ? 'selected' : '' }}>
+                                                    {{ $type->type_ligne }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                        @error('act_type', 'act_ligne_errors')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+
+                                    <!-- Forfait -->
+                                    <div class="mb-3">
+                                        <label class="form-label" for="act_forfait"><strong>Forfait</strong></label>
+                                        <select id="act_forfait" class="form-select @error('act_forfait', 'act_ligne_errors') is-invalid @enderror" 
+                                                name="act_forfait" {{ old('act_forfait') ? '' : 'disabled' }}>
+                                            <option value="" disabled {{ old('act_forfait') ? '' : 'selected' }}>Choisir le forfait</option>
+                                            @foreach ($forfaits as $forfait)
+                                                <option value="{{ $forfait->id_forfait }}" 
+                                                        data-id-operateur="{{ $forfait->id_operateur }}" 
+                                                        data-id-type-forfait="{{ $forfait->id_type_forfait }}"
+                                                    {{ old('act_forfait') == $forfait->id_forfait ? 'selected' : '' }}>
+                                                    {{ $forfait->nom_forfait }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                        @error('act_forfait', 'act_ligne_errors')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                </form>                                
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div></div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="close_modal_act" class="btn btn-warning" type="button" data-bs-dismiss="modal">Fermer</button>
+                <button id="btn_demander" class="btn btn-primary" type="submit" form="form_act_ligne" disabled>Demander</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{{-- Enregister une ligne --}}
+<div id="modal_enr_ligne" class="modal" role="dialog" tabindex="-1">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title text-primary">Enregistrer une ligne</h4>
+                <button id="close_modal_enr" class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col">
+                        <div></div>
+                    </div>
+                    <div class="col-xl-10">
+                        <div class="card shadow">
+                            <div class="card-body">
+                                <form id="form_enr_ligne" action="{{ route('ligne.enr') }}" method="post" style="color: #a0c8d8;">
+                                    @csrf
+                                    <div class="mb-3">
+                                        <input id="enr_id_ligne" class="form-control" type="hidden" name="enr_id_ligne" value="{{ old('enr_id_ligne') }}"/>
+                                    </div>                                    
+                                    <div class="mb-3">
+                                        <label class="form-label" for="enr_sim">
+                                            <strong>Numéro SIM</strong>
+                                        </label>
+                                        <input id="enr_sim" class="form-control" type="text" name="enr_sim" readonly value="{{ old('enr_sim') }}"/>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label" for="enr_forfait">
+                                            <strong>Forfait</strong>
+                                        </label>
+                                        <input id="enr_forfait" class="form-control" type="text" name="enr_forfait" readonly value="{{ old('enr_forfait') }}"/>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label" for="enr_ligne">
+                                            <strong>Numéro Ligne</strong>
+                                        </label>
+                                        <input id="enr_ligne" class="form-control @error('enr_ligne', 'enr_ligne_errors') is-invalid @enderror" 
+                                               type="text" name="enr_ligne" placeholder="Entrer le numéro ligne" value="{{ old('enr_ligne') ?? '+261'}}" />
+                                        @error('enr_ligne', 'enr_ligne_errors')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <label class="form-label" for="enr_user">
+                                            <strong>Utilisateur</strong>
+                                        </label>
+                                        <input id="search_enr_user" class="form-control mb-1" type="text" name="search_enr_user" placeholder="Rechercher un utilisateur" value="{{ old('search_enr_user') }}" />
+                                        <div id="loadingSpinner" style="display: none;"><small>Recherche en cours...</small></div>
+                                        <select id="enr_user" class="form-select @error('enr_user', 'enr_ligne_errors') is-invalid @enderror" name="enr_user">
+                                            <option value="0" disabled {{ old('enr_user') ? '' : 'selected' }}>Choisir un utilisateur</option>
+                                            @foreach ($utilisateurs as $utilisateur)
+                                                <option value="{{ $utilisateur->id_utilisateur }}" {{ old('enr_user') == $utilisateur->id_utilisateur ? 'selected' : '' }}>
+                                                    {{ $utilisateur->nom }} {{ $utilisateur->prenom }} | {{ $utilisateur->login }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                        <input type="hidden" name="selected_user" id="selected_user_hidden" value="{{ old('enr_user') }}">
+                                        @error('enr_user', 'enr_ligne_errors')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>                                    
+                                    
+                                    <div class="mb-3">
+                                        <label class="form-label" for="enr_date">
+                                            <strong>Date d&#39;affectation</strong>
+                                        </label>
+                                        <input id="enr_date" class="form-control @error('enr_date', 'enr_ligne_errors') is-invalid @enderror" 
+                                               name="enr_date" type="date" value="{{ old('enr_date') }}" />
+                                        @error('enr_date', 'enr_ligne_errors')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div></div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="close_modal_enr" class="btn btn-warning" type="button" data-bs-dismiss="modal">Fermer</button>
+                <button class="btn btn-primary" type="submit" form="form_enr_ligne">Enregistrer</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{{-- Voir plus --}}
 <div id="modal_voir_ligne" class="modal" role="dialog" tabindex="-1">
     <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
         <div class="modal-content border-0 shadow">
@@ -51,6 +245,7 @@
     </div>
 </div>
 
+{{-- Modification ligne--}}
 <div id="modal_edt_ligne" class="modal" role="dialog" tabindex="-1">
     <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable" role="document">
         <div class="modal-content">
@@ -195,193 +390,8 @@
         </div>
     </div>
 </div>
-<div id="modal_act_ligne" class="modal" role="dialog" tabindex="-1">
-    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h4 class="modal-title text-primary">Demande d'activation d'une ligne</h4>
-                <button id="close_modal_act" class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <div class="row">
-                    <div class="col">
-                        <div></div>
-                    </div>
-                    <div class="col-xl-6">
-                        <div class="card shadow">
-                            <div class="card-body">
-                                <form id="form_act_ligne" action="{{ route('ligne.save') }}" method="POST" style="color: #a0c8d8;">
-                                    @csrf <!-- Protection CSRF -->
 
-                                    <!-- Numéro SIM -->
-                                    <div class="mb-3">
-                                        <label class="form-label" for="act_sim"><strong>Numéro SIM</strong></label>
-                                        <input id="act_sim" class="form-control @error('act_sim', 'act_ligne_errors') is-invalid @enderror" 
-                                            type="text" name="act_sim" placeholder="Numéro SIM" 
-                                            value="{{ old('act_sim') }}" required />
-                                        @error('act_sim', 'act_ligne_errors')
-                                            <div class="invalid-feedback">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-
-                                    <!-- Opérateur -->
-                                    <div class="mb-3">
-                                        <label class="form-label" for="act_operateur"><strong>Opérateur</strong></label>
-                                        <select id="act_operateur" class="form-select @error('act_operateur', 'act_ligne_errors') is-invalid @enderror" 
-                                                name="act_operateur" required>
-                                            <option value="" disabled {{ old('act_operateur') ? '' : 'selected' }}>Choisir l'opérateur</option>
-                                            @foreach ($contactsOperateurs as $contact)
-                                                <option value="{{ $contact->id_operateur }}" data-email="{{ $contact->email }}"
-                                                    {{ old('act_operateur') == $contact->id_operateur ? 'selected' : '' }}>
-                                                    {{ $contact->operateur->nom_operateur }}
-                                                </option>
-                                            @endforeach
-                                        </select>
-                                        @error('act_operateur', 'act_ligne_errors')
-                                            <div class="invalid-feedback">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-
-                                    <!-- Type -->
-                                    <div class="mb-3">
-                                        <label class="form-label" for="act_type"><strong>Type</strong></label>
-                                        <select id="act_type" class="form-select @error('act_type', 'act_ligne_errors') is-invalid @enderror" 
-                                                name="act_type" required>
-                                            <option value="" disabled {{ old('act_type') ? '' : 'selected' }}>Choisir le type</option>
-                                            @foreach ($types as $type)
-                                                <option value="{{ $type->id_type_ligne }}"
-                                                    {{ old('act_type') == $type->id_type_ligne ? 'selected' : '' }}>
-                                                    {{ $type->type_ligne }}
-                                                </option>
-                                            @endforeach
-                                        </select>
-                                        @error('act_type', 'act_ligne_errors')
-                                            <div class="invalid-feedback">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-
-                                    <!-- Forfait -->
-                                    <div class="mb-3">
-                                        <label class="form-label" for="act_forfait"><strong>Forfait</strong></label>
-                                        <select id="act_forfait" class="form-select @error('act_forfait', 'act_ligne_errors') is-invalid @enderror" 
-                                                name="act_forfait" {{ old('act_forfait') ? '' : 'disabled' }}>
-                                            <option value="" disabled {{ old('act_forfait') ? '' : 'selected' }}>Choisir le forfait</option>
-                                            @foreach ($forfaits as $forfait)
-                                                <option value="{{ $forfait->id_forfait }}" 
-                                                        data-id-operateur="{{ $forfait->id_operateur }}" 
-                                                        data-id-type-forfait="{{ $forfait->id_type_forfait }}"
-                                                    {{ old('act_forfait') == $forfait->id_forfait ? 'selected' : '' }}>
-                                                    {{ $forfait->nom_forfait }}
-                                                </option>
-                                            @endforeach
-                                        </select>
-                                        @error('act_forfait', 'act_ligne_errors')
-                                            <div class="invalid-feedback">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-                                </form>                                
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col">
-                        <div></div>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button id="close_modal_act" class="btn btn-warning" type="button" data-bs-dismiss="modal">Fermer</button>
-                <button id="btn_demander" class="btn btn-primary" type="submit" form="form_act_mobile" disabled>Demander</button>
-            </div>
-        </div>
-    </div>
-</div>
-<div id="modal_enr_ligne" class="modal" role="dialog" tabindex="-1">
-    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h4 class="modal-title text-primary">Enregistrer une ligne</h4>
-                <button id="close_modal_enr" class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <div class="row">
-                    <div class="col">
-                        <div></div>
-                    </div>
-                    <div class="col-xl-7">
-                        <div class="card shadow">
-                            <div class="card-body">
-                                <form id="form_enr_ligne" action="{{ route('ligne.enr') }}" method="post" style="color: #a0c8d8;">
-                                    @csrf
-                                    <div class="mb-3">
-                                        <input id="enr_id_ligne" class="form-control" type="hidden" name="enr_id_ligne" value="{{ old('enr_id_ligne') }}"/>
-                                    </div>                                    
-                                    <div class="mb-3">
-                                        <label class="form-label" for="enr_sim">
-                                            <strong>Numéro SIM</strong>
-                                        </label>
-                                        <input id="enr_sim" class="form-control" type="text" name="enr_sim" readonly value="{{ old('enr_sim') }}"/>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label class="form-label" for="enr_forfait">
-                                            <strong>Forfait</strong>
-                                        </label>
-                                        <input id="enr_forfait" class="form-control" type="text" name="enr_forfait" readonly value="{{ old('enr_forfait') }}"/>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label class="form-label" for="enr_ligne">
-                                            <strong>Numéro Ligne</strong>
-                                        </label>
-                                        <input id="enr_ligne" class="form-control @error('enr_ligne', 'enr_ligne_errors') is-invalid @enderror" 
-                                               type="text" name="enr_ligne" placeholder="Entrer le numéro ligne" value="{{ old('enr_ligne') ?? '+261'}}" />
-                                        @error('enr_ligne', 'enr_ligne_errors')
-                                            <div class="invalid-feedback">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-                                    <div class="mb-3">
-                                        <label class="form-label" for="enr_user">
-                                            <strong>Utilisateur</strong>
-                                        </label>
-                                        <input id="search_enr_user" class="form-control mb-1" type="text" name="search_enr_user" placeholder="Rechercher un utilisateur" value="{{ old('search_enr_user') }}" />
-                                        <div id="loadingSpinner" style="display: none;"><small>Recherche en cours...</small></div>
-                                        <select id="enr_user" class="form-select @error('enr_user', 'enr_ligne_errors') is-invalid @enderror" name="enr_user">
-                                            <option value="0" disabled disabled {{ old('enr_user') ? '' : 'selected' }}>Choisir un utilisateur</option>
-                                            @foreach ($utilisateurs as $utilisateur)
-                                            <option value="{{ $utilisateur->matricule }}" {{ old('enr_user') == $utilisateur->matricule ? 'selected' : '' }}>
-                                                {{ $utilisateur->nom }} {{ $utilisateur->prenom }}
-                                            </option>
-                                            @endforeach
-                                        </select>
-                                        @error('enr_user', 'enr_ligne_errors')
-                                            <div class="invalid-feedback">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-                                    
-                                    <div class="mb-3">
-                                        <label class="form-label" for="enr_date">
-                                            <strong>Date d&#39;affectation</strong>
-                                        </label>
-                                        <input id="enr_date" class="form-control @error('enr_date', 'enr_ligne_errors') is-invalid @enderror" 
-                                               name="enr_date" type="date" value="{{ old('enr_date') }}" />
-                                        @error('enr_date', 'enr_ligne_errors')
-                                            <div class="invalid-feedback">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col">
-                        <div></div>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button id="close_modal_enr" class="btn btn-warning" type="button" data-bs-dismiss="modal">Fermer</button>
-                <button class="btn btn-primary" type="submit" form="form_enr_ligne">Enregistrer</button>
-            </div>
-        </div>
-    </div>
-</div>
+{{-- Demande résiliation --}}
 <div id="modal_resil_ligne" class="modal" role="dialog" tabindex="-1">
     <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
         <div class="modal-content">
