@@ -172,6 +172,7 @@
                                         class="mailto-link text-decoration-none"
                                         data-email="{{ $ligne->contact_email }}"
                                         data-num-sim="{{ $ligne->num_sim }}"
+                                        data-forfait="{{ $ligne->nom_forfait }}"
                                         title="Relancer">
                                         <i class="far fa-paper-plane"></i>
                                         {{ $ligne->nom_operateur }}
@@ -203,13 +204,26 @@
                                             <i class="far fa-save text-info" style="font-size: 25px;"></i>
                                         </a>
                                     @elseif ($ligne->statut_ligne === 'Attribue')
-                                        <a id="btn_resil_ligne" 
+                                        <a href="#" 
+                                            id="btn_resil_ligne"
                                             style="margin-right: 5px;"
                                             class="text-decoration-none"
                                             data-bs-target="#modal_resil_ligne" 
                                             data-bs-toggle="modal" 
-                                            href="#" 
-                                            title="Résilier">
+                                            title="Résilier"
+                                            data-sim-resil="{{ $ligne->num_sim }}"
+                                            data-ligne-resil="{{ $ligne->num_ligne }}"
+                                            data-operateur-resil="{{ $ligne->nom_operateur }}"
+                                            data-email-resil="{{ $ligne->contact_email }}"
+                                            data-type-resil="{{ $ligne->type_ligne }}"
+                                            data-forfait-resil="{{ $ligne->nom_forfait }}"
+                                            data-prix-resil="{{ $ligne->prix_forfait_ht }}"
+                                            data-resp-resil="{{ $ligne->login }}"
+                                            data-localisation-resil="{{ $ligne->localisation }}"
+                                            data-date-resil="{{ $ligne->debut_affectation }}"
+                                            data-id-aff-resil="{{ $ligne->id_affectation }}"
+                                            data-id-resil="{{ $ligne->id_ligne }}"
+                                            >
                                             <i class="far fa-window-close text-danger" style="font-size: 25px;"></i>
                                         </a>
                                     @endif

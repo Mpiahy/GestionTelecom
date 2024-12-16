@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
+use InvalidArgumentException;
 
 class Ligne extends Model
 {
@@ -25,7 +26,7 @@ class Ligne extends Model
 
     public static function getLignesWithDetails($filters = [])
     {
-        $query = DB::table('view_ligne_details');
+        $query = DB::table('view_ligne_big_details');
 
         // Filtre par statut
         if (!empty($filters['statut'])) {
@@ -95,6 +96,20 @@ class Ligne extends Model
         }
 
         return self::where('id_ligne', $idLigne)->update($updateData);
+    }
+
+    public function rslLigne($idLigne)
+    {
+        // Vérifiez si l'ID est valide
+        if (!$idLigne) {
+            throw new InvalidArgumentException("L'identifiant de la ligne est requis.");
+        }
+
+        // Mettre à jour la ligne avec les conditions spécifiées
+        $this->where('id_ligne', $idLigne)->update([
+            'num_ligne' => null,
+            'id_statut_ligne' => StatutLigne::STATUT_RESILIE,
+        ]);
     }
 
 }

@@ -6,9 +6,10 @@
         const mailtoLinks = document.querySelectorAll('.mailto-link');
 
         mailtoLinks.forEach(link => {
-            // Récupération des attributs personnalisés (email et numéro SIM)
+            // Récupération des attributs personnalisés
             const email = link.dataset.email;
             const numSim = link.dataset.numSim;
+            const forfait = link.dataset.forfait;
 
             // Définition du sujet et du corps du mail avec encodage URI
             const subject = encodeURIComponent("Demande d'activation d'une ligne");
@@ -16,6 +17,8 @@
                 `Bonjour,
 
                 Merci d'activer une ligne sur la SIM : ${numSim}.
+
+                Forfait : ${forfait}
 
                 Merci de bien vouloir traiter cette demande dans les meilleurs délais.
 
@@ -382,10 +385,11 @@
             document.querySelector('#modal_voir_ligne .modal-body [data-field="num_sim"]').textContent = data.num_sim;
             document.querySelector('#modal_voir_ligne .modal-body [data-field="type_ligne"]').textContent = data.type_ligne;
             document.querySelector('#modal_voir_ligne .modal-body [data-field="nom_forfait"]').textContent = data.nom_forfait;
-            document.querySelector('#modal_voir_ligne .modal-body [data-field="prix_forfait_ht"]').textContent = data.prix_forfait_ht + " Ar";
+            document.querySelector('#modal_voir_ligne .modal-body [data-field="prix_forfait_ht"]').textContent = parseFloat(data.prix_forfait_ht).toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " Ar";
             document.querySelector('#modal_voir_ligne .modal-body [data-field="login"]').textContent = data.login;
             document.querySelector('#modal_voir_ligne .modal-body [data-field="localisation"]').textContent = data.localisation;
             document.querySelector('#modal_voir_ligne .modal-body [data-field="debut_affectation"]').textContent = data.debut_affectation;
+            document.querySelector('#modal_voir_ligne .modal-body [data-field="fin_affectation"]').textContent = data.fin_affectation;
         }
     });
 </script>
@@ -493,6 +497,146 @@
         @if ($errors->hasBag('edt_ligne_errors') && $errors->edt_ligne_errors->any())
             const modalEdtLigne = new bootstrap.Modal(document.getElementById('modal_edt_ligne'));
             modalEdtLigne.show(); // Affiche automatiquement le modal pour corriger les erreurs
+        @endif
+    });
+</script>
+
+{{-- RESILIATION Ligne --}}
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('#btn_resil_ligne').forEach(function (button) {
+            button.addEventListener('click', (event) => {
+                event.preventDefault(); // Empêche le comportement par défaut du lien
+
+                // Récupérer les données data-* de l'élément cliqué
+                const simRsl = button.getAttribute('data-sim-resil');
+                const ligneRsl = button.getAttribute('data-ligne-resil');
+                const operateurRsl = button.getAttribute('data-operateur-resil');
+                const emailRsl = button.getAttribute('data-email-resil');
+                const typeRsl = button.getAttribute('data-type-resil');
+                const forfaitRsl = button.getAttribute('data-forfait-resil');
+                const prixRsl = button.getAttribute('data-prix-resil');
+                const respRsl = button.getAttribute('data-resp-resil');
+                const localisationRsl = button.getAttribute('data-localisation-resil');
+                const dateAffectationRsl = button.getAttribute('data-date-resil');
+                const idAffRsl = button.getAttribute('data-id-aff-resil');
+                const idLigneRsl = button.getAttribute('data-id-resil');
+
+                // Injecter les données dans les champs visibles du formulaire
+                document.getElementById('resil_sim').value = simRsl;
+                document.getElementById('resil_ligne').value = ligneRsl;
+                document.getElementById('resil_operateur').value = operateurRsl;
+                document.getElementById('resil_type').value = typeRsl;
+                document.getElementById('resil_forfait').value = forfaitRsl;
+                document.getElementById('resil_prix').value = parseFloat(prixRsl).toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " Ar";
+                document.getElementById('resil_responsable').value = respRsl;
+                document.getElementById('resil_localisation').value = localisationRsl;
+                document.getElementById('resil_date_affectation').value = dateAffectationRsl;
+
+                // Injecter les données dans les champs cachés
+                document.getElementById('resil_id_aff').value = idAffRsl;
+                document.getElementById('resil_id_ligne').value = idLigneRsl;
+                document.getElementById('resil_email').value = emailRsl;
+            });
+        })
+    });
+</script>
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // Sélectionne tous les boutons pour fermer le modal
+        const closeModalButtons = document.querySelectorAll('#close_modal_rsl');
+
+        closeModalButtons.forEach(button => {
+            button.addEventListener('click', function () {
+                // Sélectionne le formulaire dans le modal
+                const form = document.getElementById('form_rsl_ligne');
+
+                if (form) {
+                    // Réinitialise les champs du formulaire
+                    form.reset();
+
+                    // Réinitialise manuellement les sélecteurs si nécessaire
+                    const selects = form.querySelectorAll('select');
+                    selects.forEach(select => {
+                        select.value = ''; // Réinitialise le champ
+                        select.dispatchEvent(new Event('change')); // Notifie les autres scripts éventuels
+                    });
+
+                    // Supprime les classes CSS d'erreur des champs
+                    const invalidFields = form.querySelectorAll('.is-invalid');
+                    invalidFields.forEach(field => {
+                        field.classList.remove('is-invalid');
+                    });
+
+                    // Supprime les messages d'erreur affichés
+                    const errorMessages = form.querySelectorAll('.invalid-feedback');
+                    errorMessages.forEach(error => {
+                        error.textContent = '';
+                    });
+                }
+            });
+        });
+    });
+</script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const formRsl = document.getElementById('form_rsl_ligne');
+
+        if (formRsl) {
+            formRsl.addEventListener('submit', function (event) {
+                event.preventDefault(); // Empêche l'envoi normal du formulaire
+
+                // Récupérer les données du formulaire
+                const emailRsl = document.getElementById('resil_email').value;
+                const simRsl = document.getElementById('resil_sim').value;
+                const ligneRsl = document.getElementById('resil_ligne').value;
+                const forfaitRsl = document.getElementById('resil_forfait').value;
+                const dateResil = document.getElementById('resil_date').value;
+
+                // Validation : vérifier si l'email est disponible
+                if (!emailRsl) {
+                    alert('Adresse email du destinataire non disponible.');
+                    return;
+                }
+
+                // Préparer le sujet et le corps de l'email
+                const subject = encodeURIComponent("Demande de résiliation d'une ligne");
+                const body = encodeURIComponent(
+                    `Bonjour,
+
+                    Veuillez procéder à la résiliation de la ligne sur la SIM : ${simRsl}
+
+                    - Numéro de ligne : ${ligneRsl}
+                    - Forfait : ${forfaitRsl}
+
+                    Date de résiliation : ${dateResil}
+
+                    Merci de traiter cette demande dans les meilleurs délais.
+
+                    Cordialement,
+                `);
+
+                // Générer le lien mailto
+                const mailtoLink = `mailto:${emailRsl}?subject=${subject}&body=${body}`;
+
+                // Ouvrir le client de messagerie par défaut avec le lien généré
+                window.location.href = mailtoLink;
+
+                // Optionnel : soumettre le formulaire après avoir ouvert le client de messagerie
+                formRsl.submit();
+            });
+        }
+    });
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // Vérifie si des erreurs sont présentes dans `rsl_ligne_errors` (backend Laravel)
+        @if ($errors->hasBag('rsl_ligne_errors') && $errors->rsl_ligne_errors->any())
+            const modalRslLigne = new bootstrap.Modal(document.getElementById('modal_resil_ligne'));
+            modalRslLigne.show(); // Affiche automatiquement le modal pour corriger les erreurs
         @endif
     });
 </script>

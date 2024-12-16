@@ -50,21 +50,7 @@ class LigneController extends Controller
         return view('ref.ligne', compact('login','lignes','contactsOperateurs', 'types', 'forfaits', 'statuts', 'utilisateurs'));
     }
 
-    // Voir plus ligne
-    public function detailLigne($id_ligne)
-    {
-        // Appel de la méthode optimisée pour récupérer les détails de la ligne
-        $lignesBig = Ligne::getLignesWithBigDetails($id_ligne);
-
-        // Vérifie si aucun résultat n'a été trouvé
-        if (empty($lignesBig)) {
-            return response()->json(['error' => 'Détails de la ligne introuvables.'], 404);
-        }
-
-        // Retourne le premier résultat trouvé (si applicable)
-        return response()->json($lignesBig[0]);
-    }
-
+    // Demander l'activation
     public function saveLigne(Request $request)
     {
         try {
@@ -93,6 +79,7 @@ class LigneController extends Controller
         }
     }
 
+    // Enregistrer ligne(num d'appel) & Attribuer vers Utilisateur
     public function enrLigne(Request $request)
     {
         try {
@@ -141,6 +128,7 @@ class LigneController extends Controller
         }
     }
 
+    // Recherche utilisateur dans enrLigne
     public function searchUser(Request $request)
     {
         try {
@@ -163,6 +151,22 @@ class LigneController extends Controller
         }
     }
 
+    // Voir plus ligne
+    public function detailLigne($id_ligne)
+    {
+        // Appel de la méthode optimisée pour récupérer les détails de la ligne
+        $lignesBig = Ligne::getLignesWithBigDetails($id_ligne);
+
+        // Vérifie si aucun résultat n'a été trouvé
+        if (empty($lignesBig)) {
+            return response()->json(['error' => 'Détails de la ligne introuvables.'], 404);
+        }
+
+        // Retourne le premier résultat trouvé (si applicable)
+        return response()->json($lignesBig[0]);
+    }
+
+    // Modifier Ligne
     public function edtLigne(Request $request)
     {
         try {
@@ -215,4 +219,36 @@ class LigneController extends Controller
         }
     }
 
+    public function rslLigne(Request $request)
+    {
+        try {
+            // Validation des données envoyées
+            $validatedData = $request->validate([
+                'resil_id_ligne' => 'required|exists:ligne,id_ligne',
+                'resil_date' => 'required|date|after_or_equal:today',
+            ]);
+
+            $idLigne = $validatedData['resil_id_ligne'];
+            $dateResil = $validatedData['resil_date'];
+
+            $ligne = Ligne::findOrFail($idLigne);
+            $ligne->rslLigne($idLigne);
+            
+            Affectation::rslAffectation($idLigne, $dateResil);
+
+            return redirect()
+                ->route('ref.ligne')
+                ->with('success', 'La ligne a été résiliée avec succès.');
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return redirect()
+                ->route('ref.ligne')
+                ->withErrors($e->errors(), 'rsl_ligne_errors')
+                ->withInput();
+        } catch (Exception $e) {
+            return redirect()
+                ->route('ref.ligne')
+                ->withErrors(['error' => 'Une erreur inattendue est survenue: ' . $e->getMessage()], 'rsl_ligne_errors')
+                ->withInput();
+        }
+    }
 }

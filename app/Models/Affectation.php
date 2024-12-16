@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use InvalidArgumentException;
 
 class Affectation extends Model
 {
@@ -40,6 +41,19 @@ class Affectation extends Model
         }
 
         return false;
+    }
+
+    public static function rslAffectation(int $idLigne, string $dateResil)
+    {
+        // Validation des paramètres
+        if (empty($idLigne) || empty($dateResil)) {
+            throw new InvalidArgumentException("Les paramètres 'idLigne' et 'dateResil' sont requis.");
+        }
+
+        // Mise à jour de l'affectation correspondant à id_ligne
+        return self::where('id_ligne', $idLigne)->update([
+            'fin_affectation' => $dateResil,
+        ]);
     }
 
 }

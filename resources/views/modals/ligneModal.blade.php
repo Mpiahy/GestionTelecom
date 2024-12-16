@@ -11,7 +11,7 @@
                     <div class="col">
                         <div></div>
                     </div>
-                    <div class="col-xl-6">
+                    <div class="col-xl-8">
                         <div class="card shadow">
                             <div class="card-body">
                                 <form id="form_act_ligne" action="{{ route('ligne.save') }}" method="POST" style="color: #a0c8d8;">
@@ -83,6 +83,16 @@
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
                                     </div>
+
+                                    <!-- Texte de warning -->
+                                    <div class="row mb-2">
+                                        <div class="col">
+                                            <p class="text-info small mb-0">
+                                                <em>*Ce formulaire génère automatiquement un email de demande d'activation après sa soumission.</em>
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <!-- Fin Texte de warning -->
                                 </form>                                
                             </div>
                         </div>
@@ -143,7 +153,7 @@
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
                                     </div>
-                                    
+
                                     <div class="mb-3">
                                         <label class="form-label" for="enr_user">
                                             <strong>Utilisateur</strong>
@@ -236,6 +246,10 @@
                             <tr>
                                 <th class="table-primary text-start">Date d&#39;affectation</th>
                                 <td class="text-dark text-start" data-field="debut_affectation"></td>
+                            </tr>
+                            <tr>
+                                <th class="table-primary text-start">Date de resiliation</th>
+                                <td class="text-dark text-start" data-field="fin_affectation"></td>
                             </tr>
                         </tbody>                        
                     </table>
@@ -393,37 +407,138 @@
 
 {{-- Demande résiliation --}}
 <div id="modal_resil_ligne" class="modal" role="dialog" tabindex="-1">
-    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable" role="document">
         <div class="modal-content">
-            <div class="modal-header">
-                <h4 class="modal-title text-primary">Demander la résiliation de cette ligne</h4><button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
+            <div class="modal-header bg-danger text-white">
+                <h4 class="modal-title text-light">Demande de Résiliation</h4>
+                <button id="close_modal_rsl" class="btn-close text-white" type="button" data-bs-dismiss="modal" aria-label="Fermer"></button>
             </div>
             <div class="modal-body">
                 <div class="row">
-                    <div class="col">
-                        <div></div>
-                    </div>
-                    <div class="col-xl-7">
+                    <div class="col-12">
                         <div class="card shadow">
                             <div class="card-body">
-                                <form id="form_resil_mobile" action="resil_mobile" method="get" style="color: #a0c8d8;">
-                                    <div class="mb-3"><label class="form-label" for="resil_ligne"><strong>Numéro d&#39;appel</strong></label><input id="resil_ligne" class="form-control" type="text" name="resil_ligne" value="+261 32 59 599 53" readonly /></div>
-                                    <div class="mb-3"><label class="form-label" for="resil_sim"><strong>Numéro SIM</strong></label><input id="resil_sim" class="form-control" type="text" name="resil_sim" value="98745632145698" readonly /></div>
-                                    <div class="mb-3"><label class="form-label" for="resil_operateur"><strong>Opérateur</strong></label><input id="resil_operateur" class="form-control" type="text" name="resil_operateur" value="Orange" readonly /></div>
-                                    <div class="mb-3"><label class="form-label" for="resil_type"><strong>Type</strong></label><input id="resil_type" class="form-control" type="text" name="resil_type" value="Internet mobile" readonly /></div>
+                                <form id="form_rsl_ligne" action="{{ route('ligne.rsl') }}" method="post">
+                                    @csrf
+                                    <input type="hidden" id="resil_id_ligne" name="resil_id_ligne" />
+                                    <input type="hidden" id="resil_id_aff" name="resil_id_affectation" />
+                                    <input type="hidden" id="resil_email" name="resil_email" />
+
+                                    <div class="row mb-3">
+                                        <div class="col-md-6">
+                                            <label class="form-label" for="resil_ligne">
+                                                <strong>Numéro d'Appel</strong>
+                                            </label>
+                                            <input id="resil_ligne" class="form-control" type="text" name="resil_ligne" readonly />
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label" for="resil_sim">
+                                                <strong>Numéro SIM</strong>
+                                            </label>
+                                            <input id="resil_sim" class="form-control" type="text" name="resil_sim" readonly />
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-3">
+                                        <div class="col-md-6">
+                                            <label class="form-label" for="resil_operateur">
+                                                <strong>Opérateur</strong>
+                                            </label>
+                                            <input id="resil_operateur" class="form-control" type="text" name="resil_operateur" readonly />
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label" for="resil_type">
+                                                <strong>Type</strong>
+                                            </label>
+                                            <input id="resil_type" class="form-control" type="text" name="resil_type" readonly />
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-3">
+                                        <div class="col-md-6">
+                                            <label class="form-label" for="resil_forfait">
+                                                <strong>Forfait</strong>
+                                            </label>
+                                            <input id="resil_forfait" class="form-control" type="text" name="resil_forfait" readonly />
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label" for="resil_prix">
+                                                <strong>Prix HT mensuel</strong>
+                                            </label>
+                                            <input id="resil_prix" class="form-control" type="text" name="resil_prix" readonly />
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-3">
+                                        <div class="col">
+                                            <label class="form-label" for="resil_localisation">
+                                                <strong>Localisation</strong>
+                                            </label>
+                                            <input id="resil_localisation" class="form-control" type="text" name="resil_localisation" readonly />
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-3">
+                                        <div class="col-md-6">
+                                            <label class="form-label" for="resil_responsable">
+                                                <strong>Responsable</strong>
+                                            </label>
+                                            <input id="resil_responsable" class="form-control" type="text" name="resil_responsable" readonly />
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label" for="resil_date_affectation">
+                                                <strong>Date d'affectation</strong>
+                                            </label>
+                                            <input id="resil_date_affectation" class="form-control" type="text" name="resil_date_affectation" readonly />
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="row mb-4">
+                                        <div class="col">
+                                            <label class="form-label" for="resil_date">
+                                                <strong>Date de Résiliation <span class="text-danger">*</span></strong>
+                                            </label>
+                                            <input 
+                                                id="resil_date" 
+                                                class="form-control @error('resil_date', 'rsl_ligne_errors') is-invalid @enderror" 
+                                                type="date" 
+                                                name="resil_date" 
+                                                value="{{ old('resil_date') }}" 
+                                                required 
+                                            />
+                                            @error('resil_date', 'rsl_ligne_errors')
+                                                <div class="invalid-feedback">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+                                    </div>
+                                                                       
+
+                                    <!-- Texte de warning -->
+                                    <div class="row mb-0">
+                                        <div class="col">
+                                            <p class="text-info small mb-0">
+                                                <em>*Ce formulaire génère automatiquement un email de demande de résiliation après sa soumission.</em>
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <!-- Fin Texte de warning -->
+
                                 </form>
                             </div>
                         </div>
                     </div>
-                    <div class="col">
-                        <div></div>
-                    </div>
                 </div>
             </div>
-            <div class="modal-footer"><button class="btn btn-warning" type="button" data-bs-dismiss="modal">Fermer</button><button class="btn btn-danger" type="submit" form="form_resil_mobile">Résilier</button></div>
+            <div class="modal-footer justify-content-between">
+                <button id="close_modal_rsl" class="btn btn-secondary" type="button" data-bs-dismiss="modal">Annuler</button>
+                <button id="confirm_rsl_ligne" class="btn btn-danger" type="submit" form="form_rsl_ligne">
+                    Confirmer la Résiliation
+                </button>
+            </div>
         </div>
     </div>
 </div>
+
 <div id="modal_react_ligne" class="modal" role="dialog" tabindex="-1">
     <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
         <div class="modal-content">
@@ -438,7 +553,7 @@
                     <div class="col-xl-7">
                         <div class="card shadow">
                             <div class="card-body">
-                                <form id="form_resil_mobile-1" action="react_mobile" method="get" style="color: #a0c8d8;">
+                                <form id="form_react_ligne" action="react_mobile" method="get" style="color: #a0c8d8;">
                                     <div class="mb-3"><label class="form-label" for="react_ligne"><strong>Numéro Ligne</strong></label><input id="react_ligne" class="form-control" type="text" name="react_ligne" value="+261 32 65 466 32" readonly /></div>
                                     <div class="mb-3"><label class="form-label" for="react_sim"><strong>Numéro SIM</strong></label><input id="react_sim" class="form-control" type="text" name="react_sim" value="98745632145698" readonly /></div>
                                     <div class="mb-3"><label class="form-label" for="react_operateur"><strong>Opérateur</strong></label><input id="react_operateur" class="form-control" type="text" name="react_operateur" value="Orange" readonly /></div>
@@ -457,7 +572,9 @@
                     </div>
                 </div>
             </div>
-            <div class="modal-footer"><button class="btn btn-warning" type="button" data-bs-dismiss="modal">Fermer</button><button class="btn btn-info" type="submit" form="form_resil_mobile">Réactiver</button></div>
+            <div class="modal-footer">
+                <button class="btn btn-warning" type="button" data-bs-dismiss="modal">Fermer</button>
+                <button class="btn btn-info" type="submit" form="form_react_ligne">Réactiver</button></div>
         </div>
     </div>
 </div>

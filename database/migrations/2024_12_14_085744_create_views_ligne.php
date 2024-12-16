@@ -17,26 +17,14 @@ return new class extends Migration
                 ligne.num_ligne,
                 ligne.num_sim,
                 ligne.id_forfait,
-                forfait.nom_forfait,
                 ligne.id_statut_ligne,
-                statut_ligne.statut_ligne,
                 ligne.id_type_ligne,
-                type_ligne.type_ligne,
                 ligne.id_operateur,
-                operateur.nom_operateur,
-                contact_operateur.email AS contact_email,
-                affectation.id_utilisateur,
-                utilisateur.login,
-                affectation.debut_affectation
+                affectation.id_affectation,
+                affectation.id_utilisateur
             FROM 
                 ligne
-            LEFT JOIN forfait ON ligne.id_forfait = forfait.id_forfait
-            LEFT JOIN statut_ligne ON ligne.id_statut_ligne = statut_ligne.id_statut_ligne
-            LEFT JOIN type_ligne ON ligne.id_type_ligne = type_ligne.id_type_ligne
-            LEFT JOIN operateur ON ligne.id_operateur = operateur.id_operateur
-            LEFT JOIN contact_operateur ON ligne.id_operateur = contact_operateur.id_operateur
-            LEFT JOIN affectation ON ligne.id_ligne = affectation.id_ligne
-            LEFT JOIN utilisateur ON affectation.id_utilisateur = utilisateur.id_utilisateur;
+            LEFT JOIN affectation ON ligne.id_ligne = affectation.id_ligne;
         ');
         DB::statement('
             CREATE OR REPLACE VIEW view_ligne_big_details AS
@@ -44,21 +32,33 @@ return new class extends Migration
                 vld.id_ligne,
                 vld.num_ligne,
                 vld.num_sim,
-                vld.nom_forfait,
+                vld.id_forfait,
+                forfait.nom_forfait,
+                vld.id_statut_ligne,
+                statut_ligne.statut_ligne,
+                vld.id_type_ligne,
+                type_ligne.type_ligne,
+                vld.id_operateur,
+                operateur.nom_operateur,
+                contact_operateur.email AS contact_email,
+                vld.id_utilisateur,
+                utilisateur.login,
+                localisation.localisation,
                 vfp.prix_forfait_ht,
-                vld.statut_ligne,
-                vld.type_ligne,
-                vld.nom_operateur,
-                vld.login,
-                loc.localisation,
-                aff.debut_affectation,
-                aff.fin_affectation
+                vld.id_affectation,
+                affectation.debut_affectation,
+                affectation.fin_affectation
             FROM 
                 view_ligne_details vld
+            LEFT JOIN forfait ON vld.id_forfait = forfait.id_forfait
+            LEFT JOIN statut_ligne ON vld.id_statut_ligne = statut_ligne.id_statut_ligne
+            LEFT JOIN type_ligne ON vld.id_type_ligne = type_ligne.id_type_ligne
+            LEFT JOIN operateur ON vld.id_operateur = operateur.id_operateur
+            LEFT JOIN contact_operateur ON vld.id_operateur = contact_operateur.id_operateur
             LEFT JOIN view_forfait_prix vfp ON vld.id_forfait = vfp.id_forfait
-            LEFT JOIN utilisateur u ON vld.id_utilisateur = u.id_utilisateur
-            LEFT JOIN localisation loc ON u.id_localisation = loc.id_localisation
-            LEFT JOIN affectation aff ON vld.id_ligne = aff.id_ligne;
+            LEFT JOIN utilisateur ON vld.id_utilisateur = utilisateur.id_utilisateur
+            LEFT JOIN localisation ON utilisateur.id_localisation = localisation.id_localisation
+            LEFT JOIN affectation ON vld.id_affectation = affectation.id_affectation;
         ');
     }
 
