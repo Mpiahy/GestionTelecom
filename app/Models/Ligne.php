@@ -117,4 +117,21 @@ class Ligne extends Model
         ]);
     }
 
+    // Compter les lignes Actives
+    public static function countActif()
+    {
+        return DB::select("SELECT COUNT(*) AS total FROM view_ligne_actif")[0]->total;
+    }
+
+    // Compter les lignes En attente
+    public static function countEnAttente()
+    {
+        return DB::select("SELECT COUNT(*) AS total FROM view_ligne_en_attente")[0]->total;
+    }
+
+    // Compter les lignes Résiliées ou Inactives
+    public static function countResilie()
+    {
+        return DB::select("SELECT COUNT(*) AS total FROM view_ligne_resilie")[0]->total;
+    }
 }

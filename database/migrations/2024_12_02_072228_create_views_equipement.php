@@ -53,6 +53,24 @@ return new class extends Migration
             FROM modele
             WHERE id_modele >= 3000000 AND id_modele < 4000000;
         ');
+
+        // View pour les count_equipement
+        DB::statement('
+            CREATE VIEW view_equipement_actif AS
+            SELECT *
+            FROM equipement
+            WHERE id_statut_equipement = 2;
+
+            CREATE VIEW view_equipement_inactif AS
+            SELECT *
+            FROM equipement
+            WHERE id_statut_equipement IN (1, 3);
+
+            CREATE OR REPLACE VIEW view_equipement_hs AS
+            SELECT *
+            FROM equipement
+            WHERE id_statut_equipement = 4;
+        ');
     }
 
     /**
@@ -67,5 +85,8 @@ return new class extends Migration
         DB::statement('DROP VIEW IF EXISTS view_marque_phone CASCADE;');
         DB::statement('DROP VIEW IF EXISTS view_equipement_box CASCADE;');
         DB::statement('DROP VIEW IF EXISTS view_equipement_phones CASCADE;');
+        DB::statement('DROP VIEW IF EXISTS view_equipement_actif CASCADE;');
+        DB::statement('DROP VIEW IF EXISTS view_equipement_inactif CASCADE;');
+        DB::statement('DROP VIEW IF EXISTS view_equipement_hs CASCADE;');
     }
 };

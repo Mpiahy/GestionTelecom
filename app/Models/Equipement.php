@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\StatutEquipement;
+use Illuminate\Support\Facades\DB;
 
 class Equipement extends Model
 {
@@ -171,5 +172,23 @@ class Equipement extends Model
     public function isHS()
     {
         return $this->statut->statut_equipement === 'HS';
+    }
+
+    // Compter les equipements Actifs
+    public static function countActif()
+    {
+        return DB::select("SELECT COUNT(*) AS total FROM view_equipement_actif")[0]->total;
+    }
+
+    // Compter les equipements Inactifs
+    public static function countInactif()
+    {
+        return DB::select("SELECT COUNT(*) AS total FROM view_equipement_inactif")[0]->total;
+    }
+
+    // Compter les equipements hs
+    public static function countHs()
+    {
+        return DB::select("SELECT COUNT(*) AS total FROM view_equipement_hs")[0]->total;
     }
 }

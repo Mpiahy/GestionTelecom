@@ -122,3 +122,35 @@ LEFT JOIN view_forfait_prix vfp ON vld.id_forfait = vfp.id_forfait
 LEFT JOIN utilisateur ON vld.id_utilisateur = utilisateur.id_utilisateur
 LEFT JOIN localisation ON utilisateur.id_localisation = localisation.id_localisation
 LEFT JOIN affectation ON vld.id_affectation = affectation.id_affectation;
+
+-- View pour count_ligne
+CREATE VIEW view_ligne_actif AS
+SELECT *
+FROM ligne
+WHERE id_statut_ligne = 3;
+
+CREATE VIEW view_ligne_en_attente AS
+SELECT *
+FROM ligne
+WHERE id_statut_ligne = 2;
+
+CREATE OR REPLACE VIEW view_ligne_resilie AS
+SELECT *
+FROM ligne
+WHERE id_statut_ligne IN (1, 4);
+
+-- View pour count_equipement
+CREATE VIEW view_equipement_actif AS
+SELECT *
+FROM equipement
+WHERE id_statut_equipement = 2;
+
+CREATE VIEW view_equipement_inactif AS
+SELECT *
+FROM equipement
+WHERE id_statut_equipement IN (1, 3);
+
+CREATE OR REPLACE VIEW view_equipement_hs AS
+SELECT *
+FROM equipement
+WHERE id_statut_equipement = 4;
