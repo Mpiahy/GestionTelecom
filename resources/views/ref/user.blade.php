@@ -137,14 +137,14 @@
                         </form>
                     </div>
                 </div>
-                <div id="dataTable-1" class="table-responsive table mt-2" role="grid" aria-describedby="dataTable_info">
-                    <table id="dataTable" class="table table-hover my-0">
-                        <thead>
+                <div id="dataTable-1" class="table-responsive mt-2">
+                    <table id="dataTable" class="table table-hover table-bordered align-middle">
+                        <thead class="table-light">
                             <tr>
                                 <th class="text-center">Matricule</th>
                                 <th>Nom et Prénom(s)</th>
                                 <th>Login</th>
-                                <th>Type</th>
+                                <th class="text-center">Type</th>
                                 <th>Fonction</th>
                                 <th>Chantier</th>
                                 <th class="text-center">Action</th>
@@ -152,55 +152,79 @@
                         </thead>
                         <tbody>
                             @foreach ($utilisateurs as $utilisateur)
-                                <tr class="utilisateur-row {{ strtolower($utilisateur->typeUtilisateur->type_utilisateur) }}">
-                                    <td class="text-center">{{ $utilisateur->matricule ?? 'N/A' }}</td>
-                                    <td>{{ $utilisateur->nom }} {{ $utilisateur->prenom }}</td>
-                                    <td>{{ $utilisateur->login }}</td>
-                                    <td>{{ $utilisateur->typeUtilisateur->type_utilisateur ?? 'N/A' }}</td>
-                                    <td>{{ $utilisateur->fonction->fonction ?? 'N/A' }}</td>
-                                    <td>{{ $utilisateur->localisation->localisation ?? 'N/A' }}</td>
-                                    <td class="text-center">
-                                        <a href="#" style="margin-right: 10px;" data-bs-target="#modal_voir_emp" data-bs-toggle="modal" data-toggle="tooltip" title="Voir" class="text-decoration-none">
-                                            <i class="fas fa-history text-primary" style="font-size: 25px;"></i>
+                            <tr class="utilisateur-row {{ strtolower($utilisateur->typeUtilisateur->type_utilisateur) }}">
+                                <!-- Matricule -->
+                                <td class="text-center py-2 px-3">{{ $utilisateur->matricule ?? 'N/A' }}</td>
+                                
+                                <!-- Nom et Prénom -->
+                                <td class="text-wrap" style="word-break: break-word;">
+                                    {{ $utilisateur->nom }} {{ $utilisateur->prenom }}
+                                </td>
+                                
+                                <!-- Login -->
+                                <td>{{ $utilisateur->login }}</td>
+                                
+                                <!-- Type Utilisateur -->
+                                <td class="text-center py-2 px-3">{{ $utilisateur->typeUtilisateur->type_utilisateur ?? 'N/A' }}</td>
+                                
+                                <!-- Fonction -->
+                                <td class="text-wrap" style="word-break: break-word;">
+                                    {{ $utilisateur->fonction->fonction ?? 'N/A' }}
+                                </td>
+                                
+                                <!-- Chantier -->
+                                <td class="text-wrap" style="word-break: break-word;">
+                                    {{ $utilisateur->localisation->localisation ?? 'N/A' }}
+                                </td>
+                                
+                                <!-- Actions -->
+                                <td class="text-center">
+                                    <div class="d-flex justify-content-center gap-2">
+                                        <!-- Voir -->
+                                        <a href="#" class="text-decoration-none" data-bs-target="#modal_voir_emp" data-bs-toggle="modal" title="Voir">
+                                            <i class="fas fa-history text-primary" style="font-size: 20px;"></i>
                                         </a>
+                
+                                        <!-- Modifier -->
                                         <a href="#"
-                                            data-toggle="tooltip"
-                                            title="Modifier"
-                                            style="margin-right: 5px;"
-                                            class="text-decoration-none edit-user-btn"
-                                            data-bs-toggle="modal"
-                                            data-bs-target="#modal_edit_emp"
-                                            data-id="{{ $utilisateur->id_utilisateur }}"
-                                            data-matricule="{{ $utilisateur->matricule }}"
-                                            data-nom="{{ $utilisateur->nom }}"
-                                            data-prenom="{{ $utilisateur->prenom }}"
-                                            data-login="{{ $utilisateur->login }}"
-                                            data-type="{{ $utilisateur->typeUtilisateur->id_type_utilisateur }}"
-                                            data-fonction="{{ $utilisateur->fonction->id_fonction }}"
-                                            data-chantier="{{ $utilisateur->localisation->id_localisation }}">
-                                            <i class="far fa-edit text-warning" style="font-size: 25px;"></i>
+                                           class="text-decoration-none"
+                                           data-bs-toggle="modal"
+                                           data-bs-target="#modal_edit_emp"
+                                           data-id="{{ $utilisateur->id_utilisateur }}"
+                                           data-matricule="{{ $utilisateur->matricule }}"
+                                           data-nom="{{ $utilisateur->nom }}"
+                                           data-prenom="{{ $utilisateur->prenom }}"
+                                           data-login="{{ $utilisateur->login }}"
+                                           data-type="{{ $utilisateur->typeUtilisateur->id_type_utilisateur }}"
+                                           data-fonction="{{ $utilisateur->fonction->id_fonction }}"
+                                           data-chantier="{{ $utilisateur->localisation->id_localisation }}"
+                                           title="Modifier">
+                                            <i class="far fa-edit text-warning" style="font-size: 20px;"></i>
                                         </a>
+                
+                                        <!-- Supprimer -->
                                         <a href="#"
-                                            data-toggle="tooltip"
-                                            title="Départ"
-                                            data-bs-target="#supprimer_utilisateur"
-                                            data-bs-toggle="modal"
-                                            data-id="{{ $utilisateur->id_utilisateur }}"
-                                            data-matricule="{{ $utilisateur->matricule }}"
-                                            data-name="{{ $utilisateur->nom }} {{ $utilisateur->prenom }}"
-                                            data-login="{{ $utilisateur->login }}"
-                                            data-type="{{ $utilisateur->typeUtilisateur->type_utilisateur }}"
-                                            data-fonction="{{ $utilisateur->fonction->fonction }}"
-                                            data-chantier="{{ $utilisateur->localisation->localisation }}"
-                                            class="open-delete-modal">
-                                            <i class="fas fa-sign-out-alt text-danger" style="font-size: 25px;"></i>
+                                           class="text-decoration-none open-delete-modal"
+                                           data-bs-target="#supprimer_utilisateur"
+                                           data-bs-toggle="modal"
+                                           data-id="{{ $utilisateur->id_utilisateur }}"
+                                           data-matricule="{{ $utilisateur->matricule }}"
+                                           data-name="{{ $utilisateur->nom }} {{ $utilisateur->prenom }}"
+                                           data-login="{{ $utilisateur->login }}"
+                                           data-type="{{ $utilisateur->typeUtilisateur->type_utilisateur }}"
+                                           data-fonction="{{ $utilisateur->fonction->fonction }}"
+                                           data-chantier="{{ $utilisateur->localisation->localisation }}"
+                                           title="Départ">
+                                            <i class="fas fa-sign-out-alt text-danger" style="font-size: 20px;"></i>
                                         </a>
-                                    </td>
-                                </tr>
+                                    </div>
+                                </td>
+                            </tr>
                             @endforeach
                         </tbody>
                     </table>
                 </div>
+                
             </div>
         </div>
     </div>

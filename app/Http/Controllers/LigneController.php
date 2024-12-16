@@ -35,6 +35,7 @@ class LigneController extends Controller
                 'statut' => null,
                 'search_ligne_num' => null,
                 'search_ligne_sim' => null,
+                'search_ligne_user' => null,
             ];
         } else {
             // Sinon, appliquer les filtres existants
@@ -42,6 +43,7 @@ class LigneController extends Controller
                 'statut' => $request->input('statut'),
                 'search_ligne_num' => $request->input('search_ligne_num'),
                 'search_ligne_sim' => $request->input('search_ligne_sim'),
+                'search_ligne_user' => $request->input('search_ligne_user'),
             ];
         }
 

@@ -42,6 +42,11 @@ class Ligne extends Model
         if (!empty($filters['search_ligne_sim'])) {
             $query->where('num_sim', 'like', '%' . $filters['search_ligne_sim'] . '%');
         }
+        
+        // Recherche par utilisateur
+        if (!empty($filters['search_ligne_user'])) {
+            $query->where('login', 'ilike', '%' . $filters['search_ligne_user'] . '%');
+        }
 
         return $query->get();
     }

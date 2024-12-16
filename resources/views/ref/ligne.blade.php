@@ -74,6 +74,7 @@
                                 
                                 <!-- Inputs cachés pour conserver les autres filtres/recherches -->
                                 <input type="hidden" name="search_ligne_sim" value="{{ request('search_ligne_sim') }}">
+                                <input type="hidden" name="search_ligne_user" value="{{ request('search_ligne_user') }}">
                                 <input type="hidden" name="statut" value="{{ request('statut') }}">
 
                                 <button class="btn btn-primary" type="submit">Rechercher</button>
@@ -95,6 +96,7 @@
                                 
                                 <!-- Inputs cachés pour conserver les autres filtres/recherches -->
                                 <input type="hidden" name="search_ligne_num" value="{{ request('search_ligne_num') }}">
+                                <input type="hidden" name="search_ligne_user" value="{{ request('search_ligne_user') }}">
                                 <input type="hidden" name="statut" value="{{ request('statut') }}">
 
                                 <button class="btn btn-primary" type="submit">Rechercher</button>
@@ -118,6 +120,7 @@
                                 <!-- Bouton "Tout" pour réinitialiser les filtres -->
                                 <input type="hidden" name="search_ligne_num" value="{{ request('search_ligne_num') }}">
                                 <input type="hidden" name="search_ligne_sim" value="{{ request('search_ligne_sim') }}">
+                                <input type="hidden" name="search_ligne_user" value="{{ request('search_ligne_user') }}">
                         
                                 {{-- Boutons dynamiques pour chaque statut --}}
                                 @foreach ($statuts as $statut)
@@ -136,9 +139,21 @@
                         </form>
                     </div>
                     <div class="col">
-                        <form action="search_ligne_user">
-                            <div class="input-group"><span class="input-group-text">Utilisateur</span>
-                                <input class="form-control" type="text" placeholder="Rechercher par Utilisateur" name="search_ligne_user" />
+                        <form action="{{ route('ref.ligne') }}" method="get">
+                            <div class="input-group">
+                                <span class="input-group-text">Utilisateur</span>
+                                <input 
+                                    class="form-control" 
+                                    type="text" 
+                                    placeholder="Rechercher par Utilisateur" 
+                                    name="search_ligne_user" 
+                                    value="{{ request('reset_filters') == 'reset' ? '' : request('search_ligne_user') }}" />
+                                
+                                <!-- Inputs cachés pour conserver les autres filtres/recherches -->
+                                <input type="hidden" name="search_ligne_sim" value="{{ request('search_ligne_sim') }}">
+                                <input type="hidden" name="search_ligne_num" value="{{ request('search_ligne_num') }}">
+                                <input type="hidden" name="statut" value="{{ request('statut') }}">
+
                                 <button class="btn btn-primary" type="submit">Rechercher</button>
                             </div>
                         </form>
