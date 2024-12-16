@@ -190,14 +190,14 @@
                                            class="text-decoration-none"
                                            data-bs-toggle="modal"
                                            data-bs-target="#modal_edit_emp"
-                                           data-id="{{ $utilisateur->id_utilisateur }}"
-                                           data-matricule="{{ $utilisateur->matricule }}"
-                                           data-nom="{{ $utilisateur->nom }}"
-                                           data-prenom="{{ $utilisateur->prenom }}"
-                                           data-login="{{ $utilisateur->login }}"
-                                           data-type="{{ $utilisateur->typeUtilisateur->id_type_utilisateur }}"
-                                           data-fonction="{{ $utilisateur->fonction->id_fonction }}"
-                                           data-chantier="{{ $utilisateur->localisation->id_localisation }}"
+                                           data-id-edt="{{ $utilisateur->id_utilisateur }}"
+                                           data-edt-matricule="{{ $utilisateur->matricule }}"
+                                           data-edt-nom="{{ $utilisateur->nom }}"
+                                           data-edt-prenom="{{ $utilisateur->prenom }}"
+                                           data-edt-login="{{ $utilisateur->login }}"
+                                           data-edt-type="{{ $utilisateur->typeUtilisateur->id_type_utilisateur }}"
+                                           data-edt-fonction="{{ $utilisateur->fonction->id_fonction }}"
+                                           data-edt-chantier="{{ $utilisateur->localisation->id_localisation }}"
                                            title="Modifier">
                                             <i class="far fa-edit text-warning" style="font-size: 20px;"></i>
                                         </a>

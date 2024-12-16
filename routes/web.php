@@ -43,6 +43,8 @@ Route::middleware('check.session')->group(function() {
     Route::post('/utilisateur/ajouter', [UserController::class, 'ajouterUtilisateur'])->name('ajouter.utilisateur');
     Route::post('/utilisateur/modifier', [UserController::class, 'modifierUtilisateur'])->name('modifier.utilisateur');
     Route::get('/utilisateur/supprimer/{id}', [UserController::class, 'supprimerUtilisateur'])->name('utilisateur.supprimer');
+    Route::get('/ligne/searchFonction', [UserController::class, 'searchFonction'])->name('ligne.searchFonction');
+    Route::get('/ligne/searchChantier', [UserController::class, 'searchChantier'])->name('ligne.searchChantier');
 
     Route::get('/chantier', [ChantierController::class, 'chantierView'])->name('ref.chantier');
     Route::post('/addChantier', [ChantierController::class, 'ajouterChantier'])->name('ref.chantier.add');

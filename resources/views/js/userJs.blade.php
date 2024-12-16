@@ -32,41 +32,28 @@
 {{-- MODIFIER --}}
 <script>
     document.addEventListener("DOMContentLoaded", function () {
-        // Gestion des boutons "Modifier"
-        const editButtons = document.querySelectorAll(".edit-user-btn");
+        // Attacher un gestionnaire d'événement au clic sur les liens contenant les attributs data-*
+        document.querySelectorAll('a[data-id-edt]').forEach(link => {
+            link.addEventListener('click', function (e) {
+                // Récupérer les valeurs des attributs data-* du lien cliqué
+                const idEdt = this.getAttribute('data-id-edt');
+                const matricule = this.getAttribute('data-edt-matricule');
+                const nom = this.getAttribute('data-edt-nom');
+                const prenom = this.getAttribute('data-edt-prenom');
+                const login = this.getAttribute('data-edt-login');
+                const type = this.getAttribute('data-edt-type');
+                const fonction = this.getAttribute('data-edt-fonction');
+                const chantier = this.getAttribute('data-edt-chantier');
 
-        editButtons.forEach(button => {
-            button.addEventListener("click", function () {
-                // Récupérer les données utilisateur
-                const userId = this.getAttribute("data-id");
-                const userMatricule = this.getAttribute("data-matricule");
-                const userNom = this.getAttribute("data-nom");
-                const userPrenom = this.getAttribute("data-prenom");
-                const userLogin = this.getAttribute("data-login");
-                const userType = this.getAttribute("data-type");
-                const userFonction = this.getAttribute("data-fonction");
-                const userChantier = this.getAttribute("data-chantier");
-
-                // Vérifier que les champs existent avant de les modifier
-                const fields = {
-                    id: document.querySelector("#edt_emp_id"),
-                    matricule: document.querySelector("#edt_emp_matricule"),
-                    nom: document.querySelector("#edt_emp_nom"),
-                    prenom: document.querySelector("#edt_emp_prenom"),
-                    login: document.querySelector("#edt_emp_login"),
-                    type: document.querySelector("#edt_emp_type"),
-                    fonction: document.querySelector("#fonction-select"),
-                    chantier: document.querySelector("#chantier-select"),
-                };
-
-                if (fields.id) fields.id.value = userId;
-                if (fields.matricule) fields.matricule.value = userMatricule;
-                if (fields.nom) fields.nom.value = userNom;
-                if (fields.prenom) fields.prenom.value = userPrenom;
-                if (fields.login) fields.login.value = userLogin;
-                if (fields.type) fields.type.value = userType;
-                if (fields.fonction) fields.fonction.value = userFonction;
-                if (fields.chantier) fields.chantier.value = userChantier;
+                // Remplir les champs du formulaire avec les données récupérées
+                document.getElementById('edt_emp_id').value = idEdt;
+                document.getElementById('edt_emp_matricule').value = matricule;
+                document.getElementById('edt_emp_nom').value = nom;
+                document.getElementById('edt_emp_prenom').value = prenom;
+                document.getElementById('edt_emp_login').value = login;
+                document.getElementById('edt_emp_type').value = type;
+                document.getElementById('fonction-select').value = fonction;
+                document.getElementById('chantier-select').value = chantier;
             });
         });
 
@@ -221,4 +208,115 @@
             });
         });
     });
+</script>
+
+{{-- RECHERCHE DYNAMIQUE DANS FORMS --}}
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    // Recherche des fonctions
+    configureSearchField(
+        'search-fonction',       // ID du champ de recherche
+        'fonction-select',       // ID du <select> à mettre à jour
+        'selected_fonction_hidden', // ID du champ caché
+        '/ligne/searchFonction'  // URL pour récupérer les données
+    );
+
+    configureSearchField(
+        'search-fonction-add',   // Pour le formulaire "AJOUTER"
+        'fonction-select-add',
+        'selected_fonction_add_hidden',
+        '/ligne/searchFonction'
+    );
+
+    // Recherche des chantiers
+    configureSearchField(
+        'search-chantier',
+        'chantier-select',
+        'selected_chantier_hidden',
+        '/ligne/searchChantier'
+    );
+
+    configureSearchField(
+        'search-chantier-add',
+        'chantier-select-add',
+        'selected_chantier_add_hidden',
+        '/ligne/searchChantier'
+    );
+});
+
+/**
+ * Fonction générique pour gérer un champ de recherche et son <select>.
+ */
+function configureSearchField(searchInputId, selectId, hiddenInputId, searchUrl) {
+    const searchInput = document.getElementById(searchInputId);
+    const select = document.getElementById(selectId);
+    const hiddenInput = document.getElementById(hiddenInputId);
+    const spinner = document.createElement('div');
+    spinner.innerHTML = '<small>Recherche en cours...</small>';
+    spinner.style.display = 'none';
+    searchInput.parentElement.appendChild(spinner);
+
+    let timeout = null;
+
+    searchInput.addEventListener('input', function () {
+        clearTimeout(timeout);
+        const query = searchInput.value.trim();
+
+        if (query.length >= 2) {
+            spinner.style.display = 'block';
+
+            timeout = setTimeout(() => {
+                fetch(`${searchUrl}?query=${query}`)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Erreur lors de la récupération des données.');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        spinner.style.display = 'none';
+                        select.innerHTML = '<option value="0" disabled>Choisir une option</option>';
+
+                        if (data.length > 0) {
+                            data.forEach((item, index) => {
+                                const option = document.createElement('option');
+                                option.value = item.id;
+                                option.textContent = item.label; // "label" représente un nom générique
+                                select.appendChild(option);
+
+                                // Sélectionner le premier résultat et mettre à jour le champ caché
+                                if (index === 0) {
+                                    option.selected = true;
+                                    hiddenInput.value = item.id; // Mettre à jour le champ caché
+                                }
+                            });
+                        } else {
+                            const noResultOption = document.createElement('option');
+                            noResultOption.value = "0";
+                            noResultOption.textContent = "Aucun résultat trouvé";
+                            select.appendChild(noResultOption);
+
+                            hiddenInput.value = ""; // Réinitialiser le champ caché
+                        }
+                    })
+                    .catch(error => {
+                        spinner.style.display = 'none';
+                        console.error('Erreur lors de la recherche :', error);
+                        select.innerHTML = '<option value="0" disabled>Erreur lors du chargement</option>';
+                        hiddenInput.value = ""; // Réinitialiser le champ caché
+                    });
+            }, 300);
+        } else {
+            spinner.style.display = 'none';
+            select.innerHTML = '<option value="0" disabled>Choisir une option</option>';
+            hiddenInput.value = ""; // Réinitialiser le champ caché
+        }
+    });
+
+    // Synchroniser le champ caché avec le champ <select> lorsqu'une option est sélectionnée
+    select.addEventListener('change', function () {
+        hiddenInput.value = select.value;
+    });
+}
+
 </script>

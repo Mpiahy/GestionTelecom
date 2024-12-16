@@ -51,12 +51,12 @@
                                 <form id="edit_emp" action="{{ route('modifier.utilisateur') }}" method="POST">
                                     @csrf
                                     <!-- id_utilisateur (caché pour ne pas être modifiable) -->
-                                    <input type="hidden" id="edt_emp_id" name="id" />
+                                    <input type="hidden" id="edt_emp_id" name="id_edt" />
 
                                     <!-- Matricule -->
                                     <div class="mb-3">
                                         <label class="form-label" for="edt_emp_matricule"><strong>Matricule</strong></label>
-                                        <input id="edt_emp_matricule" class="form-control @error('matricule') is-invalid @enderror" type="text" name="matricule" placeholder="Matricule de l'utilisateur" value="{{ old('matricule') }}" />
+                                        <input id="edt_emp_matricule" class="form-control @error('matricule') is-invalid @enderror" type="text" name="matricule_edt" placeholder="Matricule de l'utilisateur" value="{{ old('matricule') }}" />
                                         @error('nom')
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
@@ -65,7 +65,7 @@
                                     <!-- Nom -->
                                     <div class="mb-3">
                                         <label class="form-label" for="edt_emp_nom"><strong>Nom</strong></label>
-                                        <input id="edt_emp_nom" class="form-control @error('nom') is-invalid @enderror" type="text" name="nom" placeholder="Nom de l'utilisateur" value="{{ old('nom') }}" />
+                                        <input id="edt_emp_nom" class="form-control @error('nom') is-invalid @enderror" type="text" name="nom_edt" placeholder="Nom de l'utilisateur" value="{{ old('nom') }}" />
                                         @error('nom')
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
@@ -74,7 +74,7 @@
                                     <!-- Prénom -->
                                     <div class="mb-3">
                                         <label class="form-label" for="edt_emp_prenom"><strong>Prénom(s)</strong></label>
-                                        <input id="edt_emp_prenom" class="form-control @error('prenom') is-invalid @enderror" type="text" name="prenom" placeholder="Prénom(s) de l'utilisateur" value="{{ old('prenom') }}" />
+                                        <input id="edt_emp_prenom" class="form-control @error('prenom') is-invalid @enderror" type="text" name="prenom_edt" placeholder="Prénom(s) de l'utilisateur" value="{{ old('prenom') }}" />
                                         @error('prenom')
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
@@ -83,7 +83,7 @@
                                     <!-- Login -->
                                     <div class="mb-3">
                                         <label class="form-label" for="edt_emp_login"><strong>Login</strong></label>
-                                        <input id="edt_emp_login" class="form-control @error('login') is-invalid @enderror" type="text" name="login" placeholder="Login de l'utilisateur" value="{{ old('login') }}" />
+                                        <input id="edt_emp_login" class="form-control @error('login') is-invalid @enderror" type="text" name="login_edt" placeholder="Login de l'utilisateur" value="{{ old('login') }}" />
                                         @error('login')
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
@@ -92,7 +92,7 @@
                                     <!-- Type d'utilisateur -->
                                     <div class="mb-3">
                                         <label class="form-label" for="edt_emp_type"><strong>Type</strong></label>
-                                        <select id="edt_emp_type" class="form-select @error('id_type_utilisateur') is-invalid @enderror" name="id_type_utilisateur">
+                                        <select id="edt_emp_type" class="form-select @error('id_type_utilisateur') is-invalid @enderror" name="id_type_utilisateur_edt">
                                             @foreach ($types as $type)
                                                 <option value="{{ $type->id_type_utilisateur }}" {{ old('id_type_utilisateur') == $type->id_type_utilisateur ? 'selected' : '' }}>
                                                     {{ $type->type_utilisateur }}
@@ -108,13 +108,15 @@
                                     <div class="mb-3">
                                         <label class="form-label" for="fonction-select"><strong>Fonction</strong></label>
                                         <input class="form-control mb-2" type="text" id="search-fonction" placeholder="Rechercher une fonction...">
-                                        <select id="fonction-select" class="form-select @error('id_fonction') is-invalid @enderror" name="id_fonction">
+                                        <select id="fonction-select" class="form-select @error('id_fonction') is-invalid @enderror" name="id_fonction_edt">
+                                            <option value="0" disabled selected>Choisir une fonction</option>
                                             @foreach ($fonctions as $fonction)
                                                 <option value="{{ $fonction->id_fonction }}" {{ old('id_fonction') == $fonction->id_fonction ? 'selected' : '' }}>
                                                     {{ $fonction->fonction }}
                                                 </option>
                                             @endforeach
                                         </select>
+                                        <input type="hidden" name="selected_fonction" id="selected_fonction_hidden" value="{{ old('id_fonction_edt') }}">
                                         @error('id_fonction')
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
@@ -124,17 +126,20 @@
                                     <div class="mb-3">
                                         <label class="form-label" for="chantier-select"><strong>Chantier</strong></label>
                                         <input class="form-control mb-2" type="text" id="search-chantier" placeholder="Rechercher un chantier...">
-                                        <select id="chantier-select" class="form-select @error('id_localisation') is-invalid @enderror" name="id_localisation">
+                                        <select id="chantier-select" class="form-select @error('id_localisation') is-invalid @enderror" name="id_localisation_edt">
+                                            <option value="0" disabled selected>Choisir un chantier</option>
                                             @foreach ($chantiers as $chantier)
                                                 <option value="{{ $chantier->id_localisation }}" {{ old('id_localisation') == $chantier->id_localisation ? 'selected' : '' }}>
                                                     {{ $chantier->localisation }}
                                                 </option>
                                             @endforeach
                                         </select>
+                                        <input type="hidden" name="selected_chantier" id="selected_chantier_hidden" value="{{ old('id_localisation_edt') }}">
                                         @error('id_localisation')
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
                                     </div>
+
                                 </form>
                             </div>
                         </div>
@@ -263,6 +268,7 @@
                                                 </option>
                                             @endforeach
                                         </select>
+                                        <input type="hidden" name="selected_fonction_add" id="selected_fonction_add_hidden" value="{{ old('id_fonction') }}">
                                         @error('id_fonction')
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
@@ -287,9 +293,9 @@
 
                                     <!-- Chantier -->
                                     <div class="mb-3">
-                                        <label class="form-label" for="chantier-select"><strong>Chantier</strong></label>
-                                        <input class="form-control mb-2" type="text" id="search-chantier" placeholder="Rechercher un chantier...">
-                                        <select id="chantier-select" class="form-select @error('id_localisation_add') is-invalid @enderror" name="id_localisation_add" required>
+                                        <label class="form-label" for="chantier-select-add"><strong>Chantier</strong></label>
+                                        <input class="form-control mb-2" type="text" id="search-chantier-add" placeholder="Rechercher un chantier...">
+                                        <select id="chantier-select-add" class="form-select @error('id_localisation_add') is-invalid @enderror" name="id_localisation_add" required>
                                             <option value="" selected disabled>Chantier</option>
                                             @foreach ($chantiers as $chantier)
                                                 <option value="{{ $chantier->id_localisation }}" {{ old('id_localisation_add') == $chantier->id_localisation ? 'selected' : '' }}>
@@ -297,6 +303,7 @@
                                                 </option>
                                             @endforeach
                                         </select>
+                                        <input type="hidden" name="selected_chantier_add" id="selected_chantier_add_hidden" value="{{ old('id_localisation_add') }}">
                                         @error('id_localisation_add')
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
@@ -325,7 +332,7 @@
                 <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <p class="text-dark">Id: <strong id="utilisateur_id"></strong></p>
+                <p class="text-dark visually-hidden">Id: <strong id="utilisateur_id"></strong></p>
                 <p class="text-dark">Utilisateur: <strong id="utilisateur_nom"></strong></p>
                 <p class="text-dark">Matricule: <strong id="utilisateur_matricule"></strong></p>
                 <p class="text-dark">Login: <strong id="utilisateur_login"></strong></p>

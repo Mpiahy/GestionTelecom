@@ -8,6 +8,7 @@ use App\Models\Utilisateur;
 use App\Models\TypeUtilisateur;
 use App\Models\Fonction;
 use App\Models\Localisation;
+use Exception;
 
 class UserController extends Controller
 {
@@ -103,4 +104,63 @@ class UserController extends Controller
 
         return redirect()->route('ref.user')->with('error', __('Utilisateur introuvable.'));
     }
+
+    // Recherche des fonctions
+    public function searchFonction(Request $request)
+    {
+        try {
+            $term = $request->input('query');
+
+            // Si aucun terme n'est fourni, retourner une réponse vide
+            if (empty($term)) {
+                return response()->json([], 200);
+            }
+
+            // Rechercher les fonctions correspondantes
+            $fonctions = Fonction::where('fonction', 'ILIKE', "%{$term}%")
+                ->get()
+                ->map(function ($fonction) {
+                    return [
+                        'id' => $fonction->id_fonction,
+                        'label' => $fonction->fonction
+                    ];
+                });
+
+            return response()->json($fonctions, 200);
+        } catch (Exception $e) {
+            return response()->json([
+                'error' => 'Une erreur est survenue : ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    // Recherche des chantiers
+    public function searchChantier(Request $request)
+    {
+        try {
+            $term = $request->input('query');
+
+            // Si aucun terme n'est fourni, retourner une réponse vide
+            if (empty($term)) {
+                return response()->json([], 200);
+            }
+
+            // Rechercher les chantiers correspondants
+            $chantiers = Localisation::where('localisation', 'ILIKE', "%{$term}%")
+                ->get()
+                ->map(function ($chantier) {
+                    return [
+                        'id' => $chantier->id_localisation,
+                        'label' => $chantier->localisation
+                    ];
+                });
+
+            return response()->json($chantiers, 200);
+        } catch (Exception $e) {
+            return response()->json([
+                'error' => 'Une erreur est survenue : ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
 }
