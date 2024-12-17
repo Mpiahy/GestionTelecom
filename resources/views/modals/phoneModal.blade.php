@@ -150,72 +150,32 @@
                                 <form id="form_edt_phone" method="get" style="color: #a0c8d8;">
                                     <!-- Champs cachés pour transmettre les valeurs des champs désactivés -->
                                     <input type="hidden" id="edt_phone_id" name="edt_phone_id" value="">
-                                    <input type="hidden" id="hidden_phone_type" name="edt_phone_type" value="">
-                                    <input type="hidden" id="hidden_phone_marque" name="edt_phone_marque" value="">
-                                    <input type="hidden" id="hidden_phone_modele" name="edt_phone_modele" value="">
+                                    
                                     <div class="mb-3">
                                         <label class="form-label" for="edt_phone_type"><strong>Type</strong></label>
-                                        <select disabled id="edt_phone_type" class="form-select @error('edt_phone_type','edt_phone_errors') is-invalid @enderror" name="edt_phone_type" required>
-                                            <option value="0" disabled {{ old('edt_phone_type') ? '' : 'selected' }}>Choisir le type</option>
-                                            @foreach($types as $type)
-                                                <option value="{{ $type->id_type_equipement }}"
-                                                    {{ old('edt_phone_type') == $type->id_type_equipement ? 'selected' : '' }}>
-                                                    {{ $type->type_equipement }}
-                                                </option>
-                                            @endforeach
-                                        </select>
-                                        @error('edt_phone_type','edt_phone_errors')
-                                            <div class="invalid-feedback">{{ $message }}</div>
-                                        @enderror
+                                        <input id="edt_phone_type" class="form-control @error('edt_phone_type','edt_phone_errors') is-invalid @enderror"
+                                            type="text"
+                                            name="edt_phone_type"
+                                            value="{{ old('edt_phone_type') }}"
+                                            disabled />
                                     </div>
 
                                     <div class="mb-3">
                                         <label class="form-label" for="edt_phone_marque"><strong>Marque</strong></label>
-                                        <select disabled id="edt_phone_marque" class="form-select @error('edt_phone_marque','edt_phone_errors') is-invalid @enderror" name="edt_phone_marque" required>
-                                            <option value="0" disabled {{ old('edt_phone_marque') ? '' : 'selected' }}>Choisir la marque</option>
-                                            <option value="new_marque" {{ old('edt_phone_marque') == 'new_marque' ? 'selected' : '' }}>Ajouter une nouvelle marque</option>
-                                            @foreach($marques as $marque)
-                                                <option value="{{ $marque->id_marque }}"
-                                                    {{ old('edt_phone_marque') == $marque->id_marque ? 'selected' : '' }}>
-                                                    {{ $marque->marque }}
-                                                </option>
-                                            @endforeach
-                                        </select>
-                                        @error('edt_phone_marque','edt_phone_errors')
-                                            <div class="invalid-feedback">{{ $message }}</div>
-                                        @enderror
-
-                                        <!-- Champ pour nouvelle marque -->
-                                        <input id="new_phone_marque_edt" class="form-control mt-2 d-none @error('new_phone_marque_edt','edt_phone_errors') is-invalid @enderror" type="text" placeholder="Nouvelle marque" name="new_phone_marque_edt" value="{{ old('new_phone_marque_edt') }}" />
-                                        @error('new_phone_marque_edt','edt_phone_errors')
-                                            <div class="invalid-feedback">{{ $message }}</div>
-                                        @enderror
+                                        <input id="edt_phone_marque" class="form-control @error('edt_phone_marque','edt_phone_errors') is-invalid @enderror"
+                                            type="text"
+                                            name="edt_phone_marque"
+                                            value="{{ old('edt_phone_marque') }}"
+                                            disabled />
                                     </div>
 
                                     <div class="mb-3">
                                         <label class="form-label" for="edt_phone_modele"><strong>Modèle</strong></label>
-                                        <select disabled id="edt_phone_modele" class="form-select @error('edt_phone_modele','edt_phone_errors') is-invalid @enderror" name="edt_phone_modele" required>
-                                            <option value="0" disabled {{ old('edt_phone_modele') ? '' : 'selected' }}>Choisir le modèle</option>
-                                            <option value="new" {{ old('edt_phone_modele') == 'new' ? 'selected' : '' }}>Ajouter un nouveau modèle</option>
-                                            @foreach($modeles as $modele)
-                                                <option value="{{ $modele->id_modele }}" {{ old('edt_phone_modele') == $modele->id_modele ? 'selected' : '' }}>
-                                                    {{ $modele->nom_modele }}
-                                                </option>
-                                            @endforeach
-                                        </select>
-                                        @error('edt_phone_modele','edt_phone_errors')
-                                            <div class="invalid-feedback">{{ $message }}</div>
-                                        @enderror
-
-                                        <!-- Champ pour ajouter un nouveau modèle -->
-                                        <input id="new_phone_modele_edt" class="form-control mt-2 d-none @error('new_phone_modele_edt','edt_phone_errors') is-invalid @enderror"
-                                               type="text"
-                                               placeholder="Nouveau modèle"
-                                               name="new_phone_modele_edt"
-                                               value="{{ old('new_phone_modele_edt') }}" />
-                                        @error('new_phone_modele_edt','edt_phone_errors')
-                                            <div class="invalid-feedback">{{ $message }}</div>
-                                        @enderror
+                                        <input id="edt_phone_modele" class="form-control @error('edt_phone_modele','edt_phone_errors') is-invalid @enderror"
+                                            type="text"
+                                            name="edt_phone_modele"
+                                            value="{{ old('edt_phone_modele') }}"
+                                            disabled />
                                     </div>
 
                                     <div class="mb-3">

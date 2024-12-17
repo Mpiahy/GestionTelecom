@@ -196,21 +196,17 @@
         });
     }
 
-    /**
-     * Gère l'affichage du champ "Enrôlé" selon le type d'équipement.
-     * @param {string} typeId - Type d'équipement.
-     * @param {string} enrollValue - Valeur "Enrôlé".
-     */
-    function togglePhoneEnroll(typeId, enrollValue) {
+    function togglePhoneEnroll(dataType, enrollValue) {
         const edtPhoneEnroll = document.getElementById('edt_phone_enroll');
         const edtPhoneEnrollDiv = edtPhoneEnroll.closest('.mb-3');
 
-        if (typeId === '2') {
+        // Si le type est "Téléphone à Touche", on cache le champ "Enrôlé"
+        if (dataType === 'Téléphone à Touche') {
             edtPhoneEnrollDiv.classList.add('d-none');
-            edtPhoneEnroll.value = '2';
+            edtPhoneEnroll.value = '2'; // Valeur par défaut pour "Non enrôlé"
         } else {
             edtPhoneEnrollDiv.classList.remove('d-none');
-            edtPhoneEnroll.value = enrollValue || '0';
+            edtPhoneEnroll.value = enrollValue || '0'; // Valeur par défaut
         }
     }
 

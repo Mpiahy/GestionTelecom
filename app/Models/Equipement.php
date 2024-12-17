@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\StatutEquipement;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
 class Equipement extends Model
@@ -112,7 +113,7 @@ class Equipement extends Model
         ]);
     }
 
-    public function updatePhoneFromRequest($validatedData, $modele)
+    public function updatePhoneFromRequest($validatedData)
     {
         $this->update([
             'imei' => $validatedData['edt_phone_imei'],
@@ -136,42 +137,35 @@ class Equipement extends Model
      * @param array $filters
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function scopeFilter($query, array $filters)
+    public static function getPhonesWithDetails(array $filters = []): Collection
     {
-        // Préparez les filtres avant utilisation
-        $filters = array_filter($filters); // Supprime les valeurs nulles ou vides
+        // Commence la requête avec Query Builder sur la vue SQL
+        $query = DB::table('view_phones_details');
 
-        return $query
-            // Filtre par marque
-            ->when(isset($filters['filter_marque']), function ($query) use ($filters) {
-                $query->whereHas('modele.marque', function ($q) use ($filters) {
-                    $q->where('id_marque', $filters['filter_marque']);
-                });
+        // Appliquer les filtres
+        $filters = array_filter($filters);
+
+        $query = $query
+            ->when(isset($filters['filter_marque']), function ($q) use ($filters) {
+                $q->where('marque', $filters['filter_marque']);
             })
-
-            // Filtre par statut
-            ->when(isset($filters['filter_statut']), function ($query) use ($filters) {
-                $query->where('id_statut_equipement', $filters['filter_statut']);
+            ->when(isset($filters['filter_statut']), function ($q) use ($filters) {
+                $q->where('statut_equipement', $filters['filter_statut']);
             })
-
-            // Recherche par IMEI (LIKE avec wildcard optimisé)
-            ->when(isset($filters['search_imei']), function ($query) use ($filters) {
-                $query->where('imei', 'like', '%' . $filters['search_imei'] . '%');
+            ->when(isset($filters['search_imei']), function ($q) use ($filters) {
+                $q->where('imei', 'like', '%' . $filters['search_imei'] . '%');
             })
-
-            // Recherche par numéro de série (SN)
-            ->when(isset($filters['search_sn']), function ($query) use ($filters) {
-                $query->where('serial_number', 'like', '%' . $filters['search_sn'] . '%');
+            ->when(isset($filters['search_sn']), function ($q) use ($filters) {
+                $q->where('serial_number', 'like', '%' . $filters['search_sn'] . '%');
             })
+            ->when(isset($filters['search_user']), function ($q) use ($filters) {
+                $q->where('login', 'ilike', '%' . $filters['search_user'] . '%');
+            })
+            ->orderByRaw("CASE WHEN statut_equipement = 'HS' THEN 1 ELSE 0 END")
+            ->orderBy('id_equipement');
 
-            // Tri conditionnel : met le statut HS (id_statut_equipement = 4) à la fin
-            ->orderByRaw('CASE WHEN id_statut_equipement = 4 THEN 1 ELSE 0 END')
-            ->orderBy('id_equipement'); // Optionnel : tri secondaire par ID pour un ordre cohérent.
-    }
-
-    public function isHS()
-    {
-        return $this->statut->statut_equipement === 'HS';
+        // Retourner les résultats sous forme de collection
+        return $query->get();
     }
 
     // Compter les equipements Actifs
@@ -202,6 +196,18 @@ class Equipement extends Model
     public static function boxInactif()
     {
         return DB::select('SELECT * FROM view_box_inactif');
+    }
+
+    // Fonction pour récupérer les téléphones with affectation
+    public static function phonesWithDetails()
+    {
+        return DB::select('SELECT * FROM view_phones_details');
+    }
+
+    // Fonction pour récupérer les box with affectation
+    public static function boxWithDetails()
+    {
+        return DB::select('SELECT * FROM view_box_details');
     }
 
     // Recherche sur view_phones_inactif

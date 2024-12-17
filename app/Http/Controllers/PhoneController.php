@@ -15,28 +15,20 @@ class PhoneController extends Controller
 {
     public function phoneView(Request $request)
     {
-        // Obtenir les données de session
         $login = Session::get('login');
 
-        // Charger les données nécessaires pour les filtres
         $marques = Marque::marquePhone()->get();
         $modeles = Modele::modelePhone()->get();
         $statuts = StatutEquipement::all();
         $types = TypeEquipement::forPhones()->get();
 
-        // Vérifier si le bouton "Tout" est cliqué pour réinitialiser les filtres
         if ($request->has('reset_filters')) {
-            return redirect()->route('ref.phone'); // Rediriger vers la page sans filtres
+            return redirect()->route('ref.phone');
         }
 
-        // Obtenir les filtres actifs depuis la requête
-        $filters = $request->only(['filter_marque', 'filter_statut', 'search_imei', 'search_sn']);
+        $filters = $request->only(['filter_marque', 'filter_statut', 'search_imei', 'search_sn', 'search_user']);
 
-        // Appliquer les filtres et récupérer uniquement les téléphones
-        $equipements = Equipement::phones()
-            ->with(['modele.marque', 'typeEquipement', 'statut'])
-            ->filter($filters)
-            ->get();
+        $equipements = Equipement::getPhonesWithDetails($filters);
 
         return view('ref.phone', compact(
             'login', 'marques', 'modeles', 'statuts', 'types', 'equipements', 'filters'
@@ -83,22 +75,17 @@ class PhoneController extends Controller
     public function updatePhone(Request $request, $id)
     {
         try {
-            // Valider les données
             $validatedData = $request->validate([
-                'edt_phone_imei' => 'required|unique:equipement,imei,' . $id . ',id_equipement|max:50',
-                'edt_phone_sn' => 'required|unique:equipement,serial_number,' . $id . ',id_equipement|max:50',
+                'edt_phone_imei' => 'required|unique:equipement,imei,' . $id . ',id_equipement',
+                'edt_phone_sn' => 'required|unique:equipement,serial_number,' . $id . ',id_equipement',
                 'edt_phone_enroll' => 'required|in:1,2',
-            ]);
+            ]);            
 
             // Trouver l'équipement existant
             $equipement = Equipement::findOrFail($id);
 
-            // Gestion des marques et modèles
-            $marque = Marque::findOrCreate($request->edt_phone_marque, $request->new_phone_marque, $request->edt_phone_type);
-            $modele = Modele::findOrCreate($request->edt_phone_modele, $request->new_phone_modele, $marque->id_marque);
-
             // Mettre à jour l'équipement
-            $equipement->updatePhoneFromRequest($validatedData, $modele);
+            $equipement->updatePhoneFromRequest($validatedData);
 
             return redirect()->route('ref.phone')->with('success', 'Téléphone modifié avec succès.');
         } catch (ValidationException $e) {
