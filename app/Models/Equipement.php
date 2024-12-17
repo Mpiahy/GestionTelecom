@@ -191,4 +191,42 @@ class Equipement extends Model
     {
         return DB::select("SELECT COUNT(*) AS total FROM view_equipement_hs")[0]->total;
     }
+
+    // Fonction pour récupérer les téléphones inactifs
+    public static function phonesInactif()
+    {
+        return DB::select('SELECT * FROM view_phones_inactif');
+    }
+
+    // Fonction pour récupérer les box inactifs
+    public static function boxInactif()
+    {
+        return DB::select('SELECT * FROM view_box_inactif');
+    }
+
+    // Recherche sur view_phones_inactif
+    public static function recherchePhonesInactifs($searchTerm)
+    {
+        $searchTerm = "%{$searchTerm}%";
+
+        return DB::table('view_phones_inactif')
+            ->where('marque', 'ILIKE', $searchTerm)
+            ->orWhere('modele', 'ILIKE', $searchTerm)
+            ->orWhere('imei', 'ILIKE', $searchTerm)
+            ->orWhere('serial_number', 'ILIKE', $searchTerm)
+            ->get();
+    }
+
+    // Recherche sur view_box_inactif
+    public static function rechercheBoxInactifs($searchTerm)
+    {
+        $searchTerm = "%{$searchTerm}%";
+
+        return DB::table('view_box_inactif')
+            ->where('marque', 'ILIKE', $searchTerm)
+            ->orWhere('modele', 'ILIKE', $searchTerm)
+            ->orWhere('imei', 'ILIKE', $searchTerm)
+            ->orWhere('serial_number', 'ILIKE', $searchTerm)
+            ->get();
+    }
 }

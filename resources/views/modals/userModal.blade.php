@@ -347,3 +347,56 @@
         </div>
     </div>
 </div>
+
+{{-- ATTRIBUTION EQUIPEMENT --}}
+<div id="modal_attribuer_equipement" class="modal" role="dialog" tabindex="-1">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <!-- En-tête du modal -->
+            <div class="modal-header">
+                <h4 class="modal-title text-primary">Attribuer un Équipement</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            
+            <div class="modal-body">
+                <form id="form_attr_equipement" action="{{ route('ligne.attrEquipement') }}" method="post">
+                    @csrf
+                    <input id="id_utilisateur_attr" type="hidden" name="id_utilisateur_attr">
+                    <!-- Informations sur l'utilisateur -->
+                    <div class="mb-3">
+                        <label for="login_attr" class="form-label">Login de l'utilisateur</label>
+                        <input type="text" class="form-control" id="login_attr" readonly>
+                    </div>
+                    <div class="mb-3">
+                        <label for="nom_prenom_attr" class="form-label">Nom et Prénom de l'utilisateur</label>
+                        <input type="text" class="form-control" id="nom_prenom_attr" readonly>
+                    </div>
+
+                    <!-- Choix entre Téléphones ou Box -->
+                    <div class="mb-3">
+                        <label for="type_equipement_attr" class="form-label">Type d'Équipement</label>
+                        <select class="form-select" id="type_equipement_attr" required>
+                            <option value="" disabled selected>Choisir un type d'équipement</option>
+                            <option value="phones">Téléphones</option>
+                            <option value="box">Box</option>
+                        </select>
+                    </div>
+
+                    <!-- Liste des équipements -->
+                    <div class="mb-3">
+                        <label for="equipement_attr" class="form-label">Équipement</label>
+                        <input type="text" class="form-control mb-1" id="search-equipement-attr" placeholder="Rechercher un équipement...">
+                        <select class="form-select" id="equipement_attr" required disabled name="id_equipement_attr">
+                            <option value="" disabled selected>Choisir un équipement</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            
+            <div class="modal-footer">
+                <button type="button" class="btn btn-warning" data-bs-dismiss="modal">Annuler</button>
+                <button id="btn_attribuer_equipement" class="btn btn-primary" form="form_attr_equipement" disabled>Attribuer</button>
+            </div>
+        </div>
+    </div>
+</div>

@@ -6,10 +6,10 @@
 
 @section('content_ref')
 
-<div class="container-fluid">
+    <div class="container-fluid">
         <!-- Contenu principal -->
         <h3 class="text-dark" style="color: #0a4866;">
-            <i class="fas fa-users" style="padding-right: 5px;"></i>Utilisateur
+            <i class="fas fa-users" style="padding-right: 5px;"></i>Utilisateurs
         </h3>
 
         <!-- Toast container -->
@@ -180,6 +180,19 @@
                                 <!-- Actions -->
                                 <td class="text-center">
                                     <div class="d-flex justify-content-center gap-2">
+                                        <!-- Attribuer Équipement -->
+                                        <a href="#"
+                                            class="text-decoration-none"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#modal_attribuer_equipement"
+                                            data-id-utilisateur-attr="{{ $utilisateur->id_utilisateur }}"
+                                            data-login-attr="{{ $utilisateur->login }}"
+                                            data-nom-attr="{{ $utilisateur->nom }}"
+                                            data-prenom-attr="{{ $utilisateur->prenom }}"
+                                            title="Attribuer un équipement">
+                                            <i class="fas fa-laptop-medical text-success" style="font-size: 20px;"></i>
+                                        </a>
+
                                         <!-- Voir -->
                                         <a href="#" class="text-decoration-none" data-bs-target="#modal_voir_emp" data-bs-toggle="modal" title="Voir">
                                             <i class="fas fa-history text-primary" style="font-size: 20px;"></i>
@@ -217,6 +230,7 @@
                                            title="Départ">
                                             <i class="fas fa-sign-out-alt text-danger" style="font-size: 20px;"></i>
                                         </a>
+
                                     </div>
                                 </td>
                             </tr>
@@ -224,7 +238,6 @@
                         </tbody>
                     </table>
                 </div>
-                
             </div>
         </div>
     </div>

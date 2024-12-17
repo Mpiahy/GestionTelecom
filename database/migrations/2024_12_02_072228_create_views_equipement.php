@@ -71,6 +71,93 @@ return new class extends Migration
             FROM equipement
             WHERE id_statut_equipement = 4;
         ');
+
+        // View pour avoir Phones/box inactifs
+        DB::statement('
+            CREATE VIEW view_phones_inactif AS
+            SELECT 
+                e.id_equipement, 
+                e.imei, 
+                e.serial_number, 
+                ma.marque, 
+                mo.nom_modele AS modele
+            FROM 
+                view_equipement_inactif e
+            JOIN 
+                modele mo ON e.id_modele = mo.id_modele
+            JOIN 
+                marque ma ON mo.id_marque = ma.id_marque
+            WHERE 
+                e.id_type_equipement IN (1, 2);
+
+            CREATE VIEW view_box_inactif AS
+            SELECT 
+                e.id_equipement, 
+                e.imei, 
+                e.serial_number, 
+                ma.marque, 
+                mo.nom_modele AS modele
+            FROM 
+                view_equipement_inactif e
+            JOIN 
+                modele mo ON e.id_modele = mo.id_modele
+            JOIN 
+                marque ma ON mo.id_marque = ma.id_marque
+            WHERE 
+                e.id_type_equipement = 3;
+        ');
+
+        // View pour avoir Phones et box avec détails d'affectation
+        DB::statement('
+            CREATE OR REPLACE VIEW view_phones_details AS
+            SELECT 
+                e.id_equipement,
+                m.marque,
+                mo.nom_modele AS modele,
+                e.imei,
+                e.serial_number,
+                te.type_equipement,
+                se.statut_equipement,
+                e.enrole,
+                u.nom,
+                u.prenom,
+                u.login,
+                l.localisation,
+                a.debut_affectation,
+                a.fin_affectation
+            FROM view_equipement_phones e
+            LEFT JOIN modele mo ON e.id_modele = mo.id_modele
+            LEFT JOIN marque m ON mo.id_marque = m.id_marque
+            LEFT JOIN type_equipement te ON e.id_type_equipement = te.id_type_equipement
+            LEFT JOIN statut_equipement se ON e.id_statut_equipement = se.id_statut_equipement
+            LEFT JOIN affectation a ON e.id_equipement = a.id_equipement
+            LEFT JOIN utilisateur u ON a.id_utilisateur = u.id_utilisateur
+            LEFT JOIN localisation l ON u.id_localisation = l.id_localisation;
+
+            CREATE OR REPLACE VIEW view_box_details AS
+            SELECT 
+                e.id_equipement,
+                m.marque,
+                mo.nom_modele AS modele,
+                e.imei,
+                e.serial_number,
+                te.type_equipement,
+                se.statut_equipement,
+                u.nom,
+                u.prenom,
+                u.login,
+                l.localisation,
+                a.debut_affectation,
+                a.fin_affectation
+            FROM view_equipement_box e
+            LEFT JOIN modele mo ON e.id_modele = mo.id_modele
+            LEFT JOIN marque m ON mo.id_marque = m.id_marque
+            LEFT JOIN type_equipement te ON e.id_type_equipement = te.id_type_equipement
+            LEFT JOIN statut_equipement se ON e.id_statut_equipement = se.id_statut_equipement
+            LEFT JOIN affectation a ON e.id_equipement = a.id_equipement
+            LEFT JOIN utilisateur u ON a.id_utilisateur = u.id_utilisateur
+            LEFT JOIN localisation l ON u.id_localisation = l.id_localisation;
+        ');
     }
 
     /**
@@ -88,5 +175,9 @@ return new class extends Migration
         DB::statement('DROP VIEW IF EXISTS view_equipement_actif CASCADE;');
         DB::statement('DROP VIEW IF EXISTS view_equipement_inactif CASCADE;');
         DB::statement('DROP VIEW IF EXISTS view_equipement_hs CASCADE;');
+        DB::statement('DROP VIEW IF EXISTS view_phones_inactif CASCADE;');
+        DB::statement('DROP VIEW IF EXISTS view_box_inactif CASCADE;');
+        DB::statement('DROP VIEW IF EXISTS view_phones_details CASCADE;');
+        DB::statement('DROP VIEW IF EXISTS view_box_details CASCADE;');
     }
 };

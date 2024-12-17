@@ -87,4 +87,17 @@ class Localisation extends Model
             throw new \Exception("Une erreur est survenue lors de la suppression de la localisation : " . $e->getMessage());
         }
     }
+
+    // Recherche d'un Chantier
+    public static function searchByTerm(string $term)
+    {
+        return self::where('localisation', 'ILIKE', "%{$term}%")
+            ->get()
+            ->map(function ($chantier) {
+                return [
+                    'id' => $chantier->id_localisation,
+                    'label' => $chantier->localisation,
+                ];
+            });
+    }
 }

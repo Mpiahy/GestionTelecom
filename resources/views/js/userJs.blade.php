@@ -320,3 +320,86 @@ function configureSearchField(searchInputId, selectId, hiddenInputId, searchUrl)
 }
 
 </script>
+
+{{-- ATTRIBUER EQUIPEMENT --}}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Sélection des éléments
+        const modal = document.getElementById('modal_attribuer_equipement');
+        const typeEquipementSelect = document.getElementById('type_equipement_attr');
+        const searchEquipementInput = document.getElementById('search-equipement-attr');
+        const equipementSelect = document.getElementById('equipement_attr');
+        const btnAttribuer = document.getElementById('btn_attribuer_equipement');
+    
+        // Fonction pour gérer l'état du bouton "Attribuer"
+        function toggleAttribuerButton() {
+            btnAttribuer.disabled = !equipementSelect.value; // Activer si un équipement est sélectionné
+        }
+    
+        // Fonction pour charger les équipements dynamiquement via API
+        function rechercherEquipements() {
+            const type = typeEquipementSelect.value; // 'phones' ou 'box'
+            const searchTerm = searchEquipementInput.value; // Terme de recherche
+    
+            // Désactiver les champs pendant le chargement
+            equipementSelect.disabled = true;
+            equipementSelect.innerHTML = '<option value="" disabled selected>Chargement...</option>';
+            btnAttribuer.disabled = true;
+    
+            // Vérifier si un type est sélectionné
+            if (!type) return;
+    
+            // Appel AJAX vers l'API
+            fetch(`/recherche-inactifs?type=${type}&searchTerm=${searchTerm}`)
+                .then(response => response.json())
+                .then(data => {
+                    equipementSelect.innerHTML = '<option value="" disabled selected>Choisir un équipement</option>';
+    
+                    if (data.length > 0) {
+                        // Ajouter les options au select
+                        data.forEach(equipement => {
+                            const option = document.createElement('option');
+                            option.value = equipement.id_equipement;
+                            option.textContent = `${equipement.marque} - ${equipement.modele} (IMEI: ${equipement.imei}, SN: ${equipement.serial_number})`;
+                            equipementSelect.appendChild(option);
+                        });
+    
+                        equipementSelect.disabled = false; // Activer le select
+                        equipementSelect.selectedIndex = 1; // Sélectionner la première option par défaut
+                    } else {
+                        equipementSelect.innerHTML = '<option value="" disabled selected>Aucun résultat trouvé</option>';
+                        equipementSelect.disabled = true;
+                    }
+    
+                    toggleAttribuerButton(); // Vérifier l'état du bouton
+                })
+                .catch(error => {
+                    console.error('Erreur lors de la recherche:', error);
+                    equipementSelect.innerHTML = '<option value="" disabled selected>Erreur de chargement</option>';
+                    equipementSelect.disabled = true;
+                });
+        }
+    
+        // Réinitialiser les champs du formulaire à l'ouverture du modal
+        modal.addEventListener('show.bs.modal', function (event) {
+            const button = event.relatedTarget;
+    
+            // Alimenter les champs avec les data-*
+            document.getElementById('id_utilisateur_attr').value = button.getAttribute('data-id-utilisateur-attr');
+            document.getElementById('login_attr').value = button.getAttribute('data-login-attr');
+            document.getElementById('nom_prenom_attr').value = `${button.getAttribute('data-nom-attr')} ${button.getAttribute('data-prenom-attr')}`;
+    
+            // Réinitialiser les autres champs
+            typeEquipementSelect.value = '';
+            searchEquipementInput.value = '';
+            equipementSelect.innerHTML = '<option value="" disabled selected>Choisir un équipement</option>';
+            equipementSelect.disabled = true;
+            btnAttribuer.disabled = true;
+        });
+    
+        // Écouteurs pour les changements
+        typeEquipementSelect.addEventListener('change', rechercherEquipements);
+        searchEquipementInput.addEventListener('input', rechercherEquipements);
+        equipementSelect.addEventListener('change', toggleAttribuerButton);
+    });
+</script>

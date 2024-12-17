@@ -2,13 +2,17 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Affectation;
+use App\Models\Equipement;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 use App\Models\Utilisateur;
 use App\Models\TypeUtilisateur;
 use App\Models\Fonction;
 use App\Models\Localisation;
+use App\Models\StatutEquipement;
 use Exception;
+use Illuminate\Support\Facades\DB;
 
 class UserController extends Controller
 {
@@ -145,22 +149,87 @@ class UserController extends Controller
                 return response()->json([], 200);
             }
 
-            // Rechercher les chantiers correspondants
-            $chantiers = Localisation::where('localisation', 'ILIKE', "%{$term}%")
-                ->get()
-                ->map(function ($chantier) {
-                    return [
-                        'id' => $chantier->id_localisation,
-                        'label' => $chantier->localisation
-                    ];
-                });
+            // Appeler la méthode du modèle
+            $chantiers = Localisation::searchByTerm($term);
 
             return response()->json($chantiers, 200);
         } catch (Exception $e) {
             return response()->json([
-                'error' => 'Une erreur est survenue : ' . $e->getMessage()
+                'error' => 'Une erreur est survenue : ' . $e->getMessage(),
             ], 500);
         }
     }
 
+    // ATTRIBUTION EQUIPEMENT
+    public function showPhonesInactifs()
+    {
+        $phonesInactifs = Equipement::phonesInactif();
+        return response()->json($phonesInactifs);
+    }
+
+    public function showBoxInactifs()
+    {
+        $boxInactifs = Equipement::boxInactif();
+        return response()->json($boxInactifs);
+    }
+
+    public function rechercherInactifs(Request $request)
+    {
+        $type = $request->input('type'); // 'phones' ou 'box'
+        $searchTerm = $request->input('searchTerm', '');
+
+        if ($type === 'phones') {
+            $resultats = Equipement::recherchePhonesInactifs($searchTerm);
+        } elseif ($type === 'box') {
+            $resultats = Equipement::rechercheBoxInactifs($searchTerm);
+        } else {
+            return response()->json(['error' => 'Type invalide'], 400);
+        }
+        return response()->json($resultats);
+    }
+
+    public function attrEquipement(Request $request)
+    {
+        try {
+            $validated = $request->validate([
+                'id_utilisateur_attr' => 'required|integer|exists:utilisateur,id_utilisateur',
+                'id_equipement_attr' => 'required|integer|exists:equipement,id_equipement',
+            ]);
+
+            $idUtilisateur = $validated['id_utilisateur_attr'];
+            $idEquipement = $validated['id_equipement_attr'];
+
+            DB::transaction(function () use ($idUtilisateur, $idEquipement) {
+                // Rechercher l'affectation existante pour cet utilisateur
+                $affectation = Affectation::where('id_utilisateur', $idUtilisateur)
+                    ->orderBy('created_at', 'desc') // Prendre la plus récente
+                    ->first();
+            
+                if ($affectation) {
+                    // Mettre à jour l'affectation avec le nouvel équipement
+                    $affectation->update([
+                        'id_equipement' => $idEquipement,
+                        'updated_at' => now(),
+                    ]);
+                } else {
+                    // Si aucune affectation existante n'est trouvée, lancer une exception
+                    throw \Illuminate\Validation\ValidationException::withMessages([
+                        'attr_equipement_errors' => 'L\'utilisateur doit d\'abord avoir une ligne attribuée.',
+                    ]);
+                }
+            
+                // Mettre à jour le statut de l'équipement sélectionné
+                Equipement::where('id_equipement', $idEquipement)->update([
+                    'id_statut_equipement' => StatutEquipement::STATUT_ATTRIBUE, // Statut 2 = Attribué
+                    'updated_at' => now(),
+                ]);
+            });
+            
+            return redirect()->route('ref.user')->with('success', 'Équipement attribué avec succès.');
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return redirect()->route('ref.user')->withErrors(['attr_equipement_errors' => $e->getMessage()]);
+        } catch (Exception $e) {
+            return redirect()->route('ref.user')->withErrors(['attr_equipement_errors' => 'Une erreur est survenue.']);
+        }
+    }
 }
