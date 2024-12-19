@@ -76,7 +76,7 @@
         <div class="card-body">
             <div class="row mt-2">
                 <div class="col">
-                    <form method="get" action="{{ route('ref.phone') }}">
+                    <form method="get" action="{{ route('ref.box') }}">
                         <div class="input-group">
                             <span class="input-group-text">Marque</span>
                             <select name="filter_marque" class="form-select">
@@ -97,7 +97,7 @@
                     </form>
                 </div>
                 <div class="col">
-                    <form method="get" action="{{ route('ref.phone') }}">
+                    <form method="get" action="{{ route('ref.box') }}">
                         <div class="input-group">
                             <span class="input-group-text">Login</span>
                             <input class="form-control" type="text" name="search_user" placeholder="Rechercher par Utilisateur" value="{{ request('search_user') }}">
@@ -116,7 +116,7 @@
                     <div></div>
                 </div>
                 <div class="col">
-                    <form method="get" action="{{ route('ref.phone') }}">
+                    <form method="get" action="{{ route('ref.box') }}">
                         <div class="input-group">
                             <span class="input-group-text">IMEI</span>
                             <input class="form-control" type="text" name="search_imei" placeholder="Rechercher par IMEI" value="{{ request('search_imei') }}">
@@ -132,7 +132,7 @@
             </div>
             <div class="row mt-2">
                 <div class="col-xl-6">
-                    <form method="get" action="{{ route('ref.phone') }}">
+                    <form method="get" action="{{ route('ref.box') }}">
                         <div class="btn-group" role="group">
                             <button class="btn btn-outline-primary {{ !request('filter_statut') ? 'active' : '' }}" type="submit" name="reset_filters" value="1">Tout</button>
                             <button class="btn btn-outline-info {{ request('filter_statut') == 'Nouveau' ? 'active' : '' }}" type="submit" name="filter_statut" value="Nouveau">Nouveau</button>
@@ -150,7 +150,7 @@
 
                 </div>
                 <div class="col-xl-6">
-                    <form method="get" action="{{ route('ref.phone') }}">
+                    <form method="get" action="{{ route('ref.box') }}">
                         <div class="input-group">
                             <span class="input-group-text">SN</span>
                             <input class="form-control" type="text" name="search_sn" placeholder="Rechercher par Numéro de Série" value="{{ request('search_sn') }}">
