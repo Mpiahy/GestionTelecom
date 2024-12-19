@@ -374,7 +374,9 @@
 
                     <!-- Choix entre Téléphones ou Box -->
                     <div class="mb-3">
-                        <label for="type_equipement_attr" class="form-label">Type d'Équipement</label>
+                        <label for="type_equipement_attr" class="form-label">
+                            Type d'Équipement <span class="text-danger">*</span>
+                        </label>
                         <select class="form-select" id="type_equipement_attr" required>
                             <option value="" disabled selected>Choisir un type d'équipement</option>
                             <option value="phones">Téléphones</option>
@@ -384,12 +386,23 @@
 
                     <!-- Liste des équipements -->
                     <div class="mb-3">
-                        <label for="equipement_attr" class="form-label">Équipement</label>
+                        <label for="equipement_attr" class="form-label">
+                            Équipement <span class="text-danger">*</span>
+                        </label>
                         <input type="text" class="form-control mb-1" id="search-equipement-attr" placeholder="Rechercher un équipement...">
                         <select class="form-select" id="equipement_attr" required disabled name="id_equipement_attr">
                             <option value="" disabled selected>Choisir un équipement</option>
                         </select>
                     </div>
+
+                    <!-- Date d'attribution -->
+                    <div class="mb-3">
+                        <label for="date_attr" class="form-label">
+                            Date d'attribution <span class="text-danger">*</span>
+                        </label>
+                        <input type="date" class="form-control" id="date_attr" name="date_attr" required>
+                    </div>
+
                 </form>
             </div>
             

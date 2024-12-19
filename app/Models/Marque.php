@@ -111,4 +111,16 @@ class Marque extends Model
         return self::findOrFail($marqueId);
     }
 
+    // Méthode pour récupérer les marques par type d'équipement
+    public static function getByType($typeId)
+    {
+        $startRange = $typeId * 1000; // Calcul du début de la plage
+        $endRange = ($typeId + 1) * 1000; // Calcul de la fin de la plage
+
+        // Retourner les marques filtrées
+        return self::where('id_marque', '>=', $startRange)
+                   ->where('id_marque', '<', $endRange)
+                   ->get(['id_marque as id', 'marque as name']);
+    }
+
 }

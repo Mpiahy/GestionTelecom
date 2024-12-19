@@ -103,4 +103,16 @@ class Modele extends Model
     
         return self::findOrFail($modeleId);
     }          
+
+    // Méthode pour récupérer les modèles par marque
+    public static function getByMarque($marqueId)
+    {
+        $startRange = $marqueId * 1000; // Calcul du début de la plage
+        $endRange = ($marqueId + 1) * 1000; // Calcul de la fin de la plage
+
+        // Retourner les modèles filtrés
+        return self::where('id_modele', '>=', $startRange)
+                   ->where('id_modele', '<', $endRange)
+                   ->get(['id_modele as id', 'nom_modele as name']);
+    }
 }

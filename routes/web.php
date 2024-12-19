@@ -72,6 +72,8 @@ Route::middleware('check.session')->group(function() {
     Route::post('/phone/save', [PhoneController::class, 'savePhone'])->name('phone.enr');
     Route::get('/phones/{id_phone}', [PhoneController::class, 'updatePhone'])->name('phone.edt');
     Route::post('/phone/hs', [PhoneController::class, 'hsPhone'])->name('phone.hs');
+    Route::post('/phone/retour', [PhoneController::class, 'retourPhone'])->name('phone.retour');
+    Route::get('/phone/detailPhone/{id_phone}', [PhoneController::class, 'detailPhone'])->name('phone.detailPhone');
 
     Route::get('/get-marques-by-type/{typeId}', [PhoneController::class, 'getMarquesByType']); //for phones
     Route::get('/get-modeles-by-marque/{marqueId}', [PhoneController::class, 'getModelesByMarque']); //for phones & box

@@ -22,4 +22,11 @@ class StatutEquipement extends Model
             'id_statut_equipement' => self::STATUT_HS,
         ]);
     }
+
+    public static function markAsRetourne($equipement)
+    {
+        $equipement->update([
+            'id_statut_equipement' => self::STATUT_RETOURNE,
+        ]);
+    }
 }

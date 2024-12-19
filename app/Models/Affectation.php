@@ -2,8 +2,10 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Validation\ValidationException;
 use InvalidArgumentException;
 
 class Affectation extends Model
@@ -56,4 +58,38 @@ class Affectation extends Model
         ]);
     }
 
+    public static function attrEquipement(int $idUtilisateur, int $idEquipement, string $dateDebutAffectation)
+    {
+        self::create([
+            'debut_affectation' => $dateDebutAffectation,
+            'id_utilisateur' => $idUtilisateur,
+            'id_equipement' => $idEquipement,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+    }
+
+    public function retourAffectationEquipement(string $retourDate)
+    {
+        if ($retourDate <= $this->debut_affectation) {
+            throw ValidationException::withMessages([
+                'retour_date' => 'La date de retour doit être strictement postérieure à la date d’affectation.',
+            ]);
+        }
+
+        $this->fin_affectation = $retourDate;
+        $this->save();
+    }
+
+    public static function hsEquipement(int $equipementId)
+    {
+        $affectation = self::where('id_equipement', $equipementId)
+            ->whereNull('fin_affectation')
+            ->first();
+
+        if ($affectation) {
+            $affectation->fin_affectation = Carbon::now();
+            $affectation->save();
+        }
+    }
 }

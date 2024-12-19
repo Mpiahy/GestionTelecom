@@ -204,6 +204,7 @@ SELECT
     u.prenom,
     u.login,
     l.localisation,
+    a.id_affectation,
     a.debut_affectation,
     a.fin_affectation
 FROM view_equipement_phones e
@@ -229,6 +230,7 @@ SELECT
     u.prenom,
     u.login,
     l.localisation,
+    a.id_affectation,
     a.debut_affectation,
     a.fin_affectation
 FROM view_equipement_box e

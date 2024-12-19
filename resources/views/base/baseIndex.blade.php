@@ -38,7 +38,7 @@
                         </a>
                         <div class="dropdown-menu" style="background: #0a4866;border-style: none;border-color: #0a4866;margin-right: 9px;padding-top: 0px;" data-bs-smooth-scroll="true">
                             <a class="nav-link {{ Route::is('ref.user') ? 'active' : '' }}" href="{{ route('ref.user') }}" style="padding-left: 35px;padding-top: 0px;padding-bottom: 15px;">
-                                <i class="fas fa-users"></i><span>Utilisateur</span>
+                                <i class="fas fa-users"></i><span>Utilisateurs</span>
                             </a>
                             <a class="nav-link {{ Route::is('ref.chantier') ? 'active' : '' }}" href="{{ route('ref.chantier') }}" style="padding-left: 35px;padding-top: 0px;padding-bottom: 15px;">
                                 <i class="far fa-building" style="font-size: 14px;"></i><span>Chantiers</span>

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Affectation;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Http\Request;
 use App\Models\Equipement;
@@ -104,15 +105,14 @@ class PhoneController extends Controller
     public function hsPhone(Request $request)
     {
         try {
-            // Valider les données
             $validatedData = $request->validate([
                 'phone_id' => 'required|exists:equipement,id_equipement',
             ]);
 
-            // Récupérer l'équipement
             $equipement = Equipement::findOrFail($validatedData['phone_id']);
 
-            // Marquer comme HS
+            Affectation::hsEquipement($equipement->id_equipement);
+
             StatutEquipement::markAsHS($equipement);
 
             // Message de succès
@@ -132,16 +132,42 @@ class PhoneController extends Controller
         }
     }
 
+    public function retourPhone(Request $request)
+    {
+        try {
+            $validatedData = $request->validate([
+                'retour_phone_id' => 'required|exists:equipement,id_equipement',
+                'retour_affectation_id' => 'required|exists:affectation,id_affectation',
+                'retour_date' => 'required|date',
+            ]);
+
+            $affectation = Affectation::findOrFail($validatedData['retour_affectation_id']);
+
+            $affectation->retourAffectationEquipement($validatedData['retour_date']);
+
+            $equipement = Equipement::findOrFail($validatedData['retour_phone_id']);
+            $equipement->retourEquipement();
+
+            return redirect()
+                ->route('ref.phone')
+                ->with('success', "Le téléphone {$equipement->modele->marque->marque} {$equipement->modele->nom_modele} ({$equipement->serial_number}) a été retourné.");
+        } catch (ValidationException $e) {
+            return redirect()
+                ->back()
+                ->withErrors($e->errors(),'retour_phone_errors')
+                ->withInput();
+        } catch (\Exception $e) {
+            return redirect()
+                ->back()
+                ->withErrors(['error_general' => 'Une erreur est survenue : ' . $e->getMessage()])
+                ->withInput();
+        }
+    }
+
+    // Récupérer les marques par type d'équipement
     public function getMarquesByType($typeId)
     {
-        // Calcul de la plage d'ID pour le type d'équipement donné
-        $startRange = $typeId * 1000; // Ex: 1 * 1000 = 1000
-        $endRange = ($typeId + 1) * 1000; // Ex: (1 + 1) * 1000 = 2000
-
-        // Récupérer les marques dont les IDs sont dans cette plage
-        $marques = Marque::where('id_marque', '>=', $startRange)
-                         ->where('id_marque', '<', $endRange)
-                         ->get(['id_marque as id', 'marque as name']);
+        $marques = Marque::getByType($typeId);
 
         return response()->json([
             'success' => true,
@@ -149,20 +175,27 @@ class PhoneController extends Controller
         ]);
     }
 
+    // Récupérer les modèles par marque
     public function getModelesByMarque($marqueId)
     {
-        // Calcul de la plage d'ID pour les modèles de cette marque
-        $startRange = $marqueId * 1000; // Ex: 1001 * 1000 = 1001000
-        $endRange = ($marqueId + 1) * 1000; // Ex: (1001 + 1) * 1000 = 1002000
-
-        // Récupérer les modèles dans cette plage
-        $modeles = Modele::where('id_modele', '>=', $startRange)
-                         ->where('id_modele', '<', $endRange)
-                         ->get(['id_modele as id', 'nom_modele as name']);
+        $modeles = Modele::getByMarque($marqueId);
 
         return response()->json([
             'success' => true,
             'modeles' => $modeles
         ]);
     }
+
+    // Voir Phone
+    public function detailPhone($id_phone)
+    {
+        $phonesBig = Equipement::getPhonesWithBigDetails($id_phone);
+
+        if (empty($phonesBig)) {
+            return response()->json(['error' => 'Détails du téléphone introuvables.'], 404);
+        }
+
+        return response()->json($phonesBig);
+    }
+
 }

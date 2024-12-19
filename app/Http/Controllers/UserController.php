@@ -194,36 +194,16 @@ class UserController extends Controller
             $validated = $request->validate([
                 'id_utilisateur_attr' => 'required|integer|exists:utilisateur,id_utilisateur',
                 'id_equipement_attr' => 'required|integer|exists:equipement,id_equipement',
+                'date_attr' => 'required|date',
             ]);
 
-            $idUtilisateur = $validated['id_utilisateur_attr'];
-            $idEquipement = $validated['id_equipement_attr'];
+            Affectation::attrEquipement(
+                $validated['id_utilisateur_attr'],
+                $validated['id_equipement_attr'],
+                $validated['date_attr']
+            );
 
-            DB::transaction(function () use ($idUtilisateur, $idEquipement) {
-                // Rechercher l'affectation existante pour cet utilisateur
-                $affectation = Affectation::where('id_utilisateur', $idUtilisateur)
-                    ->orderBy('created_at', 'desc') // Prendre la plus récente
-                    ->first();
-            
-                if ($affectation) {
-                    // Mettre à jour l'affectation avec le nouvel équipement
-                    $affectation->update([
-                        'id_equipement' => $idEquipement,
-                        'updated_at' => now(),
-                    ]);
-                } else {
-                    // Si aucune affectation existante n'est trouvée, lancer une exception
-                    throw \Illuminate\Validation\ValidationException::withMessages([
-                        'attr_equipement_errors' => 'L\'utilisateur doit d\'abord avoir une ligne attribuée.',
-                    ]);
-                }
-            
-                // Mettre à jour le statut de l'équipement sélectionné
-                Equipement::where('id_equipement', $idEquipement)->update([
-                    'id_statut_equipement' => StatutEquipement::STATUT_ATTRIBUE, // Statut 2 = Attribué
-                    'updated_at' => now(),
-                ]);
-            });
+            Equipement::attrEquipement($validated['id_equipement_attr']);
             
             return redirect()->route('ref.user')->with('success', 'Équipement attribué avec succès.');
         } catch (\Illuminate\Validation\ValidationException $e) {

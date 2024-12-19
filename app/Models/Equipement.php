@@ -235,4 +235,31 @@ class Equipement extends Model
             ->orWhere('serial_number', 'ILIKE', $searchTerm)
             ->get();
     }
+
+    public static function attrEquipement(int $idEquipement)
+    {
+        self::where('id_equipement', $idEquipement)->update([
+            'id_statut_equipement' => StatutEquipement::STATUT_ATTRIBUE,
+            'updated_at' => now(),
+        ]);
+    }
+
+    public function retourEquipement()
+    {
+        $this->id_statut_equipement = StatutEquipement::STATUT_RETOURNE;
+        $this->save();
+    }
+
+    public static function getPhonesWithBigDetails($id_phone)
+    {
+        $sql = "SELECT * FROM view_phones_details";
+        
+        // Ajout de la clause WHERE si $id_phone est fourni
+        if (!empty($id_phone)) {
+            $sql .= " WHERE id_equipement = :id_phone";
+            return DB::select($sql, ['id_phone' => $id_phone]);
+        }
+
+        return DB::select($sql);
+    }
 }
