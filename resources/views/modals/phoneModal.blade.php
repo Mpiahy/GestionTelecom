@@ -150,7 +150,7 @@
                                 <form id="form_edt_phone" method="get" style="color: #a0c8d8;">
                                     <!-- Champs cachés pour transmettre les valeurs des champs désactivés -->
                                     <input type="hidden" id="edt_phone_id" name="edt_phone_id" value="">
-                                    
+
                                     <div class="mb-3">
                                         <label class="form-label" for="edt_phone_type"><strong>Type</strong></label>
                                         <input id="edt_phone_type" class="form-control @error('edt_phone_type','edt_phone_errors') is-invalid @enderror"
@@ -232,49 +232,8 @@
     </div>
 </div>
 
-<div id="modal_attr_phone" class="modal" role="dialog" tabindex="-1">
-    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h4 class="modal-title text-primary">Attribuer un téléphone</h4><button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <div class="row">
-                    <div class="col">
-                        <div></div>
-                    </div>
-                    <div class="col-xl-7">
-                        <div class="card shadow">
-                            <div class="card-body">
-                                <form id="form_attr_phone" action="attr_phone" method="get" style="color: #a0c8d8;">
-                                    <div class="mb-3"><label class="form-label" for="attr_phone"><strong>Téléphone</strong><br /></label><input id="attr_phone" class="form-control" type="text" name="attr_phone" value="iPhone 15 Pro Max" readonly /></div>
-                                    <div class="mb-3"><label class="form-label" for="attr_phone"><strong>Numéro de série</strong><br /></label><input id="attr_phone-1" class="form-control" type="text" name="attr_phone_sn" value="14646354698" readonly /></div>
-                                    <div class="mb-3"><label class="form-label" for="attr_phone_emp"><strong>Utilisateur</strong></label><select id="attr_phone_emp" class="form-select" name="attr_phone_emp">
-                                            <option value="0" selected>Choisir l&#39;utilsateur</option>
-                                            <optgroup label="Dépôt Anosibe">
-                                                <option value="1">Randriamanivo Mpiahisoa</option>
-                                                <option value="2">Razafindrasoava Mirindra</option>
-                                            </optgroup>
-                                            <optgroup label="DTAMA">
-                                                <option value="3">Tantelison Odilon</option>
-                                            </optgroup>
-                                        </select></div>
-                                    <div class="mb-3"><label class="form-label" for="attr_phone_date"><strong>Date d&#39;affectation</strong></label><input id="attr_phone_date" class="form-control" type="date" name="attr_phone_date" /></div>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col">
-                        <div></div>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer"><button class="btn btn-warning" type="button" data-bs-dismiss="modal">Fermer</button><button class="btn btn-primary" type="submit" form="form_attr_phone">Attribuer</button></div>
-        </div>
-    </div>
-</div>
 <div id="modal_histo_phone" class="modal fade" role="dialog" tabindex="-1" aria-labelledby="modalTitle" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+  <div class="modal-dialog modal-dialog-centered modal-custom-width" role="document">
         <div class="modal-content shadow-lg border-0">
             <div class="modal-header bg-primary text-white">
                 <h4 id="modalTitle" class="modal-title">Historique d'affectation pour ce téléphone</h4>
@@ -304,6 +263,7 @@
                             <tr>
                                 <th class="text-dark">Utilisateur</th>
                                 <th class="text-dark">Login</th>
+                                <th class="text-dark">Localisation</th>
                                 <th class="text-dark">Date d'affectation</th>
                                 <th class="text-dark">Date de retour</th>
                             </tr>
@@ -374,6 +334,7 @@
         </div>
     </div>
 </div>
+
 <div id="modal_retour_phone" class="modal" role="dialog" tabindex="-1">
     <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable" role="document">
         <div class="modal-content">
@@ -393,88 +354,88 @@
                                     <!-- Champs cachés -->
                                     <input type="hidden" name="retour_phone_id" id="retour_phone_id" value="{{ old('retour_phone_id') }}">
                                     <input type="hidden" name="retour_affectation_id" id="retour_affectation_id" value="{{ old('retour_affectation_id') }}">
-                                
+
                                     <!-- Champs affichés deux par deux -->
                                     <div class="row mb-3">
                                         <div class="col-md-6">
                                             <label class="form-label" for="retour_type"><strong>Type</strong></label>
-                                            <input id="retour_type" 
-                                                   name="retour_type" 
-                                                   class="form-control" 
-                                                   type="text" 
-                                                   value="{{ old('retour_type') }}" 
+                                            <input id="retour_type"
+                                                   name="retour_type"
+                                                   class="form-control"
+                                                   type="text"
+                                                   value="{{ old('retour_type') }}"
                                                    readonly>
                                         </div>
                                         <div class="col-md-6">
                                             <label class="form-label" for="retour_phone"><strong>Téléphone</strong></label>
-                                            <input id="retour_phone" 
-                                                   name="retour_phone" 
-                                                   class="form-control" 
-                                                   type="text" 
-                                                   value="{{ old('retour_phone') }}" 
+                                            <input id="retour_phone"
+                                                   name="retour_phone"
+                                                   class="form-control"
+                                                   type="text"
+                                                   value="{{ old('retour_phone') }}"
                                                    readonly>
                                         </div>
                                     </div>
-                                
+
                                     <div class="row mb-3">
                                         <div class="col-md-6">
                                             <label class="form-label" for="retour_imei"><strong>Imei</strong></label>
-                                            <input id="retour_imei" 
-                                                   name="retour_imei" 
-                                                   class="form-control" 
-                                                   type="text" 
-                                                   value="{{ old('retour_imei') }}" 
+                                            <input id="retour_imei"
+                                                   name="retour_imei"
+                                                   class="form-control"
+                                                   type="text"
+                                                   value="{{ old('retour_imei') }}"
                                                    readonly>
                                         </div>
                                         <div class="col-md-6">
                                             <label class="form-label" for="retour_sn"><strong>SN</strong></label>
-                                            <input id="retour_sn" 
-                                                   name="retour_sn" 
-                                                   class="form-control" 
-                                                   type="text" 
-                                                   value="{{ old('retour_sn') }}" 
+                                            <input id="retour_sn"
+                                                   name="retour_sn"
+                                                   class="form-control"
+                                                   type="text"
+                                                   value="{{ old('retour_sn') }}"
                                                    readonly>
                                         </div>
                                     </div>
-                                
+
                                     <div class="row mb-3">
                                         <div class="col-md-6">
                                             <label class="form-label" for="retour_user"><strong>Utilisateur</strong></label>
-                                            <input id="retour_user" 
-                                                   name="retour_user" 
-                                                   class="form-control" 
-                                                   type="text" 
-                                                   value="{{ old('retour_user') }}" 
+                                            <input id="retour_user"
+                                                   name="retour_user"
+                                                   class="form-control"
+                                                   type="text"
+                                                   value="{{ old('retour_user') }}"
                                                    readonly>
                                         </div>
                                         <div class="col-md-6">
                                             <label class="form-label" for="retour_statut"><strong>Etat</strong></label>
-                                            <select id="retour_statut" 
-                                                    name="retour_statut" 
-                                                    class="form-select" 
+                                            <select id="retour_statut"
+                                                    name="retour_statut"
+                                                    class="form-select"
                                                     readonly>
                                                 <option value="" {{ old('retour_statut') === '' ? 'selected' : '' }}>Retourné</option>
                                             </select>
                                         </div>
                                     </div>
-                                
+
                                     <div class="row mb-3">
                                         <div class="col-md-6">
                                             <label class="form-label" for="retour_debut"><strong>Date d'affectation</strong></label>
-                                            <input type="date" 
-                                                   class="form-control @error('retour_debut') is-invalid @enderror" 
-                                                   name="retour_debut" 
-                                                   id="retour_debut" 
-                                                   value="{{ old('retour_debut') }}" 
+                                            <input type="date"
+                                                   class="form-control @error('retour_debut') is-invalid @enderror"
+                                                   name="retour_debut"
+                                                   id="retour_debut"
+                                                   value="{{ old('retour_debut') }}"
                                                    readonly>
                                         </div>
                                         <div class="col-md-6">
                                             <label class="form-label" for="retour_date"><strong>Date de retour<span class="text-danger">*</span></strong></label>
-                                            <input type="date" 
-                                                   class="form-control @error('retour_date', 'retour_phone_errors') is-invalid @enderror" 
-                                                   name="retour_date" 
-                                                   id="retour_date" 
-                                                   value="{{ old('retour_date') }}" 
+                                            <input type="date"
+                                                   class="form-control @error('retour_date', 'retour_phone_errors') is-invalid @enderror"
+                                                   name="retour_date"
+                                                   id="retour_date"
+                                                   value="{{ old('retour_date') }}"
                                                    required>
                                             @error('retour_date', 'retour_phone_errors')
                                                 <div class="invalid-feedback">
@@ -484,7 +445,7 @@
                                         </div>
                                     </div>
                                 </form>
-                                
+
                             </div>
                         </div>
                     </div>

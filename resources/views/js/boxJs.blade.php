@@ -181,7 +181,6 @@
 
 
 {{-- HS --}}
-
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         const openHSModalButtons = document.querySelectorAll('.open-hs-modal');
@@ -193,17 +192,147 @@
                 // Récupère les données dynamiques
                 const boxId = this.dataset.boxId;
                 const boxName = this.dataset.boxName;
+                const boxImei = this.dataset.boxImei;
                 const boxSN = this.dataset.boxSn;
 
                 // Injecte les données dans le formulaire
                 document.getElementById('hs_box_id').value = boxId;
                 document.getElementById('hs_box').value = boxName;
+                document.getElementById('imei_box').value = boxImei;
                 document.getElementById('sn_box').value = boxSN;
 
                 // Affiche le modal
-                const modalHSbox = new bootstrap.Modal(document.getElementById('modal_hs_box'));
-                modalHSbox.show();
+                const modalHSBox = new bootstrap.Modal(document.getElementById('modal_hs_box'));
+                modalHSBox.show();
             });
         });
     });
+</script>
+
+{{-- Retour --}}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const openRetourModalButtons = document.querySelectorAll('.open-retour-modal');
+    
+        openRetourModalButtons.forEach(button => {
+            button.addEventListener('click', function (event) {
+                event.preventDefault(); // Empêche l'action par défaut
+    
+                // Récupère les données dynamiques correctement
+                const boxIdRetour = this.dataset.idRetour; // data-id-retour
+                const affectationIdRetour = this.dataset.affectationRetour; // data-affectation-retour
+                const debutRetour = this.dataset.debutRetour; // data-debut-retour
+                const boxTypeRetour = this.dataset.typeRetour; // data-type-retour
+                const boxNameRetour = this.dataset.nameRetour; // data-name-retour
+                const boxImeiRetour = this.dataset.imeiRetour; // data-imei-retour
+                const boxSnRetour = this.dataset.snRetour; // data-sn-retour
+                const boxUserRetour = this.dataset.userRetour; // data-user-retour
+    
+                // Injecte les données dans le formulaire
+                document.getElementById('retour_box_id').value = boxIdRetour;
+                document.getElementById('retour_affectation_id').value = affectationIdRetour;
+                document.getElementById('retour_debut').value = debutRetour;
+                document.getElementById('retour_type').value = boxTypeRetour;
+                document.getElementById('retour_box').value = boxNameRetour;
+                document.getElementById('retour_imei').value = boxImeiRetour;
+                document.getElementById('retour_sn').value = boxSnRetour;
+                document.getElementById('retour_user').value = boxUserRetour;
+    
+                // Affiche le modal
+                const modalRetourBox = new bootstrap.Modal(document.getElementById('modal_retour_box'));
+                modalRetourBox.show();
+            });
+        });
+    });
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // Vérifie si des erreurs sont présentes dans `retour_box_errors` (backend Laravel)
+        @if ($errors->hasBag('retour_box_errors') && $errors->retour_box_errors->any())
+            const modalRetourBox = new bootstrap.Modal(document.getElementById('modal_retour_box'));
+            modalRetourBox.show();
+        @endif
+    });
+</script>
+
+{{-- Voir Historique box --}}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Sélectionne tous les boutons pour voir les détails
+        const voirBoxBtns = document.querySelectorAll('#btn_histo_box');
+    
+        // Ajoute un gestionnaire d'événements à chaque bouton
+        voirBoxBtns.forEach(btn => {
+            btn.addEventListener('click', function (event) {
+                event.preventDefault(); // Empêche la redirection normale
+    
+                // Récupère l'ID de la box depuis l'attribut `data-id-histo`
+                const idBox = this.getAttribute('data-id-histo');
+    
+                // Vérifie que l'ID est valide
+                if (!idBox) {
+                    alert("ID de la box non valide !");
+                    return;
+                }
+    
+                // Appelle l'API pour récupérer les données
+                fetch(`/box/detailBox/${idBox}`)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Erreur lors de la récupération des données.');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        // Injecte les données dans le contenu du modal
+                        populateModal(data);
+    
+                        // Affiche le modal
+                        const modal = new bootstrap.Modal(document.getElementById('modal_histo_box'));
+                        modal.show();
+                    })
+                    .catch(error => {
+                        console.error('Erreur:', error);
+                        alert('Une erreur est survenue lors de la récupération des détails de la box.');
+                    });
+            });
+        });
+    
+        // Fonction pour injecter les données dans le modal
+        function populateModal(data) {
+            // Sélectionne le corps du tableau
+            const tbody = document.querySelector('#modal_histo_box .modal-body #dataTable tbody');
+    
+            // Vérifie les champs globaux avant de les injecter
+            if (data[0]) { // Si `data` est un tableau, cible le premier élément pour les informations générales
+                document.querySelector('#modal_histo_box .modal-body [data-field="marque"]').textContent = data[0].marque || '--';
+                document.querySelector('#modal_histo_box .modal-body [data-field="modele"]').textContent = data[0].modele || '--';
+                document.querySelector('#modal_histo_box .modal-body [data-field="serial_number"]').textContent = data[0].serial_number || '--';
+                document.querySelector('#modal_histo_box .modal-body [data-field="imei"]').textContent = data[0].imei || '--';
+            } else {
+                console.error("Les données globales (marque, modèle, etc.) sont manquantes.");
+            }
+    
+            // Vide le tableau pour éviter d'ajouter les mêmes données plusieurs fois
+            tbody.innerHTML = '';
+    
+            // Boucle sur chaque élément de `data` pour créer une ligne dans le tableau
+            data.forEach(item => {
+                const row = document.createElement('tr');
+    
+                // Crée et insère les cellules dans la ligne
+                row.innerHTML = `
+                    <td class="text-dark">${item.nom || ''} ${item.prenom || ''}</td>
+                    <td class="text-dark">${item.login || '--'}</td>
+                    <td class="text-dark">${item.localisation || '--'}</td>
+                    <td class="text-dark">${item.debut_affectation || '--'}</td>
+                    <td class="text-dark">${item.fin_affectation || '--'}</td>
+                `;
+    
+                // Ajoute la ligne au tableau
+                tbody.appendChild(row);
+            });
+        }
+    });
+    
 </script>

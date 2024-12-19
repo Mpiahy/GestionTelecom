@@ -61,6 +61,10 @@
     }
 }
 
+.modal-custom-width {
+    max-width: 80%; /* Ou utilisez une autre valeur comme 900px */
+}
+
 </style>
 
 <body id="page-top">

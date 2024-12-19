@@ -127,72 +127,32 @@
                                 <form id="form_edt_box" method="get" style="color: #a0c8d8;">
                                     <!-- Champs cachés pour transmettre les valeurs des champs désactivés -->
                                     <input type="hidden" id="edt_box_id" name="edt_box_id" value="">
-                                    <input type="hidden" id="hidden_box_type" name="edt_box_type" value="">
-                                    <input type="hidden" id="hidden_box_marque" name="edt_box_marque" value="">
-                                    <input type="hidden" id="hidden_box_modele" name="edt_box_modele" value="">
+                                    
                                     <div class="mb-3">
                                         <label class="form-label" for="edt_box_type"><strong>Type</strong></label>
-                                        <select disabled id="edt_box_type" class="form-select @error('edt_box_type','edt_box_errors') is-invalid @enderror" name="edt_box_type" required>
-                                            <option value="0" disabled {{ old('edt_box_type') ? '' : 'selected' }}>Choisir le type</option>
-                                            @foreach($types as $type)
-                                                <option value="{{ $type->id_type_equipement }}"
-                                                    {{ old('edt_box_type') == $type->id_type_equipement ? 'selected' : '' }}>
-                                                    {{ $type->type_equipement }}
-                                                </option>
-                                            @endforeach
-                                        </select>
-                                        @error('edt_box_type','edt_box_errors')
-                                            <div class="invalid-feedback">{{ $message }}</div>
-                                        @enderror
+                                        <input id="edt_box_type" class="form-control @error('edt_box_type','edt_box_errors') is-invalid @enderror"
+                                            type="text"
+                                            name="edt_box_type"
+                                            value="{{ old('edt_box_type') }}"
+                                            disabled />
                                     </div>
 
                                     <div class="mb-3">
                                         <label class="form-label" for="edt_box_marque"><strong>Marque</strong></label>
-                                        <select disabled id="edt_box_marque" class="form-select @error('edt_box_marque','edt_box_errors') is-invalid @enderror" name="edt_box_marque" required>
-                                            <option value="0" disabled {{ old('edt_box_marque') ? '' : 'selected' }}>Choisir la marque</option>
-                                            <option value="new_marque" {{ old('edt_box_marque') == 'new_marque' ? 'selected' : '' }}>Ajouter une nouvelle marque</option>
-                                            @foreach($marques as $marque)
-                                                <option value="{{ $marque->id_marque }}"
-                                                    {{ old('edt_box_marque') == $marque->id_marque ? 'selected' : '' }}>
-                                                    {{ $marque->marque }}
-                                                </option>
-                                            @endforeach
-                                        </select>
-                                        @error('edt_box_marque','edt_box_errors')
-                                            <div class="invalid-feedback">{{ $message }}</div>
-                                        @enderror
-
-                                        <!-- Champ pour nouvelle marque -->
-                                        <input id="new_box_marque_edt" class="form-control mt-2 d-none @error('new_box_marque_edt','edt_box_errors') is-invalid @enderror" type="text" placeholder="Nouvelle marque" name="new_box_marque_edt" value="{{ old('new_box_marque_edt') }}" />
-                                        @error('new_box_marque_edt','edt_box_errors')
-                                            <div class="invalid-feedback">{{ $message }}</div>
-                                        @enderror
+                                        <input id="edt_box_marque" class="form-control @error('edt_box_marque','edt_box_errors') is-invalid @enderror"
+                                            type="text"
+                                            name="edt_box_marque"
+                                            value="{{ old('edt_box_marque') }}"
+                                            disabled />
                                     </div>
 
                                     <div class="mb-3">
                                         <label class="form-label" for="edt_box_modele"><strong>Modèle</strong></label>
-                                        <select disabled id="edt_box_modele" class="form-select @error('edt_box_modele','edt_box_errors') is-invalid @enderror" name="edt_box_modele" required>
-                                            <option value="0" disabled {{ old('edt_box_modele') ? '' : 'selected' }}>Choisir le modèle</option>
-                                            <option value="new" {{ old('edt_box_modele') == 'new' ? 'selected' : '' }}>Ajouter un nouveau modèle</option>
-                                            @foreach($modeles as $modele)
-                                                <option value="{{ $modele->id_modele }}" {{ old('edt_box_modele') == $modele->id_modele ? 'selected' : '' }}>
-                                                    {{ $modele->nom_modele }}
-                                                </option>
-                                            @endforeach
-                                        </select>
-                                        @error('edt_box_modele','edt_box_errors')
-                                            <div class="invalid-feedback">{{ $message }}</div>
-                                        @enderror
-
-                                        <!-- Champ pour ajouter un nouveau modèle -->
-                                        <input id="new_box_modele_edt" class="form-control mt-2 d-none @error('new_box_modele_edt','edt_box_errors') is-invalid @enderror"
-                                               type="text"
-                                               placeholder="Nouveau modèle"
-                                               name="new_box_modele_edt"
-                                               value="{{ old('new_box_modele_edt') }}" />
-                                        @error('new_box_modele_edt','edt_box_errors')
-                                            <div class="invalid-feedback">{{ $message }}</div>
-                                        @enderror
+                                        <input id="edt_box_modele" class="form-control @error('edt_box_modele','edt_box_errors') is-invalid @enderror"
+                                            type="text"
+                                            name="edt_box_modele"
+                                            value="{{ old('edt_box_modele') }}"
+                                            disabled />
                                     </div>
 
                                     <div class="mb-3">
@@ -237,77 +197,53 @@
     </div>
 </div>
 
-<div id="modal_attr_box" class="modal" role="dialog" tabindex="-1">
-    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h4 class="modal-title text-primary">Attribuer un box</h4><button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
+<div id="modal_histo_box" class="modal fade" role="dialog" tabindex="-1" aria-labelledby="modalTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-custom-width" role="document">
+        <div class="modal-content shadow-lg border-0">
+            <div class="modal-header bg-primary text-white">
+                <h4 id="modalTitle" class="modal-title">Historique d'affectation pour cette Box</h4>
             </div>
             <div class="modal-body">
-                <div class="row">
-                    <div class="col">
-                        <div></div>
-                    </div>
-                    <div class="col-xl-7">
-                        <div class="card shadow">
-                            <div class="card-body">
-                                <form id="form_attr_box" action="attr_box" method="get" style="color: #a0c8d8;">
-                                    <div class="mb-3"><label class="form-label" for="attr_box"><strong>box</strong><br /></label><input id="attr_box" class="form-control" type="text" name="attr_box" value="ibox 15 Pro Max" readonly /></div>
-                                    <div class="mb-3"><label class="form-label" for="attr_box"><strong>Numéro de série</strong><br /></label><input id="attr_box-1" class="form-control" type="text" name="attr_box_sn" value="14646354698" readonly /></div>
-                                    <div class="mb-3"><label class="form-label" for="attr_box_emp"><strong>Utilisateur</strong></label><select id="attr_box_emp" class="form-select" name="attr_box_emp">
-                                            <option value="0" selected>Choisir l&#39;utilsateur</option>
-                                            <optgroup label="Dépôt Anosibe">
-                                                <option value="1">Randriamanivo Mpiahisoa</option>
-                                                <option value="2">Razafindrasoava Mirindra</option>
-                                            </optgroup>
-                                            <optgroup label="DTAMA">
-                                                <option value="3">Tantelison Odilon</option>
-                                            </optgroup>
-                                        </select></div>
-                                    <div class="mb-3"><label class="form-label" for="attr_box_date"><strong>Date d&#39;affectation</strong></label><input id="attr_box_date" class="form-control" type="date" name="attr_box_date" /></div>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col">
-                        <div></div>
-                    </div>
+                <!-- Détails du Box -->
+                <div class="mb-4">
+                    <p class="text-dark mb-1">
+                        <span class="fw-bold">Box :</span>
+                        <span class="fw-normal" data-field="marque"></span>
+                        <span class="fw-normal" data-field="modele"></span>
+                    </p>
+                    <p class="text-dark mb-1">
+                        <span class="fw-bold">Numéro de série :</span>
+                        <span class="fw-normal" data-field="serial_number"></span>
+                    </p>
+                    <p class="text-dark">
+                        <span class="fw-bold">IMEI :</span>
+                        <span class="fw-normal" data-field="imei"></span>
+                    </p>
                 </div>
-            </div>
-            <div class="modal-footer"><button class="btn btn-warning" type="button" data-bs-dismiss="modal">Fermer</button><button class="btn btn-primary" type="submit" form="form_attr_box">Attribuer</button></div>
-        </div>
-    </div>
-</div>
-<div id="modal_histo_box" class="modal" role="dialog" tabindex="-1">
-    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h4 class="modal-title text-primary">Historique d&#39;affectation pour ce box</h4><button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <p class="text-dark" style="margin-bottom: 0px;">box: <strong>ibox 15 Pro Max</strong></p>
-                <p class="text-dark">SN: <strong>321 54982 543</strong></p>
-                <div id="dataTable-2" class="table-responsive table mt-2" role="grid" aria-describedby="dataTable_info">
-                    <table id="dataTable" class="table table-hover my-0">
+
+                <!-- Table des affectations -->
+                <div class="table-responsive">
+                    <table id="dataTable" class="table table-bordered table-hover align-middle">
+                        <thead class="table-primary">
+                            <tr>
+                                <th class="text-dark">Utilisateur</th>
+                                <th class="text-dark">Login</th>
+                                <th class="text-dark">Localisation</th>
+                                <th class="text-dark">Date d'affectation</th>
+                                <th class="text-dark">Date de retour</th>
+                            </tr>
+                        </thead>
                         <tbody>
-                            <tr>
-                                <th class="table-primary">Utilisateur</th>
-                                <th class="table-primary text-dark">Date d&#39;affectation</th>
-                                <th class="table-primary">Date de retour</th>
-                            </tr>
-                            <tr>
-                                <td class="text-dark">Tantelison Odilon</td>
-                                <td class="text-dark">04 Novembre 2024</td>
-                                <td class="text-dark">--</td>
-                            </tr>
+                            <!-- Les lignes seront ajoutées dynamiquement ici -->
                         </tbody>
                     </table>
                 </div>
             </div>
-            <div class="modal-footer"><button class="btn btn-warning" type="button" data-bs-dismiss="modal">Fermer</button></div>
         </div>
     </div>
 </div>
+
+
 <div id="modal_hs_box" class="modal" role="dialog" tabindex="-1">
     <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
         <div class="modal-content">
@@ -325,13 +261,18 @@
                                 <!-- Formulaire de déclaration HS -->
                                 <form id="form_hs_box" action="{{ route('box.hs') }}" method="post">
                                     @csrf
-                                    <!-- Champ caché pour l'ID du box (utilisé par le backend) -->
+                                    <!-- Champ caché pour l'ID du Box (utilisé par le backend) -->
                                     <input type="hidden" name="box_id" id="hs_box_id" value="">
 
                                     <div class="mb-3">
-                                        <label class="form-label" for="hs_box"><strong>box</strong></label>
+                                        <label class="form-label" for="hs_box"><strong>Box</strong></label>
                                         <!-- Champ désactivé pour affichage uniquement -->
                                         <input id="hs_box" class="form-control" type="text" value="" readonly>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label" for="imei_box"><strong>Imei</strong></label>
+                                        <!-- Champ désactivé pour affichage uniquement -->
+                                        <input id="imei_box" class="form-control" type="text" value="" readonly>
                                     </div>
                                     <div class="mb-3">
                                         <label class="form-label" for="sn_box"><strong>SN</strong></label>
@@ -359,40 +300,118 @@
         </div>
     </div>
 </div>
+
 <div id="modal_retour_box" class="modal" role="dialog" tabindex="-1">
-    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="modal-title text-danger">Voulez-vous vraiment retourner ce box?</h4><button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
+                <h4 class="modal-title text-danger">Voulez-vous vraiment retourner ce Box?</h4>
             </div>
             <div class="modal-body">
                 <div class="row">
                     <div class="col">
                         <div></div>
                     </div>
-                    <div class="col-xl-7">
+                    <div class="col-xl-10">
                         <div class="card shadow">
                             <div class="card-body">
-                                <form id="form_retour_box" action="retour_box" method="get" style="color: #a0c8d8;">
-                                    <div class="mb-3">
-                                        <label class="form-label" for="retour_box"><strong>box</strong></label>
-                                        <input id="retour_box" class="form-control" type="text" name="retour_box" value="ibox 15 Pro Max" readonly />
+                                <form id="form_retour_box" action="{{ route('box.retour') }}" method="post">
+                                    @csrf
+                                    <!-- Champs cachés -->
+                                    <input type="hidden" name="retour_box_id" id="retour_box_id" value="{{ old('retour_box_id') }}">
+                                    <input type="hidden" name="retour_affectation_id" id="retour_affectation_id" value="{{ old('retour_affectation_id') }}">
+
+                                    <!-- Champs affichés deux par deux -->
+                                    <div class="row mb-3">
+                                        <div class="col-md-6">
+                                            <label class="form-label" for="retour_type"><strong>Type</strong></label>
+                                            <input id="retour_type"
+                                                   name="retour_type"
+                                                   class="form-control"
+                                                   type="text"
+                                                   value="{{ old('retour_type') }}"
+                                                   readonly>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label" for="retour_box"><strong>Box</strong></label>
+                                            <input id="retour_box"
+                                                   name="retour_box"
+                                                   class="form-control"
+                                                   type="text"
+                                                   value="{{ old('retour_box') }}"
+                                                   readonly>
+                                        </div>
                                     </div>
-                                    <div class="mb-3">
-                                        <label class="form-label" for="retour_sn"><strong>SN</strong></label>
-                                        <input id="retour_sn" class="form-control" type="text" name="retour_sn" value="78524 498 6549 8" readonly />
+
+                                    <div class="row mb-3">
+                                        <div class="col-md-6">
+                                            <label class="form-label" for="retour_imei"><strong>Imei</strong></label>
+                                            <input id="retour_imei"
+                                                   name="retour_imei"
+                                                   class="form-control"
+                                                   type="text"
+                                                   value="{{ old('retour_imei') }}"
+                                                   readonly>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label" for="retour_sn"><strong>SN</strong></label>
+                                            <input id="retour_sn"
+                                                   name="retour_sn"
+                                                   class="form-control"
+                                                   type="text"
+                                                   value="{{ old('retour_sn') }}"
+                                                   readonly>
+                                        </div>
                                     </div>
-                                    <div class="mb-3">
-                                        <label class="form-label" for="retour_emp"><strong>Employé</strong></label>
-                                        <input id="retour_emp" class="form-control" type="text" name="retour_emp" value="Tantelison Odilon" readonly />
+
+                                    <div class="row mb-3">
+                                        <div class="col-md-6">
+                                            <label class="form-label" for="retour_user"><strong>Utilisateur</strong></label>
+                                            <input id="retour_user"
+                                                   name="retour_user"
+                                                   class="form-control"
+                                                   type="text"
+                                                   value="{{ old('retour_user') }}"
+                                                   readonly>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label" for="retour_statut"><strong>Etat</strong></label>
+                                            <select id="retour_statut"
+                                                    name="retour_statut"
+                                                    class="form-select"
+                                                    readonly>
+                                                <option value="" {{ old('retour_statut') === '' ? 'selected' : '' }}>Retourné</option>
+                                            </select>
+                                        </div>
                                     </div>
-                                    <div class="mb-3">
-                                        <label class="form-label" for="retour_etat"><strong>Statut</strong></label>
-                                        <select id="retour_etat" class="form-select" name="retour_etat" readonly disabled>
-                                            <option value="3" selected>Retourné</option>
-                                        </select>
+
+                                    <div class="row mb-3">
+                                        <div class="col-md-6">
+                                            <label class="form-label" for="retour_debut"><strong>Date d'affectation</strong></label>
+                                            <input type="date"
+                                                   class="form-control @error('retour_debut') is-invalid @enderror"
+                                                   name="retour_debut"
+                                                   id="retour_debut"
+                                                   value="{{ old('retour_debut') }}"
+                                                   readonly>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label" for="retour_date"><strong>Date de retour<span class="text-danger">*</span></strong></label>
+                                            <input type="date"
+                                                   class="form-control @error('retour_date', 'retour_box_errors') is-invalid @enderror"
+                                                   name="retour_date"
+                                                   id="retour_date"
+                                                   value="{{ old('retour_date') }}"
+                                                   required>
+                                            @error('retour_date', 'retour_box_errors')
+                                                <div class="invalid-feedback">
+                                                    {{ $message }}
+                                                </div>
+                                            @enderror
+                                        </div>
                                     </div>
                                 </form>
+
                             </div>
                         </div>
                     </div>
@@ -401,7 +420,9 @@
                     </div>
                 </div>
             </div>
-            <div class="modal-footer"><button class="btn btn-warning" type="button" data-bs-dismiss="modal">Fermer</button><button class="btn btn-danger" type="submit" form="form_retour_box">Retourner</button></div>
+            <div class="modal-footer">
+                <button class="btn btn-danger" type="submit" form="form_retour_box">Retourner</button>
+            </div>
         </div>
     </div>
 </div>

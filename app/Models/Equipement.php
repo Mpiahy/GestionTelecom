@@ -122,7 +122,7 @@ class Equipement extends Model
         ]);
     }
 
-    public function updateBoxFromRequest($validatedData, $modele)
+    public function updateBoxFromRequest($validatedData)
     {
         $this->update([
             'imei' => $validatedData['edt_box_imei'],
@@ -141,6 +141,36 @@ class Equipement extends Model
     {
         // Commence la requête avec Query Builder sur la vue SQL
         $query = DB::table('view_phones_details');
+
+        // Appliquer les filtres
+        $filters = array_filter($filters);
+
+        $query = $query
+            ->when(isset($filters['filter_marque']), function ($q) use ($filters) {
+                $q->where('marque', $filters['filter_marque']);
+            })
+            ->when(isset($filters['filter_statut']), function ($q) use ($filters) {
+                $q->where('statut_equipement', $filters['filter_statut']);
+            })
+            ->when(isset($filters['search_imei']), function ($q) use ($filters) {
+                $q->where('imei', 'like', '%' . $filters['search_imei'] . '%');
+            })
+            ->when(isset($filters['search_sn']), function ($q) use ($filters) {
+                $q->where('serial_number', 'like', '%' . $filters['search_sn'] . '%');
+            })
+            ->when(isset($filters['search_user']), function ($q) use ($filters) {
+                $q->where('login', 'ilike', '%' . $filters['search_user'] . '%');
+            })
+            ->orderByRaw("CASE WHEN statut_equipement = 'HS' THEN 1 ELSE 0 END")
+            ->orderBy('id_equipement');
+
+        // Retourner les résultats sous forme de collection
+        return $query->get();
+    }
+    public static function getBoxWithDetails(array $filters = []): Collection
+    {
+        // Commence la requête avec Query Builder sur la vue SQL
+        $query = DB::table('view_box_details');
 
         // Appliquer les filtres
         $filters = array_filter($filters);
@@ -258,6 +288,18 @@ class Equipement extends Model
         if (!empty($id_phone)) {
             $sql .= " WHERE id_equipement = :id_phone";
             return DB::select($sql, ['id_phone' => $id_phone]);
+        }
+
+        return DB::select($sql);
+    }
+    public static function getBoxWithBigDetails($id_box)
+    {
+        $sql = "SELECT * FROM view_box_details";
+        
+        // Ajout de la clause WHERE si $id_box est fourni
+        if (!empty($id_box)) {
+            $sql .= " WHERE id_equipement = :id_box";
+            return DB::select($sql, ['id_box' => $id_box]);
         }
 
         return DB::select($sql);

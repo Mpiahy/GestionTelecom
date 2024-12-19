@@ -253,7 +253,6 @@
 </script>
 
 {{-- Retour --}}
-
 <script>
 document.addEventListener('DOMContentLoaded', function () {
     const openRetourModalButtons = document.querySelectorAll('.open-retour-modal');
@@ -346,7 +345,7 @@ document.addEventListener('DOMContentLoaded', function () {
     function populateModal(data) {
         // Sélectionne le corps du tableau
         const tbody = document.querySelector('#modal_histo_phone .modal-body #dataTable tbody');
-        
+
         // Vérifie les champs globaux avant de les injecter
         if (data[0]) { // Si `data` est un tableau, cible le premier élément pour les informations générales
             document.querySelector('#modal_histo_phone .modal-body [data-field="marque"]').textContent = data[0].marque || '--';
@@ -363,15 +362,16 @@ document.addEventListener('DOMContentLoaded', function () {
         // Boucle sur chaque élément de `data` pour créer une ligne dans le tableau
         data.forEach(item => {
             const row = document.createElement('tr');
-            
+
             // Crée et insère les cellules dans la ligne
             row.innerHTML = `
                 <td class="text-dark">${item.nom || ''} ${item.prenom || ''}</td>
                 <td class="text-dark">${item.login || '--'}</td>
+                <td class="text-dark">${item.localisation || '--'}</td>
                 <td class="text-dark">${item.debut_affectation || '--'}</td>
                 <td class="text-dark">${item.fin_affectation || '--'}</td>
             `;
-            
+
             // Ajoute la ligne au tableau
             tbody.appendChild(row);
         });

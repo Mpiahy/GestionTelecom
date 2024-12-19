@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Affectation;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Http\Request;
 use App\Models\Equipement;
@@ -17,25 +18,18 @@ class BoxController extends Controller
     {
         $login = Session::get('login');
 
-        // Charger les données nécessaires pour les filtres
         $marques = Marque::marqueBox()->get();
         $modeles = Modele::modeleBox()->get();
         $statuts = StatutEquipement::all();
         $types = TypeEquipement::forBox()->get();
     
-        // Vérifier si le bouton "Tout" est cliqué pour réinitialiser les filtres
         if ($request->has('reset_filters')) {
-            return redirect()->route('ref.box'); // Rediriger vers la page sans filtres
+            return redirect()->route('ref.box');
         }
     
-        // Obtenir les filtres actifs depuis la requête
         $filters = $request->only(['filter_marque', 'filter_statut', 'search_imei', 'search_sn']);
     
-        // Appliquer les filtres et récupérer uniquement les box
-        $equipements = Equipement::box()
-            ->with(['modele.marque', 'typeEquipement', 'statut'])
-            ->filter($filters)
-            ->get();
+        $equipements = Equipement::getBoxWithDetails($filters);
             
         return view('ref.box', compact(
             'login', 'marques', 'modeles', 'statuts', 'types', 'equipements', 'filters'
@@ -80,26 +74,16 @@ class BoxController extends Controller
     public function updateBox(Request $request, $id)
     {
         try {
-            // Valider les données
             $validatedData = $request->validate([
-                'edt_box_type' => 'required|exists:type_equipement,id_type_equipement',
-                'edt_box_marque' => 'required',
-                'new_box_marque' => 'required_if:edt_box_marque,new_marque|max:50',
-                'edt_box_modele' => 'required',
-                'new_box_modele' => 'required_if:edt_box_modele,new|max:50',
-                'edt_box_imei' => 'required|unique:equipement,imei,' . $id . ',id_equipement|max:50',
-                'edt_box_sn' => 'required|unique:equipement,serial_number,' . $id . ',id_equipement|max:50',
+                'edt_box_imei' => 'required|unique:equipement,imei,' . $id . ',id_equipement',
+                'edt_box_sn' => 'required|unique:equipement,serial_number,' . $id . ',id_equipement',
             ]);
 
             // Trouver l'équipement existant
             $equipement = Equipement::findOrFail($id);
 
-            // Gestion des marques et modèles
-            $marque = Marque::findOrCreate($request->edt_box_marque, $request->new_box_marque, $request->edt_box_type);
-            $modele = Modele::findOrCreate($request->edt_box_modele, $request->new_box_modele, $marque->id_marque);
-
             // Mettre à jour l'équipement
-            $equipement->updateboxFromRequest($validatedData, $modele);
+            $equipement->updateBoxFromRequest($validatedData);
 
             return redirect()->route('ref.box')->with('success', 'Box modifié avec succès.');
         } catch (ValidationException $e) {
@@ -118,15 +102,14 @@ class BoxController extends Controller
     public function hsBox(Request $request)
     {
         try {
-            // Valider les données
             $validatedData = $request->validate([
                 'box_id' => 'required|exists:equipement,id_equipement',
             ]);
 
-            // Récupérer l'équipement
             $equipement = Equipement::findOrFail($validatedData['box_id']);
 
-            // Marquer comme HS
+            Affectation::hsEquipement($equipement->id_equipement);
+
             StatutEquipement::markAsHS($equipement);
 
             // Message de succès
@@ -145,4 +128,49 @@ class BoxController extends Controller
                 ->withInput();
         }
     }
+
+    public function retourBox(Request $request)
+    {
+        try {
+            $validatedData = $request->validate([
+                'retour_box_id' => 'required|exists:equipement,id_equipement',
+                'retour_affectation_id' => 'required|exists:affectation,id_affectation',
+                'retour_date' => 'required|date',
+            ]);
+
+            $affectation = Affectation::findOrFail($validatedData['retour_affectation_id']);
+
+            $affectation->retourAffectationEquipement($validatedData['retour_date']);
+
+            $equipement = Equipement::findOrFail($validatedData['retour_box_id']);
+            $equipement->retourEquipement();
+
+            return redirect()
+                ->route('ref.box')
+                ->with('success', "La box {$equipement->modele->marque->marque} {$equipement->modele->nom_modele} ({$equipement->serial_number}) a été retournée.");
+        } catch (ValidationException $e) {
+            return redirect()
+                ->back()
+                ->withErrors($e->errors(),'retour_box_errors')
+                ->withInput();
+        } catch (\Exception $e) {
+            return redirect()
+                ->back()
+                ->withErrors(['error_general' => 'Une erreur est survenue : ' . $e->getMessage()])
+                ->withInput();
+        }
+    }
+
+    // Voir Box
+    public function detailBox($id_box)
+    {
+        $boxBig = Equipement::getBoxWithBigDetails($id_box);
+
+        if (empty($boxBig)) {
+            return response()->json(['error' => 'Détails de la box introuvables.'], 404);
+        }
+
+        return response()->json($boxBig);
+    }
+
 }

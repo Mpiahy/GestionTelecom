@@ -82,6 +82,8 @@ Route::middleware('check.session')->group(function() {
     Route::post('/box/save', [BoxController::class, 'saveBox'])->name('box.enr');
     Route::get('/box/{id_box}', [BoxController::class, 'updateBox'])->name('box.edt');
     Route::post('/box/hs', [BoxController::class, 'hsBox'])->name('box.hs');
+    Route::post('/box/retour', [BoxController::class, 'retourBox'])->name('box.retour');
+    Route::get('/box/detailBox/{id_box}', [BoxController::class, 'detailBox'])->name('box.detailBox');
 
     Route::get('/forfait', [ForfaitController::class, 'forfaitView'])->name('ref.forfait');
     Route::get('/forfaits/update-element/{id_forfait}/{id_element}', [ForfaitController::class, 'updateElement'])->name('forfait.update.element');

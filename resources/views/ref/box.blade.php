@@ -76,18 +76,18 @@
         <div class="card-body">
             <div class="row mt-2">
                 <div class="col">
-                    <form method="get" action="{{ route('ref.box') }}">
+                    <form method="get" action="{{ route('ref.phone') }}">
                         <div class="input-group">
                             <span class="input-group-text">Marque</span>
                             <select name="filter_marque" class="form-select">
                                 <option value="" {{ !request('filter_marque') ? 'selected' : '' }}>Toutes les marques</option>
                                 @foreach ($marques as $marque)
-                                    <option value="{{ $marque->id_marque }}" {{ request('filter_marque') == $marque->id_marque ? 'selected' : '' }}>
+                                    <option value="{{ $marque->marque }}" {{ request('filter_marque') == $marque->marque ? 'selected' : '' }}>
                                         {{ $marque->marque }}
                                     </option>
                                 @endforeach
                             </select>
-                            @foreach (['filter_statut', 'search_imei', 'search_sn'] as $filter)
+                            @foreach (['filter_statut', 'search_imei', 'search_sn', 'search_user'] as $filter)
                                 @if (request($filter))
                                     <input type="hidden" name="{{ $filter }}" value="{{ request($filter) }}">
                                 @endif
@@ -97,8 +97,17 @@
                     </form>
                 </div>
                 <div class="col">
-                    <form action="search_user">
-                        <div class="input-group"><span class="input-group-text">Utilisateur</span><input class="form-control" type="text" placeholder="Rechercher par Utilisateur" name="search_user" /><button class="btn btn-primary" type="button">Rechercher</button></div>
+                    <form method="get" action="{{ route('ref.phone') }}">
+                        <div class="input-group">
+                            <span class="input-group-text">Login</span>
+                            <input class="form-control" type="text" name="search_user" placeholder="Rechercher par Utilisateur" value="{{ request('search_user') }}">
+                            @foreach (['filter_statut', 'filter_marque', 'search_sn', 'search_imei'] as $filter)
+                                @if (request($filter))
+                                    <input type="hidden" name="{{ $filter }}" value="{{ request($filter) }}">
+                                @endif
+                            @endforeach
+                            <button class="btn btn-primary" type="submit">Rechercher</button>
+                        </div>
                     </form>
                 </div>
             </div>
@@ -107,11 +116,11 @@
                     <div></div>
                 </div>
                 <div class="col">
-                    <form method="get" action="{{ route('ref.box') }}">
+                    <form method="get" action="{{ route('ref.phone') }}">
                         <div class="input-group">
                             <span class="input-group-text">IMEI</span>
                             <input class="form-control" type="text" name="search_imei" placeholder="Rechercher par IMEI" value="{{ request('search_imei') }}">
-                            @foreach (['filter_statut', 'filter_marque', 'search_sn'] as $filter)
+                            @foreach (['filter_statut', 'filter_marque', 'search_sn', 'search_user'] as $filter)
                                 @if (request($filter))
                                     <input type="hidden" name="{{ $filter }}" value="{{ request($filter) }}">
                                 @endif
@@ -123,25 +132,25 @@
             </div>
             <div class="row mt-2">
                 <div class="col-xl-6">
-                    <form method="get" action="{{ route('ref.box') }}">
+                    <form method="get" action="{{ route('ref.phone') }}">
                         <div class="btn-group" role="group">
                             <button class="btn btn-outline-primary {{ !request('filter_statut') ? 'active' : '' }}" type="submit" name="reset_filters" value="1">Tout</button>
-                            <button class="btn btn-outline-info {{ request('filter_statut') == 1 ? 'active' : '' }}" type="submit" name="filter_statut" value="1">Nouveau</button>
-                            <button class="btn btn-outline-success {{ request('filter_statut') == 2 ? 'active' : '' }}" type="submit" name="filter_statut" value="2">Attribué</button>
-                            <button class="btn btn-outline-warning {{ request('filter_statut') == 3 ? 'active' : '' }}" type="submit" name="filter_statut" value="3">Retourné</button>
+                            <button class="btn btn-outline-info {{ request('filter_statut') == 'Nouveau' ? 'active' : '' }}" type="submit" name="filter_statut" value="Nouveau">Nouveau</button>
+                            <button class="btn btn-outline-success {{ request('filter_statut') == 'Attribué' ? 'active' : '' }}" type="submit" name="filter_statut" value="Attribué">Attribué</button>
+                            <button class="btn btn-outline-warning {{ request('filter_statut') == 'Retourne' ? 'active' : '' }}" type="submit" name="filter_statut" value="Retourne">Retourné</button>
+                            <button class="btn btn-outline-danger {{ request('filter_statut') == 'HS' ? 'active' : '' }}" type="submit" name="filter_statut" value="HS">HS</button>
 
                             <!-- Champs cachés pour conserver les autres filtres -->
                             <input type="hidden" name="filter_marque" value="{{ request('filter_marque') }}">
                             <input type="hidden" name="search_imei" value="{{ request('search_imei') }}">
                             <input type="hidden" name="search_sn" value="{{ request('search_sn') }}">
 
-                            <button class="btn btn-outline-danger {{ request('filter_statut') == 4 ? 'active' : '' }}" type="submit" name="filter_statut" value="4">HS</button>
                         </div>
                     </form>
 
                 </div>
                 <div class="col-xl-6">
-                    <form method="get" action="{{ route('ref.box') }}">
+                    <form method="get" action="{{ route('ref.phone') }}">
                         <div class="input-group">
                             <span class="input-group-text">SN</span>
                             <input class="form-control" type="text" name="search_sn" placeholder="Rechercher par Numéro de Série" value="{{ request('search_sn') }}">
@@ -172,24 +181,42 @@
                     <tbody>
                         @foreach ($equipements as $equipement)
                             <tr>
-                                <td>{{ $equipement->modele->marque->marque }}</td>
-                                <td>{{ $equipement->modele->nom_modele }}</td>
+                                <td>{{ $equipement->marque }}</td>
+                                <td>{{ $equipement->modele }}</td>
                                 <td>{{ $equipement->imei }}</td>
                                 <td>{{ $equipement->serial_number }}</td>
-                                <td>
-                                    N/A
-                                </td>
-                                <td>
-                                    N/A
-                                </td>
-                                <td>{{ $equipement->statut->statut_equipement }}</td>
+                                <td>{{ $equipement->login ?? '--' }}</td>
+                                <td>{{ $equipement->localisation ?? '--' }}</td>
+                                <td>{{ $equipement->statut_equipement }}</td>
 
-                                @if ($equipement->isHS())
-                                <td class="text-center">
-                                    <a id="btn_histo_box" class="text-decoration-none" data-bs-target="#modal_histo_box" data-bs-toggle="modal" data-toggle="tooltip" title="Historique" href="#" >
-                                        <i class="fas fa-history text-primary" style="font-size: 25px;"></i>
-                                    </a>
-                                </td>
+                                @if ($equipement->statut_equipement === 'HS')
+                                    <td class="text-center">
+                                        <a id="btn_edt_box"
+                                            class="text-decoration-none"
+                                            style="margin-right: 10px;"
+                                            data-bs-target="#modal_edt_box"
+                                            data-bs-toggle="modal"
+                                            title="Modifier"
+                                            href="#"
+                                            data-id="{{ $equipement->id_equipement }}"
+                                            data-type="{{ $equipement->type_equipement }}"
+                                            data-marque="{{ $equipement->marque ?? '' }}"
+                                            data-modele="{{ $equipement->modele ?? '' }}"
+                                            data-imei="{{ $equipement->imei ?? '' }}"
+                                            data-sn="{{ $equipement->serial_number ?? '' }}">
+                                            <i class="far fa-edit text-info" style="font-size: 25px;"></i>
+                                        </a>
+                                        <a id="btn_histo_box"
+                                            class="text-decoration-none" 
+                                            data-bs-target="#modal_histo_box" 
+                                            data-bs-toggle="modal"
+                                            title="Historique" 
+                                            href="{{ url('/box/detailBox/' . $equipement->id_equipement) }}" 
+                                            style="margin-right: 10px;"
+                                            data-id-histo="{{ $equipement->id_equipement }}">
+                                            <i class="fas fa-history text-primary" style="font-size: 25px;"></i>
+                                        </a>
+                                    </td>
                                 @else
                                 <td class="text-center">
                                     <!-- Action buttons -->
@@ -200,15 +227,22 @@
                                         data-bs-toggle="modal"
                                         title="Modifier"
                                         href="#"
-                                        data-id="{{ $equipement->id_equipement ?? '' }}"
-                                        data-type="{{ $equipement->typeEquipement->id_type_equipement ?? '' }}"
-                                        data-marque="{{ $equipement->modele->marque->id_marque ?? '' }}"
-                                        data-modele="{{ $equipement->modele->id_modele ?? '' }}"
+                                        data-id="{{ $equipement->id_equipement }}"
+                                        data-type="{{ $equipement->type_equipement }}"
+                                        data-marque="{{ $equipement->marque ?? '' }}"
+                                        data-modele="{{ $equipement->modele ?? '' }}"
                                         data-imei="{{ $equipement->imei ?? '' }}"
                                         data-sn="{{ $equipement->serial_number ?? '' }}">
                                         <i class="far fa-edit text-info" style="font-size: 25px;"></i>
                                     </a>
-                                    <a id="btn_histo_box" class="text-decoration-none" data-bs-target="#modal_histo_box" data-bs-toggle="modal" data-toggle="tooltip" title="Historique" href="#" style="margin-right: 10px;">
+                                    <a id="btn_histo_box"
+                                        class="text-decoration-none" 
+                                        data-bs-target="#modal_histo_box" 
+                                        data-bs-toggle="modal"
+                                        title="Historique" 
+                                        href="{{ url('/box/detailBox/' . $equipement->id_equipement) }}" 
+                                        style="margin-right: 10px;"
+                                        data-id-histo="{{ $equipement->id_equipement }}">
                                         <i class="fas fa-history text-primary" style="font-size: 25px;"></i>
                                     </a>
                                     <a id="btn_hs_box"
@@ -217,13 +251,30 @@
                                         title="Déclarer HS"
                                         href="#"
                                         data-box-id="{{ $equipement->id_equipement }}"
-                                        data-box-name="{{ $equipement->modele->marque->marque }} {{ $equipement->modele->nom_modele }}"
+                                        data-box-name="{{ $equipement->marque }} {{ $equipement->modele }}"
+                                        data-box-imei="{{ $equipement->imei }}"
                                         data-box-sn="{{ $equipement->serial_number }}">
                                         <i class="far fa-times-circle text-danger" style="font-size: 25px;"></i>
                                     </a>
-                                    <a id="btn_retour_box" class="text-decoration-none" data-bs-target="#modal_retour_box" data-bs-toggle="modal" data-toggle="tooltip" title="Retourner" href="#" style="margin-left: 10px;">
-                                        <i class="fas fa-undo text-warning" style="font-size: 25px;"></i>
-                                    </a>
+                                    @if ($equipement->statut_equipement === 'Attribué')
+                                        <a class="text-decoration-none open-retour-modal" 
+                                            href="#" 
+                                            data-bs-target="#modal_retour_box" 
+                                            data-bs-toggle="modal" 
+                                            title="Retourner" 
+                                            style="margin-left: 10px;"
+                                            data-id-retour="{{ $equipement->id_equipement }}"
+                                            data-affectation-retour="{{ $equipement->id_affectation }}"
+                                            data-debut-retour="{{ $equipement->debut_affectation }}"
+                                            data-type-retour="{{ $equipement->type_equipement }}"
+                                            data-name-retour="{{ $equipement->marque }} {{ $equipement->modele }}"
+                                            data-imei-retour="{{ $equipement->imei ?? '' }}"
+                                            data-sn-retour="{{ $equipement->serial_number ?? '' }}"
+                                            data-user-retour="{{ $equipement->login ?? '' }}"
+                                            >
+                                            <i class="fas fa-undo text-warning" style="font-size: 25px;"></i>
+                                        </a>
+                                    @endif
                                 </td>
                                 @endif
                             </tr>

@@ -193,12 +193,27 @@
                                 <td>{{ $equipement->enrole ? 'Oui' : 'Non' }}</td>
                                 @if ($equipement->statut_equipement === 'HS')
                                     <td class="text-center">
-                                        <a id="btn_histo_phone"
-                                            class="text-decoration-none" 
-                                            data-bs-target="#modal_histo_phone" 
+                                        <a class="text-decoration-none"
+                                            style="margin-right: 10px;"
+                                            data-bs-target="#modal_edt_phone"
                                             data-bs-toggle="modal"
-                                            title="Historique" 
-                                            href="{{ url('/phone/detailPhone/' . $equipement->id_equipement) }}" 
+                                            title="Modifier"
+                                            href="#"
+                                            data-id="{{ $equipement->id_equipement }}"
+                                            data-type="{{ $equipement->type_equipement }}"
+                                            data-marque="{{ $equipement->marque ?? '' }}"
+                                            data-modele="{{ $equipement->modele ?? '' }}"
+                                            data-imei="{{ $equipement->imei ?? '' }}"
+                                            data-sn="{{ $equipement->serial_number ?? '' }}"
+                                            data-enroll="{{ $equipement->enrole ? '1' : '2' }}">
+                                            <i class="far fa-edit text-info" style="font-size: 25px;"></i>
+                                        </a>
+                                        <a id="btn_histo_phone"
+                                            class="text-decoration-none"
+                                            data-bs-target="#modal_histo_phone"
+                                            data-bs-toggle="modal"
+                                            title="Historique"
+                                            href="{{ url('/phone/detailPhone/' . $equipement->id_equipement) }}"
                                             style="margin-right: 10px;"
                                             data-id-histo="{{ $equipement->id_equipement }}">
                                             <i class="fas fa-history text-primary" style="font-size: 25px;"></i>
@@ -223,11 +238,11 @@
                                         <i class="far fa-edit text-info" style="font-size: 25px;"></i>
                                     </a>
                                     <a id="btn_histo_phone"
-                                        class="text-decoration-none" 
-                                        data-bs-target="#modal_histo_phone" 
+                                        class="text-decoration-none"
+                                        data-bs-target="#modal_histo_phone"
                                         data-bs-toggle="modal"
-                                        title="Historique" 
-                                        href="{{ url('/phone/detailPhone/' . $equipement->id_equipement) }}" 
+                                        title="Historique"
+                                        href="{{ url('/phone/detailPhone/' . $equipement->id_equipement) }}"
                                         style="margin-right: 10px;"
                                         data-id-histo="{{ $equipement->id_equipement }}">
                                         <i class="fas fa-history text-primary" style="font-size: 25px;"></i>
@@ -243,11 +258,11 @@
                                         <i class="far fa-times-circle text-danger" style="font-size: 25px;"></i>
                                     </a>
                                     @if ($equipement->statut_equipement === 'Attribué')
-                                        <a class="text-decoration-none open-retour-modal" 
-                                            href="#" 
-                                            data-bs-target="#modal_retour_phone" 
-                                            data-bs-toggle="modal" 
-                                            title="Retourner" 
+                                        <a class="text-decoration-none open-retour-modal"
+                                            href="#"
+                                            data-bs-target="#modal_retour_phone"
+                                            data-bs-toggle="modal"
+                                            title="Retourner"
                                             style="margin-left: 10px;"
                                             data-id-retour="{{ $equipement->id_equipement }}"
                                             data-affectation-retour="{{ $equipement->id_affectation }}"
@@ -262,7 +277,7 @@
                                         </a>
                                     @endif
                                 </td>
-                                    
+
                                 @endif
                             </tr>
                         @endforeach
