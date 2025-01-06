@@ -8,11 +8,12 @@ use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithTitle;
 use Maatwebsite\Excel\Concerns\WithColumnWidths;
 use Maatwebsite\Excel\Concerns\WithStyles;
-use Maatwebsite\Excel\Concerns\WithColumnFormatting;
-use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
+use Maatwebsite\Excel\Concerns\WithEvents;
+use Maatwebsite\Excel\Events\AfterSheet;
+use PhpOffice\PhpSpreadsheet\Cell\DataType;
 
-class SuiviFlotteExport implements FromArray, WithHeadings, WithTitle, WithColumnWidths, WithStyles, WithColumnFormatting
+class SuiviFlotteExport implements FromArray, WithHeadings, WithTitle, WithColumnWidths, WithStyles, WithEvents
 {
     private $annee;
     private $flotteService;
@@ -39,7 +40,7 @@ class SuiviFlotteExport implements FromArray, WithHeadings, WithTitle, WithColum
         $mois = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
 
         return array_merge(
-            ['Numéro', 'Statut', 'Login', 'Nom et Prénom(s)', 'Fonction', 'Localisation', 'Forfait'],
+            ['Numéro', 'Sim', 'Statut', 'Login', 'Nom et Prénom(s)', 'Fonction', 'Localisation', 'Forfait'],
             $mois,
             ['Total Annuel']
         );
@@ -72,20 +73,27 @@ class SuiviFlotteExport implements FromArray, WithHeadings, WithTitle, WithColum
     public function columnWidths(): array
     {
         return [
-            'A' => 15, 'B' => 12, 'C' => 15, 'D' => 40, 'E' => 40, 'F' => 50,
-            'G' => 25, 'H' => 12, 'I' => 12, 'J' => 12, 'K' => 12, 'L' => 12,
-            'M' => 12, 'N' => 12, 'O' => 12, 'P' => 12, 'Q' => 12, 'R' => 12,
-            'S' => 12, 'T' => 15,
-        ];
-    }
-
-    /**
-     * Définir les formats des colonnes (par exemple, texte pour les numéros).
-     */
-    public function columnFormats(): array
-    {
-        return [
-            'A' => NumberFormat::FORMAT_TEXT, // Numéro en texte
+            'A' => 15, // num_ligne
+            'B' => 20, // num_sim
+            'C' => 12, // statut_ligne
+            'D' => 15, // login
+            'E' => 40, // nom_prenom
+            'F' => 40, // fonction
+            'G' => 50, // localisation
+            'H' => 25, // nom_forfait
+            'I' => 12, // mois_1
+            'J' => 12, // mois_2
+            'K' => 12, // mois_3
+            'L' => 12, // mois_4
+            'M' => 12, // mois_5
+            'N' => 12, // mois_6
+            'O' => 12, // mois_7
+            'P' => 12, // mois_8
+            'Q' => 12, // mois_9
+            'R' => 12, // mois_10
+            'S' => 12, // mois_11
+            'T' => 12, // mois_12
+            'U' => 15, // total_annuel
         ];
     }
 
@@ -95,5 +103,24 @@ class SuiviFlotteExport implements FromArray, WithHeadings, WithTitle, WithColum
     public function title(): string
     {
         return $this->annee;
+    }
+
+    /**
+     * Gérer les événements après la génération de l'Excel.
+     */
+    public function registerEvents(): array
+    {
+        return [
+            AfterSheet::class => function (AfterSheet $event) {
+                $sheet = $event->sheet->getDelegate();
+
+                // Forcer toutes les cellules de la colonne `B` (num_sim) en texte
+                foreach ($sheet->getColumnIterator('B') as $column) {
+                    foreach ($column->getCellIterator() as $cell) {
+                        $cell->setDataType(DataType::TYPE_STRING);
+                    }
+                }
+            },
+        ];
     }
 }

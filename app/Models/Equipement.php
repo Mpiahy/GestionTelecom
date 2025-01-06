@@ -140,16 +140,16 @@ class Equipement extends Model
      *
      * @param \Illuminate\Database\Eloquent\Builder $query
      * @param array $filters
-     * @return \Illuminate\Database\Eloquent\Builder
+     * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator
      */
-    public static function getPhonesWithDetails(array $filters = []): Collection
+    public static function getPhonesWithDetails(array $filters = [], $perPage)
     {
         // Commence la requête avec Query Builder sur la vue SQL
         $query = DB::table('view_phones_details');
-
+    
         // Appliquer les filtres
         $filters = array_filter($filters);
-
+    
         $query = $query
             ->when(isset($filters['filter_marque']), function ($q) use ($filters) {
                 $q->where('marque', $filters['filter_marque']);
@@ -168,11 +168,12 @@ class Equipement extends Model
             })
             ->orderByRaw("CASE WHEN statut_equipement = 'HS' THEN 1 ELSE 0 END")
             ->orderBy('id_equipement');
-
-        // Retourner les résultats sous forme de collection
-        return $query->get();
+    
+        // Retourner une pagination
+        return $query->paginate($perPage);
     }
-    public static function getBoxWithDetails(array $filters = []): Collection
+    
+    public static function getBoxWithDetails(array $filters = [], $perPage)
     {
         // Commence la requête avec Query Builder sur la vue SQL
         $query = DB::table('view_box_details');
@@ -199,8 +200,8 @@ class Equipement extends Model
             ->orderByRaw("CASE WHEN statut_equipement = 'HS' THEN 1 ELSE 0 END")
             ->orderBy('id_equipement');
 
-        // Retourner les résultats sous forme de collection
-        return $query->get();
+        // Retourner une pagination
+        return $query->paginate($perPage);
     }
 
     // Compter les equipements Actifs

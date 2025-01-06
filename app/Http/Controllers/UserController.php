@@ -16,24 +16,24 @@ use Illuminate\Support\Facades\DB;
 
 class UserController extends Controller
 {
-    // Affichage de la vue utilisateur
+    // Affichage de la vue user.blade.php
     public function userView(Request $request)
     {
         $login = Session::get('login');
-        $types = TypeUtilisateur::all(); 
-        $fonctions = Fonction::all(); 
-        $chantiers = Localisation::all(); 
-
-        // Appliquer les filtres aux utilisateurs directement dans la base de données
+        $types = TypeUtilisateur::all();
+        $fonctions = Fonction::all();
+        $chantiers = Localisation::all();
+    
+        // Appliquer les filtres avec pagination
         $utilisateurs = Utilisateur::with(['typeUtilisateur', 'fonction', 'localisation'])
             ->filterByType($request->input('type'))
             ->filterByChantier($request->input('search_user_chantier'))
             ->filterByLogin($request->input('search_user_login'))
             ->filterByName($request->input('search_user_name'))
-            ->get();
-
+            ->paginate(5);
+    
         return view('ref.user', compact('login', 'types', 'fonctions', 'chantiers', 'utilisateurs'));
-    }
+    }    
 
     // Insertion d'un nouvel utilisateur
     public function ajouterUtilisateur(Request $request)

@@ -20,14 +20,13 @@ class LigneController extends Controller
     public function ligneView(Request $request)
     {
         $login = Session::get('login');
-
+    
         $contactsOperateurs = ContactOperateur::with('operateur')->get();
-        
         $types = TypeLigne::getLignesTypes();
         $forfaits = Forfait::all();
         $statuts = StatutLigne::all();
         $utilisateurs = Utilisateur::all();
-        
+    
         // Vérifier si le bouton "Tout" a été cliqué
         if ($request->has('reset_filters') && $request->input('reset_filters') == 'reset') {
             // Réinitialiser tous les filtres
@@ -48,11 +47,11 @@ class LigneController extends Controller
                 'search_ligne_user' => $request->input('search_ligne_user'),
             ];
         }
-
-        $lignes = Ligne::getLignesWithDetails($filters);
-
-        return view('ref.ligne', compact('login','lignes','contactsOperateurs', 'types', 'forfaits', 'statuts', 'utilisateurs'));
-    }
+    
+        $lignes = Ligne::getLignesWithDetails($filters, "10"); // Ajout du paramètre pour la pagination
+    
+        return view('ref.ligne', compact('login', 'lignes', 'contactsOperateurs', 'types', 'forfaits', 'statuts', 'utilisateurs'));
+    }    
 
     // Demander l'activation
     public function saveLigne(Request $request)

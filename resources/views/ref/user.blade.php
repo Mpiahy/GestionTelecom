@@ -146,98 +146,95 @@
                                 <th>Login</th>
                                 <th class="text-center">Type</th>
                                 <th>Fonction</th>
-                                <th>Chantier</th>
+                                <th>Localisation</th>
                                 <th class="text-center">Action</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach ($utilisateurs as $utilisateur)
-                            <tr class="utilisateur-row {{ strtolower($utilisateur->typeUtilisateur->type_utilisateur) }}">
-                                <!-- Matricule -->
-                                <td class="text-center py-2 px-3">{{ $utilisateur->matricule ?? 'N/A' }}</td>
-                                
-                                <!-- Nom et Prénom -->
-                                <td class="text-wrap" style="word-break: break-word;">
-                                    {{ $utilisateur->nom }} {{ $utilisateur->prenom }}
-                                </td>
-                                
-                                <!-- Login -->
-                                <td>{{ $utilisateur->login }}</td>
-                                
-                                <!-- Type Utilisateur -->
-                                <td class="text-center py-2 px-3">{{ $utilisateur->typeUtilisateur->type_utilisateur ?? 'N/A' }}</td>
-                                
-                                <!-- Fonction -->
-                                <td class="text-wrap" style="word-break: break-word;">
-                                    {{ $utilisateur->fonction->fonction ?? 'N/A' }}
-                                </td>
-                                
-                                <!-- Chantier -->
-                                <td class="text-wrap" style="word-break: break-word;">
-                                    {{ $utilisateur->localisation->localisation ?? 'N/A' }}
-                                </td>
-                                
-                                <!-- Actions -->
-                                <td class="text-center">
-                                    <div class="d-flex justify-content-center gap-2">
-                                        <!-- Attribuer Équipement -->
-                                        <a href="#"
+                            @forelse ($utilisateurs as $utilisateur)
+                                <tr class="utilisateur-row {{ strtolower($utilisateur->typeUtilisateur->type_utilisateur) }}">
+                                    <td class="text-center py-2 px-3">{{ $utilisateur->matricule ?? 'N/A' }}</td>
+                                    <td class="text-wrap" style="word-break: break-word;">
+                                        {{ $utilisateur->nom }} {{ $utilisateur->prenom }}
+                                    </td>
+                                    <td>{{ $utilisateur->login }}</td>
+                                    <td class="text-center py-2 px-3">{{ $utilisateur->typeUtilisateur->type_utilisateur ?? 'N/A' }}</td>
+                                    <td class="text-wrap" style="word-break: break-word;">
+                                        {{ $utilisateur->fonction->fonction ?? 'N/A' }}
+                                    </td>
+                                    <td class="text-wrap" style="word-break: break-word;">
+                                        {{ $utilisateur->localisation->localisation ?? 'N/A' }}
+                                    </td>
+                                    <!-- Actions -->
+                                    <td class="text-center">
+                                        <div class="d-flex justify-content-center gap-2">
+                                            <!-- Attribuer Équipement -->
+                                            <a href="#"
+                                                class="text-decoration-none"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#modal_attribuer_equipement"
+                                                data-id-utilisateur-attr="{{ $utilisateur->id_utilisateur }}"
+                                                data-login-attr="{{ $utilisateur->login }}"
+                                                data-nom-attr="{{ $utilisateur->nom }}"
+                                                data-prenom-attr="{{ $utilisateur->prenom }}"
+                                                title="Attribuer un équipement">
+                                                <i class="fas fa-laptop-medical text-success" style="font-size: 20px;"></i>
+                                            </a>
+
+                                            <!-- Voir -->
+                                            <a href="#" class="text-decoration-none" data-bs-target="#modal_voir_emp" data-bs-toggle="modal" title="Voir">
+                                                <i class="fas fa-history text-primary" style="font-size: 20px;"></i>
+                                            </a>
+                    
+                                            <!-- Modifier -->
+                                            <a href="#"
                                             class="text-decoration-none"
                                             data-bs-toggle="modal"
-                                            data-bs-target="#modal_attribuer_equipement"
-                                            data-id-utilisateur-attr="{{ $utilisateur->id_utilisateur }}"
-                                            data-login-attr="{{ $utilisateur->login }}"
-                                            data-nom-attr="{{ $utilisateur->nom }}"
-                                            data-prenom-attr="{{ $utilisateur->prenom }}"
-                                            title="Attribuer un équipement">
-                                            <i class="fas fa-laptop-medical text-success" style="font-size: 20px;"></i>
-                                        </a>
+                                            data-bs-target="#modal_edit_emp"
+                                            data-id-edt="{{ $utilisateur->id_utilisateur }}"
+                                            data-edt-matricule="{{ $utilisateur->matricule }}"
+                                            data-edt-nom="{{ $utilisateur->nom }}"
+                                            data-edt-prenom="{{ $utilisateur->prenom }}"
+                                            data-edt-login="{{ $utilisateur->login }}"
+                                            data-edt-type="{{ $utilisateur->typeUtilisateur->id_type_utilisateur }}"
+                                            data-edt-fonction="{{ $utilisateur->fonction->id_fonction }}"
+                                            data-edt-chantier="{{ $utilisateur->localisation->id_localisation }}"
+                                            title="Modifier">
+                                                <i class="far fa-edit text-warning" style="font-size: 20px;"></i>
+                                            </a>
+                    
+                                            <!-- Supprimer -->
+                                            <a href="#"
+                                            class="text-decoration-none open-delete-modal"
+                                            data-bs-target="#supprimer_utilisateur"
+                                            data-bs-toggle="modal"
+                                            data-id="{{ $utilisateur->id_utilisateur }}"
+                                            data-matricule="{{ $utilisateur->matricule }}"
+                                            data-name="{{ $utilisateur->nom }} {{ $utilisateur->prenom }}"
+                                            data-login="{{ $utilisateur->login }}"
+                                            data-type="{{ $utilisateur->typeUtilisateur->type_utilisateur }}"
+                                            data-fonction="{{ $utilisateur->fonction->fonction }}"
+                                            data-chantier="{{ $utilisateur->localisation->localisation }}"
+                                            title="Départ">
+                                                <i class="fas fa-sign-out-alt text-danger" style="font-size: 20px;"></i>
+                                            </a>
 
-                                        <!-- Voir -->
-                                        <a href="#" class="text-decoration-none" data-bs-target="#modal_voir_emp" data-bs-toggle="modal" title="Voir">
-                                            <i class="fas fa-history text-primary" style="font-size: 20px;"></i>
-                                        </a>
-                
-                                        <!-- Modifier -->
-                                        <a href="#"
-                                           class="text-decoration-none"
-                                           data-bs-toggle="modal"
-                                           data-bs-target="#modal_edit_emp"
-                                           data-id-edt="{{ $utilisateur->id_utilisateur }}"
-                                           data-edt-matricule="{{ $utilisateur->matricule }}"
-                                           data-edt-nom="{{ $utilisateur->nom }}"
-                                           data-edt-prenom="{{ $utilisateur->prenom }}"
-                                           data-edt-login="{{ $utilisateur->login }}"
-                                           data-edt-type="{{ $utilisateur->typeUtilisateur->id_type_utilisateur }}"
-                                           data-edt-fonction="{{ $utilisateur->fonction->id_fonction }}"
-                                           data-edt-chantier="{{ $utilisateur->localisation->id_localisation }}"
-                                           title="Modifier">
-                                            <i class="far fa-edit text-warning" style="font-size: 20px;"></i>
-                                        </a>
-                
-                                        <!-- Supprimer -->
-                                        <a href="#"
-                                           class="text-decoration-none open-delete-modal"
-                                           data-bs-target="#supprimer_utilisateur"
-                                           data-bs-toggle="modal"
-                                           data-id="{{ $utilisateur->id_utilisateur }}"
-                                           data-matricule="{{ $utilisateur->matricule }}"
-                                           data-name="{{ $utilisateur->nom }} {{ $utilisateur->prenom }}"
-                                           data-login="{{ $utilisateur->login }}"
-                                           data-type="{{ $utilisateur->typeUtilisateur->type_utilisateur }}"
-                                           data-fonction="{{ $utilisateur->fonction->fonction }}"
-                                           data-chantier="{{ $utilisateur->localisation->localisation }}"
-                                           title="Départ">
-                                            <i class="fas fa-sign-out-alt text-danger" style="font-size: 20px;"></i>
-                                        </a>
-
-                                    </div>
-                                </td>
-                            </tr>
-                            @endforeach
+                                        </div>
+                                    </td>
+                                @empty
+                                    <tr>
+                                        <td colspan="7" class="text-center">Aucun utilisateur trouvé.</td>
+                                    </tr>
+                            @endforelse
                         </tbody>
                     </table>
                 </div>
+
+                <!-- Liens de pagination -->
+                <div class="mt-4">
+                    {{ $utilisateurs->appends(request()->query())->links('pagination::bootstrap-5') }}
+                </div>
+
             </div>
         </div>
     </div>

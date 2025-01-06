@@ -212,7 +212,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach ($lignes as $ligne)
+                            @forelse ($lignes as $ligne)
                             <tr>
                                 <td>{{ $ligne->statut_ligne }}</td>
                                 <td>{{ $ligne->type_ligne }}</td>
@@ -230,7 +230,7 @@
                                         <i class="far fa-paper-plane"></i>
                                         {{ $ligne->nom_operateur }}
                                     </a>
-                                </td>                                
+                                </td>
                                 <td class="text-center" style="padding-left: 0px;padding-right: 0px;">
                                     {{-- Boutons spécifiques au statut --}}
                                     @if ($ligne->statut_ligne === 'Inactif' || $ligne->statut_ligne === 'Resilie')
@@ -275,8 +275,7 @@
                                             data-localisation-resil="{{ $ligne->localisation }}"
                                             data-date-resil="{{ $ligne->debut_affectation }}"
                                             data-id-aff-resil="{{ $ligne->id_affectation }}"
-                                            data-id-resil="{{ $ligne->id_ligne }}"
-                                            >
+                                            data-id-resil="{{ $ligne->id_ligne }}">
                                             <i class="far fa-window-close text-danger" style="font-size: 25px;"></i>
                                         </a>
                                     @endif
@@ -305,16 +304,25 @@
                                         data-responsable-edt="{{ $ligne->login }}"
                                         data-date-edt="{{ $ligne->debut_affectation }}"
                                         data-id-edt="{{ $ligne->id_ligne }}"
-                                        data-statut-edt="{{ $ligne->statut_ligne }}"
-                                        > 
+                                        data-statut-edt="{{ $ligne->statut_ligne }}">
                                         <i class="far fa-edit text-warning" style="font-size: 25px;"></i>
                                     </a>
                                 </td>
                             </tr>
-                            @endforeach
+                            @empty
+                            <tr>
+                                <td colspan="8" class="text-center">Aucune ligne trouvée.</td>
+                            </tr>
+                            @endforelse
                         </tbody>
                     </table>
                 </div>
+                
+                <!-- Liens de pagination -->
+                <div class="mt-4">
+                    {{ $lignes->appends(request()->query())->links('pagination::bootstrap-5') }}
+                </div>
+                
             </div>
         </div>
     </div>

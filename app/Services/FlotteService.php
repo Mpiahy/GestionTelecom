@@ -14,6 +14,7 @@ class FlotteService
      */
     public function getSuiviFlotteData(int $annee): array
     {
+        // Requête SQL pour récupérer les données nécessaires
         $affectations = DB::table('affectation as a')
             ->join('ligne as l', 'a.id_ligne', '=', 'l.id_ligne')
             ->join('view_forfait_prix as vfp', 'l.id_forfait', '=', 'vfp.id_forfait')
@@ -26,6 +27,7 @@ class FlotteService
                             THEN '0' || SUBSTRING(l.num_ligne FROM 5) 
                             ELSE l.num_ligne 
                          END AS num_ligne"), // Conversion de +261 en 0
+                DB::raw("CAST(l.num_sim AS TEXT) AS num_sim"), // S'assurer que num_sim est bien une chaîne
                 DB::raw("CASE 
                             WHEN a.fin_affectation IS NULL OR a.fin_affectation > make_date($annee, 12, 31)::date
                             THEN 'Attribue' 
@@ -47,6 +49,7 @@ class FlotteService
             })
             ->get();
 
+        // Formater les données avant de les retourner
         return $this->formatSuiviFlotteData($affectations, $annee);
     }
 
@@ -62,7 +65,8 @@ class FlotteService
         $rows = [];
         foreach ($affectations as $affectation) {
             $row = [
-                'num_ligne'       => (string) $affectation->num_ligne, // Conversion explicite en texte
+                'num_ligne'       => $affectation->num_ligne,
+                'num_sim'         => $affectation->num_sim,
                 'statut_ligne'    => $affectation->statut_ligne,
                 'login'           => $affectation->login,
                 'nom_prenom'      => $affectation->nom_prenom,

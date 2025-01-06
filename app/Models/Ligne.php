@@ -24,7 +24,7 @@ class Ligne extends Model
         'id_operateur',
     ];
 
-    public static function getLignesWithDetails($filters = [])
+    public static function getLignesWithDetails($filters = [], $perPage)
     {
         $query = DB::table('view_ligne_big_details');
 
@@ -46,14 +46,16 @@ class Ligne extends Model
         if (!empty($filters['search_ligne_sim'])) {
             $query->where('num_sim', 'like', '%' . $filters['search_ligne_sim'] . '%');
         }
-        
+
         // Recherche par utilisateur
         if (!empty($filters['search_ligne_user'])) {
             $query->where('login', 'ilike', '%' . $filters['search_ligne_user'] . '%');
         }
 
-        return $query->get();
+        // Retourner une pagination au lieu de `get()`
+        return $query->paginate($perPage);
     }
+
 
     public static function getLignesWithBigDetails($id_ligne)
     {

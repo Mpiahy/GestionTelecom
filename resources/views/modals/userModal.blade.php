@@ -14,7 +14,7 @@
                                 <th>Type</th>
                                 <th class="text-center">Ligne</th>
                                 <th>Statut</th>
-                                <th>Chantier</th>
+                                <th>Localisation</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -124,7 +124,7 @@
 
                                     <!-- Chantier -->
                                     <div class="mb-3">
-                                        <label class="form-label" for="chantier-select"><strong>Chantier</strong></label>
+                                        <label class="form-label" for="chantier-select"><strong>Localisation</strong></label>
                                         <input class="form-control mb-2" type="text" id="search-chantier" placeholder="Rechercher un chantier...">
                                         <select id="chantier-select" class="form-select @error('id_localisation') is-invalid @enderror" name="id_localisation_edt">
                                             <option value="0" disabled selected>Choisir un chantier</option>
@@ -293,10 +293,10 @@
 
                                     <!-- Chantier -->
                                     <div class="mb-3">
-                                        <label class="form-label" for="chantier-select-add"><strong>Chantier</strong></label>
+                                        <label class="form-label" for="chantier-select-add"><strong>Localisation</strong></label>
                                         <input class="form-control mb-2" type="text" id="search-chantier-add" placeholder="Rechercher un chantier...">
                                         <select id="chantier-select-add" class="form-select @error('id_localisation_add') is-invalid @enderror" name="id_localisation_add" required>
-                                            <option value="" selected disabled>Chantier</option>
+                                            <option value="" selected disabled>Localisation</option>
                                             @foreach ($chantiers as $chantier)
                                                 <option value="{{ $chantier->id_localisation }}" {{ old('id_localisation_add') == $chantier->id_localisation ? 'selected' : '' }}>
                                                     {{ $chantier->localisation }}
@@ -338,7 +338,7 @@
                 <p class="text-dark">Login: <strong id="utilisateur_login"></strong></p>
                 <p class="text-dark">Type: <strong id="utilisateur_type"></strong></p>
                 <p class="text-dark">Fonction: <strong id="utilisateur_fonction"></strong></p>
-                <p class="text-dark">Chantier: <strong id="utilisateur_chantier"></strong></p>
+                <p class="text-dark">Localisation: <strong id="utilisateur_chantier"></strong></p>
             </div>
             <div class="modal-footer">
                 <button class="btn btn-warning" type="button" data-bs-dismiss="modal">Fermer</button>

@@ -29,7 +29,7 @@ class PhoneController extends Controller
 
         $filters = $request->only(['filter_marque', 'filter_statut', 'search_imei', 'search_sn', 'search_user']);
 
-        $equipements = Equipement::getPhonesWithDetails($filters);
+        $equipements = Equipement::getPhonesWithDetails($filters, "5");
 
         return view('ref.phone', compact(
             'login', 'marques', 'modeles', 'statuts', 'types', 'equipements', 'filters'

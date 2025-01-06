@@ -190,7 +190,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($equipements as $equipement)
+                        @forelse ($equipements as $equipement)
                             <tr>
                                 <td>{{ $equipement->marque }}</td>
                                 <td>{{ $equipement->modele }}</td>
@@ -200,37 +200,7 @@
                                 <td>{{ $equipement->login ?? '--' }}</td>
                                 <td>{{ $equipement->statut_equipement }}</td>
                                 <td>{{ $equipement->enrole ? 'Oui' : 'Non' }}</td>
-                                @if ($equipement->statut_equipement === 'HS')
-                                    <td class="text-center">
-                                        <a class="text-decoration-none"
-                                            style="margin-right: 10px;"
-                                            data-bs-target="#modal_edt_phone"
-                                            data-bs-toggle="modal"
-                                            title="Modifier"
-                                            href="#"
-                                            data-id="{{ $equipement->id_equipement }}"
-                                            data-type="{{ $equipement->type_equipement }}"
-                                            data-marque="{{ $equipement->marque ?? '' }}"
-                                            data-modele="{{ $equipement->modele ?? '' }}"
-                                            data-imei="{{ $equipement->imei ?? '' }}"
-                                            data-sn="{{ $equipement->serial_number ?? '' }}"
-                                            data-enroll="{{ $equipement->enrole ? '1' : '2' }}">
-                                            <i class="far fa-edit text-info" style="font-size: 25px;"></i>
-                                        </a>
-                                        <a id="btn_histo_phone"
-                                            class="text-decoration-none"
-                                            data-bs-target="#modal_histo_phone"
-                                            data-bs-toggle="modal"
-                                            title="Historique"
-                                            href="{{ url('/phone/detailPhone/' . $equipement->id_equipement) }}"
-                                            style="margin-right: 10px;"
-                                            data-id-histo="{{ $equipement->id_equipement }}">
-                                            <i class="fas fa-history text-primary" style="font-size: 25px;"></i>
-                                        </a>
-                                    </td>
-                                @else
                                 <td class="text-center">
-                                    <!-- Action buttons -->
                                     <a class="text-decoration-none"
                                         style="margin-right: 10px;"
                                         data-bs-target="#modal_edt_phone"
@@ -256,43 +226,34 @@
                                         data-id-histo="{{ $equipement->id_equipement }}">
                                         <i class="fas fa-history text-primary" style="font-size: 25px;"></i>
                                     </a>
-                                    <a class="text-decoration-none open-hs-modal"
-                                        data-bs-toggle="tooltip"
-                                        title="Déclarer HS"
-                                        href="#"
-                                        data-phone-id="{{ $equipement->id_equipement }}"
-                                        data-phone-name="{{ $equipement->marque }} {{ $equipement->modele }}"
-                                        data-phone-imei="{{ $equipement->imei }}"
-                                        data-phone-sn="{{ $equipement->serial_number }}">
-                                        <i class="far fa-times-circle text-danger" style="font-size: 25px;"></i>
-                                    </a>
-                                    @if ($equipement->statut_equipement === 'Attribué')
-                                        <a class="text-decoration-none open-retour-modal"
+                                    @if ($equipement->statut_equipement !== 'HS')
+                                        <a class="text-decoration-none open-hs-modal"
+                                            data-bs-toggle="tooltip"
+                                            title="Déclarer HS"
                                             href="#"
-                                            data-bs-target="#modal_retour_phone"
-                                            data-bs-toggle="modal"
-                                            title="Retourner"
-                                            style="margin-left: 10px;"
-                                            data-id-retour="{{ $equipement->id_equipement }}"
-                                            data-affectation-retour="{{ $equipement->id_affectation }}"
-                                            data-debut-retour="{{ $equipement->debut_affectation }}"
-                                            data-type-retour="{{ $equipement->type_equipement }}"
-                                            data-name-retour="{{ $equipement->marque }} {{ $equipement->modele }}"
-                                            data-imei-retour="{{ $equipement->imei ?? '' }}"
-                                            data-sn-retour="{{ $equipement->serial_number ?? '' }}"
-                                            data-user-retour="{{ $equipement->login ?? '' }}"
-                                            >
-                                            <i class="fas fa-undo text-warning" style="font-size: 25px;"></i>
+                                            data-phone-id="{{ $equipement->id_equipement }}"
+                                            data-phone-name="{{ $equipement->marque }} {{ $equipement->modele }}"
+                                            data-phone-imei="{{ $equipement->imei }}"
+                                            data-phone-sn="{{ $equipement->serial_number }}">
+                                            <i class="far fa-times-circle text-danger" style="font-size: 25px;"></i>
                                         </a>
                                     @endif
                                 </td>
-
-                                @endif
                             </tr>
-                        @endforeach
+                        @empty
+                            <tr>
+                                <td colspan="9" class="text-center">Aucun téléphone trouvé.</td>
+                            </tr>
+                        @endforelse
                     </tbody>
                 </table>
             </div>
+            
+            <!-- Liens de pagination -->
+            <div class="mt-4">
+                {{ $equipements->appends(request()->query())->links('pagination::bootstrap-5') }}
+            </div>
+            
         </div>
     </div>
 </div>

@@ -119,7 +119,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach ($localisations as $localisation)
+                            @forelse ($localisations as $localisation)
                                 <tr>
                                     <td>{{ $localisation->ue->libelle_ue }}</td> <!-- Centre (UE) -->
                                     <td>{{ $localisation->service->numero_bu }}</td> <!-- Code BU -->
@@ -148,10 +148,20 @@
                                         </a>
                                     </td>
                                 </tr>
-                            @endforeach
-                        </tbody>                        
+                            @empty
+                                <tr>
+                                    <td colspan="5" class="text-center">Aucune localisation trouvée.</td>
+                                </tr>
+                            @endforelse
+                        </tbody>
                     </table>
                 </div>
+                
+                <!-- Liens de pagination -->
+                <div class="mt-4">
+                    {{ $localisations->appends(request()->query())->links('pagination::bootstrap-5') }}
+                </div>
+                
             </div>
         </div>
     </div>

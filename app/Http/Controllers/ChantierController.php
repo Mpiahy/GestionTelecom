@@ -30,7 +30,7 @@ class ChantierController extends Controller
             ->filterByBU($searchBU)
             ->filterByService($searchService)
             ->filterByImputation($searchImputation)
-            ->get();
+            ->paginate(10);
 
         // Passer les données à la vue, y compris les filtres actifs
         return view('ref.chantier', compact('login', 'ue', 'localisations', 'filterUE', 'searchBU', 'searchService', 'searchImputation'));
