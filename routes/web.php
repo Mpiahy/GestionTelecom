@@ -33,9 +33,20 @@ Route::post('/loginCheck', [LoginController::class, 'loginCheck'])->name('auth.l
 Route::get('/logout', [LoginController::class, 'logout'])->name('auth.logout');
 
 // Page d'accueil
-Route::get('/index', [IndexController::class, 'indexView'])
-    ->middleware('check.session')
-    ->name('index');
+Route::get('/index', [IndexController::class, 'indexView'])->middleware('check.session')->name('index');
+Route::post('/index/filter', [IndexController::class, 'filterDashboard'])->middleware('check.session')->name('index.filter');
+    
+// Route pour l'export PDF
+Route::get('/export/pdf', [IndexController::class, 'exportPDF'])->name('export.pdf');
+
+// Route pour l'export XLSX
+Route::get('/export/xlsx', [IndexController::class, 'exportXLSX'])->name('export.xlsx');
+
+// Route pour l'export XLSX
+Route::get('/export/suivi-flotte', [IndexController::class, 'exportSuiviFlotte'])->name('export.suivi.xlsx');
+
+// Route pour l'export XLSX
+Route::get('/export/equipement', [IndexController::class, 'exportEquipement'])->name('export.equipement.xlsx');
 
 // Routes de Référentiels avec middleware commun 'check.session'
 Route::middleware('check.session')->group(function() {

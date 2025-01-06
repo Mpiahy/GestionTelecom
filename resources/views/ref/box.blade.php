@@ -135,10 +135,19 @@
                     <form method="get" action="{{ route('ref.box') }}">
                         <div class="btn-group" role="group">
                             <button class="btn btn-outline-primary {{ !request('filter_statut') ? 'active' : '' }}" type="submit" name="reset_filters" value="1">Tout</button>
-                            <button class="btn btn-outline-info {{ request('filter_statut') == 'Nouveau' ? 'active' : '' }}" type="submit" name="filter_statut" value="Nouveau">Nouveau</button>
-                            <button class="btn btn-outline-success {{ request('filter_statut') == 'Attribué' ? 'active' : '' }}" type="submit" name="filter_statut" value="Attribué">Attribué</button>
-                            <button class="btn btn-outline-warning {{ request('filter_statut') == 'Retourne' ? 'active' : '' }}" type="submit" name="filter_statut" value="Retourne">Retourné</button>
-                            <button class="btn btn-outline-danger {{ request('filter_statut') == 'HS' ? 'active' : '' }}" type="submit" name="filter_statut" value="HS">HS</button>
+                            {{-- Boutons dynamiques pour chaque statut --}}
+                            @foreach ($statuts as $statut)
+                                @php
+                                    $colorClass = App\Models\StatutEquipement::getBootstrapClass($statut->statut_equipement);
+                                @endphp
+                                <button 
+                                    class="btn btn-outline-{{ $colorClass }} {{ request('filter_statut') == $statut->statut_equipement ? 'active' : '' }}" 
+                                    type="submit" 
+                                    name="filter_statut" 
+                                    value="{{ $statut->statut_equipement }}">
+                                    {{ $statut->statut_equipement }}
+                                </button>
+                            @endforeach
 
                             <!-- Champs cachés pour conserver les autres filtres -->
                             <input type="hidden" name="filter_marque" value="{{ request('filter_marque') }}">

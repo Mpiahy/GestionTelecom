@@ -83,11 +83,11 @@
                             <i class="fas fa-tachometer-alt"></i><span>Tableau de Bord</span>
                         </a>
                     </li>
-                    <li class="nav-item">
+                    {{-- <li class="nav-item">
                         <a class="nav-link" href="profil.html">
                             <i class="fas fa-user"></i><span>Profil</span>
                         </a>
-                    </li>
+                    </li> --}}
                     <li class="nav-item dropdown">
                         <a class="nav-link" aria-expanded="true" data-bs-toggle="dropdown" href="blank.html">
                             <i class="fas fa-database"></i><span>Référentiels</span>
@@ -105,9 +105,9 @@
                             <a class="nav-link {{ Route::is('ref.ligne') ? 'active' : '' }}" href="{{ route('ref.ligne') }}" style="padding-left: 35px;padding-top: 0px;padding-bottom: 15px;">
                                 <i class="fas fa-satellite-dish"></i><span>Lignes</span>
                             </a>
-                            <a class="nav-link {{ Route::is('ref.fibre') ? 'active' : '' }}" href="{{ route('ref.fibre') }}" style="padding-left: 35px;padding-top: 0px;padding-bottom: 15px;">
+                            {{-- <a class="nav-link {{ Route::is('ref.fibre') ? 'active' : '' }}" href="{{ route('ref.fibre') }}" style="padding-left: 35px;padding-top: 0px;padding-bottom: 15px;">
                                 <i class="fas fa-broadcast-tower"></i><span>Fibres Optiques</span>
-                            </a>
+                            </a> --}}
                             <a class="nav-link {{ Route::is('ref.phone') ? 'active' : '' }}" href="{{ route('ref.phone') }}" style="padding-left: 35px;padding-top: 0px;padding-bottom: 15px;">
                                 <i class="fas fa-tablet-alt"></i><span>Téléphones</span>
                             </a>

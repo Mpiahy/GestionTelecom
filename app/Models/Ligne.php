@@ -32,6 +32,10 @@ class Ligne extends Model
         if (!empty($filters['statut'])) {
             $query->where('id_statut_ligne', $filters['statut']);
         }
+        // Filtre par type
+        if (!empty($filters['type'])) {
+            $query->where('id_type_ligne', $filters['type']);
+        }
 
         // Recherche par numéro de ligne
         if (!empty($filters['search_ligne_num'])) {
@@ -134,4 +138,14 @@ class Ligne extends Model
     {
         return DB::select("SELECT COUNT(*) AS total FROM view_ligne_resilie")[0]->total;
     }
+
+    public static function getStats()
+    {
+        return [
+            'ligneActif' => self::countActif(),
+            'ligneEnAttente' => self::countEnAttente(),
+            'ligneResilie' => self::countResilie(),
+        ];
+    }
+
 }

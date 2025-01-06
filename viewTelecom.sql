@@ -71,7 +71,7 @@ FROM (
         element e ON fe.id_element = e.id_element
     GROUP BY
         f.id_forfait, f.nom_forfait
-) sub;                
+) sub;
 
 -- View pour détails d'une ligne
 CREATE OR REPLACE VIEW view_ligne_details AS

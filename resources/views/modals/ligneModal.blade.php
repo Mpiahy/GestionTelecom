@@ -21,7 +21,7 @@
                                     <div class="mb-3">
                                         <label class="form-label" for="act_sim"><strong>Numéro SIM</strong></label>
                                         <input id="act_sim" class="form-control @error('act_sim', 'act_ligne_errors') is-invalid @enderror" 
-                                            type="text" name="act_sim" placeholder="Numéro SIM" 
+                                            type="number" name="act_sim" placeholder="Numéro SIM" 
                                             value="{{ old('act_sim') }}" required />
                                         @error('act_sim', 'act_ligne_errors')
                                             <div class="invalid-feedback">{{ $message }}</div>
@@ -296,7 +296,7 @@
                                         <label class="form-label" for="edt_sim">
                                             <strong>Numéro SIM</strong>
                                         </label>
-                                        <input id="edt_sim" class="form-control @error('edt_sim', 'edt_ligne_errors') is-invalid @enderror" type="text" name="edt_sim" value="{{ old('edt_sim') }}"  />
+                                        <input id="edt_sim" class="form-control @error('edt_sim', 'edt_ligne_errors') is-invalid @enderror" type="number" name="edt_sim" value="{{ old('edt_sim') }}"  />
                                         @error('edt_sim', 'edt_ligne_errors')
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror

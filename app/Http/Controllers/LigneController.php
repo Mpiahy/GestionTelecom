@@ -33,6 +33,7 @@ class LigneController extends Controller
             // Réinitialiser tous les filtres
             $filters = [
                 'statut' => null,
+                'type' => null,
                 'search_ligne_num' => null,
                 'search_ligne_sim' => null,
                 'search_ligne_user' => null,
@@ -41,6 +42,7 @@ class LigneController extends Controller
             // Sinon, appliquer les filtres existants
             $filters = [
                 'statut' => $request->input('statut'),
+                'type' => $request->input('type'),
                 'search_ligne_num' => $request->input('search_ligne_num'),
                 'search_ligne_sim' => $request->input('search_ligne_sim'),
                 'search_ligne_user' => $request->input('search_ligne_user'),

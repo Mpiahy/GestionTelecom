@@ -16,6 +16,20 @@ class StatutEquipement extends Model
     const STATUT_ATTRIBUE = 2;
     const STATUT_RETOURNE = 3;
     const STATUT_HS = 4;
+    public static function getBootstrapClass($id_statut_equipement)
+    {
+        switch ($id_statut_equipement) {
+            case 'Retourné':
+                return 'warning';
+            case 'Nouveau':
+                return 'info';
+            case 'Attribué':
+                return 'success';
+            case 'HS':
+                return 'danger';
+        }
+    }
+
     public static function markAsHS($equipement)
     {
         $equipement->update([

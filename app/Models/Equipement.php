@@ -39,6 +39,11 @@ class Equipement extends Model
         return $this->belongsTo(StatutEquipement::class, 'id_statut_equipement');
     }
 
+    public function affectations()
+    {
+        return $this->hasMany(Affectation::class, 'id_equipement');
+    }
+
     /**
      * Scope pour récupérer uniquement les téléphones (Smartphone et Téléphone à Touche).
      *
@@ -304,4 +309,14 @@ class Equipement extends Model
 
         return DB::select($sql);
     }
+
+    public static function getStats()
+    {
+        return [
+            'equipementActif' => self::countActif(),
+            'equipementInactif' => self::countInactif(),
+            'equipementHS' => self::countHS(),
+        ];
+    }
+
 }

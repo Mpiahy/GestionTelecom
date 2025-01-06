@@ -2,28 +2,121 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\SuiviEquipementExport;
+use App\Exports\SuiviFlotteExport;
+use App\Models\Affectation;
 use App\Models\Equipement;
+use App\Models\Ligne;
+use App\Exports\TableauDeBordExport;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
-use App\Models\Ligne;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Helpers\DateHelper;
+use App\Services\FlotteService;
+use App\Services\EquipementService;
 
 class IndexController extends Controller
 {
-    // Load Index View
-    public function indexView()
+    /**
+     * Affiche la vue du tableau de bord avec les données.
+     */
+    public function indexView(Request $request)
+    {
+        $data = $this->getDashboardData($request->input('annee', date('Y')), $request->input('mois', null));
+        return view('index', $data);
+    }
+
+    /**
+     * Filtre les données du tableau de bord et recharge la vue.
+     */
+    public function filterDashboard(Request $request)
+    {
+        return $this->indexView($request); // Réutilisation directe de la méthode `indexView`
+    }
+
+    // Export PDF
+    public function exportPDF(Request $request)
+    {
+        $annee = $request->input('annee', date('Y'));
+        $data = $this->prepareExportData($annee);
+
+        $moisFrancais = DateHelper::getMoisFrancais(); // Appel de la méthode depuis le helper
+        $pdf = Pdf::loadView('pdf.dashboard', compact('annee', 'data', 'moisFrancais'))
+                  ->setPaper('a4', 'landscape');
+
+        return $pdf->download("tableau_de_bord_telecom_$annee.pdf");
+    }
+
+    /**
+     * Export des données en XLSX.
+     */
+    public function exportXLSX(Request $request)
+    {
+        $annee = $request->input('annee', date('Y'));
+        return Excel::download(new TableauDeBordExport($annee), "tableau_de_bord_telecom_$annee.xlsx");
+    }
+
+    /**
+     * Récupère les données pour le tableau de bord.
+     */
+    private function getDashboardData($selectedYear, $selectedMonth)
     {
         $login = Session::get('login');
 
-        // LIGNE
-        $ligneActif = Ligne::countActif();
-        $ligneEnAttente = Ligne::countEnAttente();
-        $ligneResilie = Ligne::countResilie();
+        // Données sur les lignes et équipements
+        $ligneStats = Ligne::getStats();
+        $equipementStats = Equipement::getStats();
 
-        // EQUIPEMENT
-        $equipementActif = Equipement::countActif();
-        $equipementInactif = Equipement::countInactif();
-        $equipementHS = Equipement::countHS();
-        
-        return view('index', compact('login', 'ligneActif', 'ligneEnAttente', 'ligneResilie', 'equipementActif', 'equipementInactif', 'equipementHS'));
+        // Données de facturation
+        if ($selectedMonth) {
+            $totalPrixForfaitHT = Affectation::getTotalPrixForfaitHT($selectedYear, $selectedMonth);
+            $monthlyData = null;
+        } else {
+            $totalPrixForfaitHT = null;
+            $monthlyData = Affectation::getMonthlyData($selectedYear);
+        }
+
+        return array_merge(
+            $ligneStats,
+            $equipementStats,
+            compact('login', 'selectedYear', 'selectedMonth', 'monthlyData', 'totalPrixForfaitHT')
+        );
     }
+
+    /**
+     * Prépare les données pour l'export (PDF, XLSX).
+     */
+    private function prepareExportData($annee)
+    {
+        return Affectation::getYearlyData($annee);
+    }
+
+    private $flotteService;
+    private $equipementService;
+
+    public function __construct(FlotteService $flotteService, EquipementService $equipementService)
+    {
+        $this->flotteService = $flotteService;
+        $this->equipementService = $equipementService;
+    }
+
+    public function exportSuiviFlotte(Request $request)
+    {
+        $annee = $request->input('annee', date('Y'));
+        return Excel::download(
+            new SuiviFlotteExport($annee, $this->flotteService),
+            "suivi_flotte_$annee.xlsx"
+        );
+    }
+
+    public function exportEquipement()
+    {
+        $fileName = 'suivi_equipement_telecom.xlsx';
+        return Excel::download(
+            new SuiviEquipementExport($this->equipementService),
+            $fileName
+        );
+    }
+
 }
