@@ -20,13 +20,7 @@ class ContactOperateurSeeder extends Seeder
                 ['nom' => 'Mpiahisoa Yas', 'email' => 'andriamahaleompiahisoa.randriamanivo@colas-mg.com'],
             ],
             '32' => [ // ID de Orange
-                ['nom' => 'Mpiahisoa Orange', 'email' => 'mpiahyandriam@hotmail.com'],
-            ],
-            '33' => [ // ID de Airtel
-                ['nom' => 'Mpiahisoa Airtel', 'email' => 'mpiahyandriam@outlook.com'],
-            ],
-            '7' => [ // ID de Starlink
-                ['nom' => 'Mpiahisoa Starlink', 'email' => 'mpiahisoa@yahoo.com'],
+                ['nom' => 'Mpiahisoa Orange', 'email' => 'mpiahyandriam@gmail.com'],
             ],
         ];
 

@@ -233,7 +233,7 @@
                                 </td>
                                 <td class="text-center" style="padding-left: 0px;padding-right: 0px;">
                                     {{-- Boutons spécifiques au statut --}}
-                                    @if ($ligne->statut_ligne === 'Inactif' || $ligne->statut_ligne === 'Resilie')
+                                    @if ($ligne->statut_ligne === 'Resilie')
                                         <a id="btn_react_ligne"
                                             class="text-decoration-none"
                                             style="margin-right: 5px;" 
@@ -243,7 +243,7 @@
                                             href="#">
                                             <i class="far fa-arrow-alt-circle-up text-success" style="font-size: 25px;"></i>
                                         </a>
-                                    @elseif ($ligne->statut_ligne === 'En attente')    
+                                    @elseif ($ligne->statut_ligne === 'Inactif' || $ligne->statut_ligne === 'En attente')    
                                         <a href="#"
                                             id="btn_enr_ligne"
                                             class="text-decoration-none"

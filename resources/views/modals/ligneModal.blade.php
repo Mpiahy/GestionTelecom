@@ -148,7 +148,7 @@
                                             <strong>Numéro Ligne</strong>
                                         </label>
                                         <input id="enr_ligne" class="form-control @error('enr_ligne', 'enr_ligne_errors') is-invalid @enderror" 
-                                               type="text" name="enr_ligne" placeholder="Entrer le numéro ligne" value="{{ old('enr_ligne') ?? '+261'}}" />
+                                               type="text" name="enr_ligne" placeholder="Entrer le numéro ligne" value="{{ old('enr_ligne') ?? '0'}}" />
                                         @error('enr_ligne', 'enr_ligne_errors')
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror

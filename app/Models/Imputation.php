@@ -10,7 +10,7 @@ class Imputation extends Model
     use HasFactory;
     protected $table = 'imputation';
     protected $primaryKey = 'id_imputation';
-    protected $fillable = ['code_imputation', 'id_service'];
+    protected $fillable = ['libelle_imputation', 'id_service'];
 
     public function service()
     {

@@ -11,7 +11,8 @@ use \App\Http\Controllers\{
     FibreController, 
     PhoneController, 
     BoxController,
-    ForfaitController
+    ForfaitController,
+    ImportController
 };
 
 /*
@@ -35,7 +36,13 @@ Route::get('/logout', [LoginController::class, 'logout'])->name('auth.logout');
 // Page d'accueil
 Route::get('/index', [IndexController::class, 'indexView'])->middleware('check.session')->name('index');
 Route::post('/index/filter', [IndexController::class, 'filterDashboard'])->middleware('check.session')->name('index.filter');
-    
+   
+// Route pour afficher la vue d'import
+Route::get('/import/csv', [ImportController::class, 'importView'])->name('import.view');
+
+// Route pour traiter l'importation du fichier CSV
+Route::post('/import/csv', [ImportController::class, 'processImport'])->name('import.process');
+
 // Route pour l'export PDF
 Route::get('/export/pdf', [IndexController::class, 'exportPDF'])->name('export.pdf');
 

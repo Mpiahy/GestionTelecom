@@ -10,12 +10,7 @@ class Localisation extends Model
     use HasFactory;
     protected $table = 'localisation';
     protected $primaryKey = 'id_localisation';
-    protected $fillable = ['localisation', 'id_ue', 'id_service', 'id_imputation'];
-
-    public function ue()
-    {
-        return $this->belongsTo(UE::class, 'id_ue');
-    }
+    protected $fillable = ['localisation', 'id_service', 'id_imputation'];
 
     public function service()
     {
@@ -27,45 +22,23 @@ class Localisation extends Model
         return $this->belongsTo(Imputation::class, 'id_imputation');
     }
 
-    // Méthode pour filtrer par UE
-    public function scopeFilterByUE($query, $filterUE)
-    {
-        if ($filterUE) {
-            $query->whereHas('ue', function ($q) use ($filterUE) {
-                $q->where('libelle_ue', $filterUE);
-            });
-        }
-        return $query;
-    }
-
-    // Méthode pour filtrer par numéro BU
-    public function scopeFilterByBU($query, $searchBU)
-    {
-        if ($searchBU) {
-            $query->whereHas('service', function ($q) use ($searchBU) {
-                $q->where('numero_bu', 'like', "%{$searchBU}%");
-            });
-        }
-        return $query;
-    }
-
     // Méthode pour filtrer par libellé de service
-    public function scopeFilterByService($query, $searchService)
+    public function scopeFilterByService($query, $filterService)
     {
-        if ($searchService) {
-            $query->whereHas('service', function ($q) use ($searchService) {
-                $q->where('libelle_service', 'like', "%{$searchService}%");
+        if ($filterService) {
+            $query->whereHas('service', function ($q) use ($filterService) {
+                $q->where('libelle_service', 'like', "%{$filterService}%");
             });
         }
         return $query;
     }
 
-    // Méthode pour filtrer par code imputation
+    // Méthode pour filtrer par libelle imputation
     public function scopeFilterByImputation($query, $searchImputation)
     {
         if ($searchImputation) {
             $query->whereHas('imputation', function ($q) use ($searchImputation) {
-                $q->where('code_imputation', 'like', "%{$searchImputation}%");
+                $q->where('libelle_imputation', 'like', "%{$searchImputation}%");
             });
         }
         return $query;

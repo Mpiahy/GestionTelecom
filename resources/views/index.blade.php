@@ -172,10 +172,10 @@
     new Chart(ligneCtx, {
         type: 'doughnut',
         data: {
-            labels: ['Lignes Actifs', 'Lignes Résiliés', 'Lignes en Attente'],
+            labels: ['Lignes Actifs', 'Lignes Inactifs', 'Lignes Résiliés', 'Lignes en Attente'],
             datasets: [{
-                data: [{{ $ligneActif ?? 0 }}, {{ $ligneResilie ?? 0 }}, {{ $ligneEnAttente ?? 0 }}],
-                backgroundColor: ['rgba(75, 192, 192, 0.6)', 'rgba(255, 159, 64, 0.6)', 'rgba(54, 162, 235, 0.6)']
+                data: [{{ $ligneActif ?? 0 }}, {{ $ligneInactif ?? 0 }}, {{ $ligneResilie ?? 0 }}, {{ $ligneEnAttente ?? 0 }}],
+                backgroundColor: ['rgba(75, 192, 192, 0.6)', 'rgba(255, 159, 64, 0.6)', 'rgba(255, 0, 0, 0.6)', 'rgba(54, 162, 235, 0.6)']
             }]
         },
         options: { responsive: true }

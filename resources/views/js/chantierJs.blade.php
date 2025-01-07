@@ -5,16 +5,12 @@
             button.addEventListener('click', function() {
                 // Récupérez les valeurs actuelles du chantier depuis les attributs data-*
                 const id = this.getAttribute('data-id');
-                const ue = this.getAttribute('data-ue');
-                const bu = this.getAttribute('data-bu');
                 const service = this.getAttribute('data-service');
                 const imputation = this.getAttribute('data-imputation');
 
                 // Pré-remplissez les champs du formulaire dans le modal
-                document.getElementById('edt_lib_ue').value = ue;
-                document.getElementById('edt_bu').value = bu;
                 document.getElementById('edt_lib_service').value = service;
-                document.getElementById('edt_code_imp').value = imputation;
+                document.getElementById('edt_lib_imp').value = imputation;
 
                 // Mettez à jour l'action du formulaire pour inclure l'ID du chantier
                 document.getElementById('edt_chantier').action = `/chantier/modifier/${id}`;

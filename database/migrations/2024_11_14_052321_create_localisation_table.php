@@ -11,25 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        // TABLE ue
-        Schema::create('ue', function (Blueprint $table) {
-            $table->id('id_ue');
-            $table->string('libelle_ue', 50);
-            $table->timestamps();
-        });
         // TABLE service
         Schema::create('service', function (Blueprint $table) {
             $table->id('id_service');
-            $table->string('libelle_service', 50);
-            $table->string('numero_bu', 50);
-            $table->unsignedBigInteger('id_ue');
-            $table->foreign('id_ue')->references('id_ue')->on('ue')->onDelete('cascade');
+            $table->string('libelle_service', 50)->unique();
             $table->timestamps();
         });
         // TABLE imputation
         Schema::create('imputation', function (Blueprint $table) {
             $table->id('id_imputation');
-            $table->string('code_imputation', 20);
+            $table->string('libelle_imputation', 100)->unique();
             $table->unsignedBigInteger('id_service');
             $table->foreign('id_service')->references('id_service')->on('service')->onDelete('cascade');
             $table->timestamps();
@@ -37,11 +28,9 @@ return new class extends Migration
         // TABLE localisation
         Schema::create('localisation', function (Blueprint $table) {
             $table->id('id_localisation');
-            $table->string('localisation', 100);
-            $table->unsignedBigInteger('id_ue');
+            $table->string('localisation', 150)->unique();
             $table->unsignedBigInteger('id_service');
-            $table->unsignedBigInteger('id_imputation');
-            $table->foreign('id_ue')->references('id_ue')->on('ue')->onDelete('cascade');
+            $table->unsignedBigInteger('id_imputation')->nullable();
             $table->foreign('id_service')->references('id_service')->on('service')->onDelete('cascade');
             $table->foreign('id_imputation')->references('id_imputation')->on('imputation')->onDelete('cascade');
             $table->timestamps();
@@ -56,6 +45,5 @@ return new class extends Migration
         Schema::dropIfExists('localisation');
         Schema::dropIfExists('imputation');
         Schema::dropIfExists('service');
-        Schema::dropIfExists('ue');
     }
 };

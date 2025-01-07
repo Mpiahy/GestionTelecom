@@ -60,22 +60,34 @@ return new class extends Migration
             LEFT JOIN localisation ON utilisateur.id_localisation = localisation.id_localisation
             LEFT JOIN affectation ON vld.id_affectation = affectation.id_affectation;
         ');
-        DB::statement('
+
+        DB::statement("
+            CREATE OR REPLACE VIEW view_ligne_resilie AS
+            SELECT *
+            FROM ligne
+            WHERE id_statut_ligne = 4;
+        ");
+
+        DB::statement("
             CREATE VIEW view_ligne_actif AS
             SELECT *
             FROM ligne
             WHERE id_statut_ligne = 3;
+        ");
 
+        DB::statement("
             CREATE VIEW view_ligne_en_attente AS
             SELECT *
             FROM ligne
             WHERE id_statut_ligne = 2;
+        ");
 
-            CREATE OR REPLACE VIEW view_ligne_resilie AS
+        DB::statement("
+            CREATE OR REPLACE VIEW view_ligne_inactif AS
             SELECT *
             FROM ligne
-            WHERE id_statut_ligne IN (1, 4);
-        ');
+            WHERE id_statut_ligne = 1;
+        ");
     }
 
     /**
@@ -85,8 +97,9 @@ return new class extends Migration
     {
         DB::statement('DROP VIEW IF EXISTS view_ligne_details CASCADE;');
         DB::statement('DROP VIEW IF EXISTS view_ligne_big_details CASCADE;');
+        DB::statement('DROP VIEW IF EXISTS view_ligne_resilie CASCADE;');
         DB::statement('DROP VIEW IF EXISTS view_ligne_actif CASCADE;');
         DB::statement('DROP VIEW IF EXISTS view_ligne_en_attente CASCADE;');
-        DB::statement('DROP VIEW IF EXISTS view_ligne_resilie CASCADE;');
+        DB::statement('DROP VIEW IF EXISTS view_ligne_inactif CASCADE;');
     }
 };

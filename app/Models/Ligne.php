@@ -123,6 +123,12 @@ class Ligne extends Model
         ]);
     }
 
+    // Compter les lignes Résiliées
+    public static function countResilie()
+    {
+        return DB::select("SELECT COUNT(*) AS total FROM view_ligne_resilie")[0]->total;
+    }
+
     // Compter les lignes Actives
     public static function countActif()
     {
@@ -135,18 +141,19 @@ class Ligne extends Model
         return DB::select("SELECT COUNT(*) AS total FROM view_ligne_en_attente")[0]->total;
     }
 
-    // Compter les lignes Résiliées ou Inactives
-    public static function countResilie()
+    // Compter les lignes Inactives
+    public static function countInactif()
     {
-        return DB::select("SELECT COUNT(*) AS total FROM view_ligne_resilie")[0]->total;
+        return DB::select("SELECT COUNT(*) AS total FROM view_ligne_inactif")[0]->total;
     }
 
     public static function getStats()
     {
         return [
+            'ligneResilie' => self::countResilie(),
             'ligneActif' => self::countActif(),
             'ligneEnAttente' => self::countEnAttente(),
-            'ligneResilie' => self::countResilie(),
+            'ligneInactif' => self::countInactif(),
         ];
     }
 

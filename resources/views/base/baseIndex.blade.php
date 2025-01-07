@@ -23,7 +23,7 @@
                 <hr class="sidebar-divider my-0">
                 <ul id="accordionSidebar" class="navbar-nav text-light">
                     <li class="nav-item">
-                        <a class="nav-link active" href="{{ url('/index') }}">
+                        <a class="nav-link {{ Route::is('index') ? 'active' : '' }}" href="{{ url('/index') }}">
                             <i class="fas fa-tachometer-alt"></i><span>Tableau de Bord</span>
                         </a>
                     </li>
@@ -41,7 +41,7 @@
                                 <i class="fas fa-users"></i><span>Utilisateurs</span>
                             </a>
                             <a class="nav-link {{ Route::is('ref.chantier') ? 'active' : '' }}" href="{{ route('ref.chantier') }}" style="padding-left: 35px;padding-top: 0px;padding-bottom: 15px;">
-                                <i class="far fa-building" style="font-size: 14px;"></i><span>Chantiers</span>
+                                <i class="far fa-building" style="font-size: 14px;"></i><span>Localisations</span>
                             </a>
                             <a class="nav-link {{ Route::is('ref.operateur') ? 'active' : '' }}" href="{{ route('ref.operateur') }}" style="padding-left: 35px;padding-top: 0px;padding-bottom: 15px;">
                                 <i class="fas fa-globe"></i><span>Opérateurs</span>
@@ -63,6 +63,11 @@
                             </a>
                         </div>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link {{ Route::is('import.view') ? 'active' : '' }}" href="{{ route('import.view') }}">
+                            <i class="fas fa-file-import"></i><span>Imports</span>
+                        </a>
+                    </li>                    
                 </ul>
             </div>
         </nav>
