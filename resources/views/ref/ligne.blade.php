@@ -251,6 +251,7 @@
                                             data-bs-target="#modal_enr_ligne" 
                                             data-bs-toggle="modal" 
                                             title="Enregistrer" 
+                                            data-ligne-enr="{{ $ligne->num_ligne ?? 0 }}"
                                             data-sim-enr="{{ $ligne->num_sim }}" 
                                             data-forfait-enr="{{ $ligne->nom_forfait }}" 
                                             data-id-enr="{{ $ligne->id_ligne }}">

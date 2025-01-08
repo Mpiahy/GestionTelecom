@@ -77,10 +77,10 @@ class SuiviFlotteExport implements FromArray, WithHeadings, WithTitle, WithColum
             'B' => 20, // num_sim
             'C' => 12, // statut_ligne
             'D' => 15, // login
-            'E' => 40, // nom_prenom
-            'F' => 40, // fonction
-            'G' => 50, // localisation
-            'H' => 25, // nom_forfait
+            'E' => 50, // nom_prenom
+            'F' => 50, // fonction
+            'G' => 70, // localisation
+            'H' => 15, // nom_forfait
             'I' => 12, // mois_1
             'J' => 12, // mois_2
             'K' => 12, // mois_3

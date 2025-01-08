@@ -203,11 +203,13 @@
                 event.preventDefault(); // Empêche le comportement par défaut du lien
 
                 // Récupérer les données des attributs data-*
+                const ligneEnr = button.getAttribute('data-ligne-enr'); 
                 const simEnr = button.getAttribute('data-sim-enr'); 
                 const forfaitEnr = button.getAttribute('data-forfait-enr');
                 const idEnr = button.getAttribute('data-id-enr');
 
                 // Injecter les valeurs dans le formulaire du modal
+                document.getElementById('enr_ligne').value = ligneEnr || ''; 
                 document.getElementById('enr_sim').value = simEnr || ''; 
                 document.getElementById('enr_forfait').value = forfaitEnr || '';
                 document.getElementById('enr_id_ligne').value = idEnr || '';

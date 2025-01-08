@@ -87,7 +87,7 @@ class LigneController extends Controller
     {
         try {
             $validatedData = $request->validate([
-                'enr_ligne' => 'required|string|max:15|unique:ligne,num_ligne', //+2613xxxxxxxx
+                'enr_ligne' => 'required|string|max:15', //03xxxxxxxx
                 'enr_date' => 'required|date',
                 'enr_id_ligne' => 'required|integer|exists:ligne,id_ligne', //id_ligne correspondant
                 'enr_user' => 'nullable|integer|exists:utilisateur,id_utilisateur', // Nullable pour gérer la récupération depuis le champ caché
@@ -228,7 +228,7 @@ class LigneController extends Controller
             // Validation des données envoyées
             $validatedData = $request->validate([
                 'resil_id_ligne' => 'required|exists:ligne,id_ligne',
-                'resil_date' => 'required|date|after_or_equal:today',
+                'resil_date' => 'required|date',
             ]);
 
             $idLigne = $validatedData['resil_id_ligne'];

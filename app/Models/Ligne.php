@@ -23,6 +23,11 @@ class Ligne extends Model
         'id_type_ligne',
         'id_operateur',
     ];
+    // Mise à jour du statut de la ligne
+    public function updateStatut($statut)
+    {
+        $this->update(['id_statut_ligne' => $statut]);
+    }
 
     public static function getLignesWithDetails($filters = [], $perPage)
     {
@@ -118,7 +123,6 @@ class Ligne extends Model
 
         // Mettre à jour la ligne avec les conditions spécifiées
         $this->where('id_ligne', $idLigne)->update([
-            'num_ligne' => null,
             'id_statut_ligne' => StatutLigne::STATUT_RESILIE,
         ]);
     }

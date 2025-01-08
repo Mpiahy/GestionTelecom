@@ -12,7 +12,8 @@ use \App\Http\Controllers\{
     PhoneController, 
     BoxController,
     ForfaitController,
-    ImportController
+    ImportController,
+    SimulationController
 };
 use App\Exports\ExampleExport;
 use Maatwebsite\Excel\Facades\Excel;
@@ -54,6 +55,12 @@ Route::get('/export-example/{type}', function ($type) {
     
     abort(404); // Retourne une erreur 404 si le type est invalide
 })->name('export.example');
+
+// Afficher la page de simulation
+Route::get('/simulation', [SimulationController::class, 'simulationView'])->name('simulation.view');
+
+// Lancer la simulation
+Route::post('/simulation/run', [SimulationController::class, 'runSimulation'])->name('simulation.run');
 
 // Route pour l'export PDF
 Route::get('/export/pdf', [IndexController::class, 'exportPDF'])->name('export.pdf');

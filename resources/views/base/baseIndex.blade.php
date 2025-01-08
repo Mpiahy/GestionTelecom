@@ -67,7 +67,12 @@
                         <a class="nav-link {{ Route::is('import.view') ? 'active' : '' }}" href="{{ route('import.view') }}">
                             <i class="fas fa-file-import"></i><span>Imports</span>
                         </a>
-                    </li>                    
+                    </li>     
+                    <li class="nav-item">
+                        <a class="nav-link {{ Route::is('simulation.view') ? 'active' : '' }}" href="{{ route('simulation.view') }}">
+                            <i class="fas fa-gamepad"></i><span>Simulations</span>
+                        </a>
+                    </li>                  
                 </ul>
             </div>
         </nav>
