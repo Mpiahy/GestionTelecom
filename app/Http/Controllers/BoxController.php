@@ -161,16 +161,17 @@ class BoxController extends Controller
         }
     }
 
-    // Voir Box
-    public function detailBox($id_box)
+    // Historique Box
+    public function histoBox($id_box)
     {
-        $boxBig = Equipement::getBoxWithBigDetails($id_box);
+        $histoBox = Equipement::getHistoriqueEquipement($id_box);
 
-        if (empty($boxBig)) {
-            return response()->json(['error' => 'Détails de la box introuvables.'], 404);
+        // Retourne un tableau vide si aucun historique n'est trouvé
+        if (empty($histoBox)) {
+            return response()->json([]);
         }
 
-        return response()->json($boxBig);
+        return response()->json($histoBox);
     }
 
 }

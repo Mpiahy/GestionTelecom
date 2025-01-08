@@ -140,7 +140,11 @@ return new class extends Migration
             LEFT JOIN marque m ON mo.id_marque = m.id_marque
             LEFT JOIN type_equipement te ON e.id_type_equipement = te.id_type_equipement
             LEFT JOIN statut_equipement se ON e.id_statut_equipement = se.id_statut_equipement
-            LEFT JOIN affectation a ON e.id_equipement = a.id_equipement
+            LEFT JOIN (
+                SELECT DISTINCT ON (id_equipement) *
+                FROM affectation
+                ORDER BY id_equipement, debut_affectation DESC
+            ) a ON e.id_equipement = a.id_equipement
             LEFT JOIN utilisateur u ON a.id_utilisateur = u.id_utilisateur
             LEFT JOIN localisation l ON u.id_localisation = l.id_localisation;
         ');
@@ -168,9 +172,30 @@ return new class extends Migration
             LEFT JOIN marque m ON mo.id_marque = m.id_marque
             LEFT JOIN type_equipement te ON e.id_type_equipement = te.id_type_equipement
             LEFT JOIN statut_equipement se ON e.id_statut_equipement = se.id_statut_equipement
-            LEFT JOIN affectation a ON e.id_equipement = a.id_equipement
+            LEFT JOIN (
+                SELECT DISTINCT ON (id_equipement) *
+                FROM affectation
+                ORDER BY id_equipement, debut_affectation DESC
+            ) a ON e.id_equipement = a.id_equipement
             LEFT JOIN utilisateur u ON a.id_utilisateur = u.id_utilisateur
             LEFT JOIN localisation l ON u.id_localisation = l.id_localisation;
+        ');
+
+        // View pour avoir Box avec détails
+        DB::statement('
+            CREATE OR REPLACE VIEW view_historique_equipement AS
+            SELECT 
+                aff.id_equipement,
+                u.nom AS nom,
+                u.prenom AS prenom,
+                u.login AS login,
+                loc.localisation AS localisation,
+                aff.debut_affectation,
+                aff.fin_affectation
+            FROM 
+                (SELECT * FROM affectation WHERE id_equipement IS NOT NULL) aff
+            INNER JOIN utilisateur u ON aff.id_utilisateur = u.id_utilisateur
+            LEFT JOIN localisation loc ON u.id_localisation = loc.id_localisation;
         ');
     }
 
@@ -193,5 +218,6 @@ return new class extends Migration
         DB::statement('DROP VIEW IF EXISTS view_marque_phone CASCADE;');
         DB::statement('DROP VIEW IF EXISTS view_equipement_box CASCADE;');
         DB::statement('DROP VIEW IF EXISTS view_equipement_phones CASCADE;');
+        DB::statement('DROP VIEW IF EXISTS view_historique_equipement CASCADE;');
     }
 };

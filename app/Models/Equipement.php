@@ -286,29 +286,20 @@ class Equipement extends Model
         $this->save();
     }
 
-    public static function getPhonesWithBigDetails($id_phone)
+    public static function getHistoriqueEquipement($id_equipement)
     {
-        $sql = "SELECT * FROM view_phones_details";
-        
-        // Ajout de la clause WHERE si $id_phone est fourni
-        if (!empty($id_phone)) {
-            $sql .= " WHERE id_equipement = :id_phone";
-            return DB::select($sql, ['id_phone' => $id_phone]);
+        // Vérifie si l'équipement existe
+        $equipmentExists = DB::table('equipement')
+            ->where('id_equipement', $id_equipement)
+            ->exists();
+
+        if (!$equipmentExists) {
+            return null; // Retourne null si l'équipement n'existe pas
         }
 
-        return DB::select($sql);
-    }
-    public static function getBoxWithBigDetails($id_box)
-    {
-        $sql = "SELECT * FROM view_box_details";
-        
-        // Ajout de la clause WHERE si $id_box est fourni
-        if (!empty($id_box)) {
-            $sql .= " WHERE id_equipement = :id_box";
-            return DB::select($sql, ['id_box' => $id_box]);
-        }
-
-        return DB::select($sql);
+        // Récupère les détails de l'historique s'il existe
+        $sql = "SELECT * FROM view_historique_equipement WHERE id_equipement = :id_equipement";
+        return DB::select($sql, ['id_equipement' => $id_equipement]);
     }
 
     public static function getStats()

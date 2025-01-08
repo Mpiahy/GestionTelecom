@@ -25,3 +25,8 @@ CREATE INDEX idx_marque_id ON marque (id_marque);
 
 -- Index pour optimiser les sous-requêtes sur id_modele
 CREATE INDEX idx_modele_id ON modele (id_modele);
+
+-- Index pour optimiser les sous-requêtes sur affectation
+CREATE INDEX idx_affectation_id_equipement ON affectation (id_equipement);
+CREATE INDEX idx_affectation_id_utilisateur ON affectation (id_utilisateur);
+CREATE INDEX idx_utilisateur_id_localisation ON utilisateur (id_localisation);

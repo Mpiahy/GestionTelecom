@@ -241,3 +241,17 @@ LEFT JOIN statut_equipement se ON e.id_statut_equipement = se.id_statut_equipeme
 LEFT JOIN affectation a ON e.id_equipement = a.id_equipement
 LEFT JOIN utilisateur u ON a.id_utilisateur = u.id_utilisateur
 LEFT JOIN localisation l ON u.id_localisation = l.id_localisation;
+
+CREATE OR REPLACE VIEW view_historique_equipement AS
+SELECT 
+    aff.id_equipement,
+    u.nom AS utilisateur_nom,
+    u.prenom AS utilisateur_prenom,
+    u.login AS utilisateur_login,
+    loc.localisation AS localisation,
+    aff.debut_affectation,
+    aff.fin_affectation
+FROM 
+    (SELECT * FROM affectation WHERE id_equipement IS NOT NULL) aff
+INNER JOIN utilisateur u ON aff.id_utilisateur = u.id_utilisateur
+LEFT JOIN localisation loc ON u.id_localisation = loc.id_localisation;

@@ -186,16 +186,17 @@ class PhoneController extends Controller
         ]);
     }
 
-    // Voir Phone
-    public function detailPhone($id_phone)
+    // Histo Phone
+    public function histoPhone($id_phone)
     {
-        $phonesBig = Equipement::getPhonesWithBigDetails($id_phone);
+        $histoPhone = Equipement::getHistoriqueEquipement($id_phone);
 
-        if (empty($phonesBig)) {
-            return response()->json(['error' => 'Détails du téléphone introuvables.'], 404);
+        // Retourne un tableau vide si aucun historique n'est trouvé
+        if (empty($histoPhone)) {
+            return response()->json([]);
         }
 
-        return response()->json($phonesBig);
+        return response()->json($histoPhone);
     }
 
 }

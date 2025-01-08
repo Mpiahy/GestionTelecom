@@ -265,18 +265,22 @@
         voirBoxBtns.forEach(btn => {
             btn.addEventListener('click', function (event) {
                 event.preventDefault(); // Empêche la redirection normale
-    
-                // Récupère l'ID de la box depuis l'attribut `data-id-histo`
+                
+                // Récupère les informations depuis les attributs data-*
                 const idBox = this.getAttribute('data-id-histo');
+                const marque = this.getAttribute('data-marque-histo') || '--';
+                const modele = this.getAttribute('data-modele-histo') || '--';
+                const serialNumber = this.getAttribute('data-serial-number-histo') || '--';
+                const imei = this.getAttribute('data-imei-histo') || '--';
+
+                // Remplit les champs du modal avec les informations générales
+                document.querySelector('#modal_histo_box .modal-body [data-field="marque"]').textContent = marque;
+                document.querySelector('#modal_histo_box .modal-body [data-field="modele"]').textContent = modele;
+                document.querySelector('#modal_histo_box .modal-body [data-field="serial_number"]').textContent = serialNumber;
+                document.querySelector('#modal_histo_box .modal-body [data-field="imei"]').textContent = imei;
     
-                // Vérifie que l'ID est valide
-                if (!idBox) {
-                    alert("ID de la box non valide !");
-                    return;
-                }
-    
-                // Appelle l'API pour récupérer les données
-                fetch(`/box/detailBox/${idBox}`)
+                // Appelle l'API pour récupérer l'historique d'affectation
+                fetch(`/box/histoBox/${idBox}`)
                     .then(response => {
                         if (!response.ok) {
                             throw new Error('Erreur lors de la récupération des données.');
@@ -298,40 +302,33 @@
             });
         });
     
-        // Fonction pour injecter les données dans le modal
+        // Fonction pour injecter les données d'historique dans le tableau
         function populateModal(data) {
-            // Sélectionne le corps du tableau
             const tbody = document.querySelector('#modal_histo_box .modal-body #dataTable tbody');
-    
-            // Vérifie les champs globaux avant de les injecter
-            if (data[0]) { // Si `data` est un tableau, cible le premier élément pour les informations générales
-                document.querySelector('#modal_histo_box .modal-body [data-field="marque"]').textContent = data[0].marque || '--';
-                document.querySelector('#modal_histo_box .modal-body [data-field="modele"]').textContent = data[0].modele || '--';
-                document.querySelector('#modal_histo_box .modal-body [data-field="serial_number"]').textContent = data[0].serial_number || '--';
-                document.querySelector('#modal_histo_box .modal-body [data-field="imei"]').textContent = data[0].imei || '--';
-            } else {
-                console.error("Les données globales (marque, modèle, etc.) sont manquantes.");
-            }
-    
-            // Vide le tableau pour éviter d'ajouter les mêmes données plusieurs fois
+
+            // Vide le tableau pour éviter d'afficher des données redondantes
             tbody.innerHTML = '';
-    
-            // Boucle sur chaque élément de `data` pour créer une ligne dans le tableau
-            data.forEach(item => {
-                const row = document.createElement('tr');
-    
-                // Crée et insère les cellules dans la ligne
-                row.innerHTML = `
-                    <td class="text-dark">${item.nom || ''} ${item.prenom || ''}</td>
-                    <td class="text-dark">${item.login || '--'}</td>
-                    <td class="text-dark">${item.localisation || '--'}</td>
-                    <td class="text-dark">${item.debut_affectation || '--'}</td>
-                    <td class="text-dark">${item.fin_affectation || '--'}</td>
+
+            if (data && Array.isArray(data) && data.length > 0) {
+                data.forEach(item => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td class="text-dark">${item.nom || ''} ${item.prenom || ''}</td>
+                        <td class="text-dark">${item.login || '--'}</td>
+                        <td class="text-dark">${item.localisation || '--'}</td>
+                        <td class="text-dark">${item.debut_affectation || '--'}</td>
+                        <td class="text-dark">${item.fin_affectation || '--'}</td>
+                    `;
+                    tbody.appendChild(row);
+                });
+            } else {
+                // Aucun historique trouvé
+                const noDataRow = document.createElement('tr');
+                noDataRow.innerHTML = `
+                    <td class="text-dark text-center" colspan="5">Aucun historique disponible.</td>
                 `;
-    
-                // Ajoute la ligne au tableau
-                tbody.appendChild(row);
-            });
+                tbody.appendChild(noDataRow);
+            }
         }
     });
     

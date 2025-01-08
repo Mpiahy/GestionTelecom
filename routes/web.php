@@ -110,7 +110,7 @@ Route::middleware('check.session')->group(function() {
     Route::get('/phones/{id_phone}', [PhoneController::class, 'updatePhone'])->name('phone.edt');
     Route::post('/phone/hs', [PhoneController::class, 'hsPhone'])->name('phone.hs');
     Route::post('/phone/retour', [PhoneController::class, 'retourPhone'])->name('phone.retour');
-    Route::get('/phone/detailPhone/{id_phone}', [PhoneController::class, 'detailPhone'])->name('phone.detailPhone');
+    Route::get('/phone/histoPhone/{id_phone}', [PhoneController::class, 'histoPhone'])->name('phone.histoPhone');
 
     Route::get('/get-marques-by-type/{typeId}', [PhoneController::class, 'getMarquesByType']); //for phones
     Route::get('/get-modeles-by-marque/{marqueId}', [PhoneController::class, 'getModelesByMarque']); //for phones & box
@@ -120,7 +120,7 @@ Route::middleware('check.session')->group(function() {
     Route::get('/box/{id_box}', [BoxController::class, 'updateBox'])->name('box.edt');
     Route::post('/box/hs', [BoxController::class, 'hsBox'])->name('box.hs');
     Route::post('/box/retour', [BoxController::class, 'retourBox'])->name('box.retour');
-    Route::get('/box/detailBox/{id_box}', [BoxController::class, 'detailBox'])->name('box.detailBox');
+    Route::get('/box/histoBox/{id_box}', [BoxController::class, 'histoBox'])->name('box.histoBox');
 
     Route::get('/forfait', [ForfaitController::class, 'forfaitView'])->name('ref.forfait');
     Route::get('/forfaits/update-element/{id_forfait}/{id_element}', [ForfaitController::class, 'updateElement'])->name('forfait.update.element');
