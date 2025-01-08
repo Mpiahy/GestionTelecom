@@ -85,31 +85,88 @@
                         <i class="fas fa-upload"></i> Importer
                     </button>
                 </div>
+                <div class="text-center mt-4">
+                    <a href="{{ route('export.example', 'csv') }}" class="text-white btn btn-success me-2">
+                        <i class="fas fa-file-csv"></i> Télécharger l'exemple CSV
+                    </a>
+                    <a href="{{ route('export.example', 'xlsx') }}" class="text-white btn btn-info">
+                        <i class="fas fa-file-excel"></i> Télécharger l'exemple XLSX
+                    </a>
+                </div>                
             </form>
         </div>
     </div>
 
     <!-- Section d'instructions -->
-    <div class="alert alert-info mt-4 p-4" style="max-width: 800px; border-left: 5px solid #007bff; border-radius: 0.5rem;">
-        <h5 class="font-weight-bold">
-            <i class="fas fa-info-circle"></i> Instructions pour l'import :
+    <div class="alert alert-info mt-4 p-4 shadow-sm rounded" style="max-width: 800px; border-left: 5px solid #0d6efd;">
+        <h5 class="fw-bold mb-3">
+            <i class="bi bi-info-circle-fill text-primary"></i> Instructions pour l'import
         </h5>
-        <p class="mb-2">
-            Assurez-vous que le fichier CSV respecte le format suivant. Les colonnes doivent être correctement nommées (respect des <strong>majuscules et minuscules</strong>) :
+        <p class="mb-4">
+            Veuillez vous assurer que le fichier CSV contient les colonnes suivantes. Les colonnes doivent être correctement nommées (respect des <strong>majuscules et minuscules</strong>) :
         </p>
-        <ul class="mb-3 pl-4">
-            <li><code>Numero2</code> <span class="text-muted">(numéro téléphone)</span></li>
-            <li><code>Login</code></li>
-            <li><code>Nom et Prénoms</code></li>
-            <li><code>Fonction</code></li>
-            <li><code>SERVICE</code></li>
-            <li><code>Libelle Imputation</code></li>
-            <li><code>TYPE FORFAIT</code></li>
+        <ul class="list-unstyled mb-4 ps-3">
+            <li class="mb-2">
+                <code class="bg-light px-1 py-1 rounded">Numero2</code> 
+                <span class="text-muted ms-2">(exemple : 0340502524)</span>
+            </li>
+            <li class="mb-2">
+                <code class="bg-light px-1 py-1 rounded">Login</code> 
+                <span class="text-muted ms-2">(exemple : RAKOTOE2)</span>
+            </li>
+            <li class="mb-2">
+                <code class="bg-light px-1 py-1 rounded">Nom et Prénoms</code> 
+                <span class="text-muted ms-2">(exemple : RAKOTOARISOA Eliot)</span>
+            </li>
+            <li class="mb-2">
+                <code class="bg-light px-1 py-1 rounded">Fonction</code> 
+                <span class="text-muted ms-2">(exemple : Ingénieur IT)</span>
+            </li>
+            <li class="mb-2">
+                <code class="bg-light px-1 py-1 rounded">SERVICE</code> 
+                <span class="text-muted ms-2">(exemple : ADM)</span>
+            </li>
+            <li class="mb-2">
+                <code class="bg-light px-1 py-1 rounded">Libelle Imputation</code> 
+                <span class="text-muted ms-2">(exemple : 2200001AD001 - Service Info - 300800)</span>
+            </li>
+            <li class="mb-2">
+                <code class="bg-light px-1 py-1 rounded">TYPE FORFAIT</code> 
+                <span class="text-muted ms-2">(exemple : Forfait 3)</span>
+            </li>
         </ul>
+        <p class="fw-bold mb-3">Estimation du temps de traitement selon le nombre de lignes :</p>
+        <table class="table table-bordered table-hover text-center align-middle mb-4">
+            <thead class="table-light">
+                <tr>
+                    <th>Nombre de lignes</th>
+                    <th>Temps attendu (moyen)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>100 lignes</td>
+                    <td>1 à 3 secondes</td>
+                </tr>
+                <tr>
+                    <td>500 lignes</td>
+                    <td>10 à 20 secondes</td>
+                </tr>
+                <tr>
+                    <td>1000 lignes</td>
+                    <td>30 à 40 secondes</td>
+                </tr>
+                <tr>
+                    <td>5000 lignes</td>
+                    <td>3 à 5 minutes</td>
+                </tr>
+            </tbody>
+        </table>
         <p class="mb-0">
-            <strong>Note :</strong> Veuillez vérifier attentivement le format et les colonnes avant d'importer le fichier.
+            <strong class="text-danger">Note :</strong> Veuillez vérifier attentivement le format et les colonnes avant d'importer le fichier. En cas de doute, contactez le support.
         </p>
     </div>
+
 
 </div>
 @endsection

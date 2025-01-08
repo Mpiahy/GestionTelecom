@@ -14,6 +14,8 @@ use \App\Http\Controllers\{
     ForfaitController,
     ImportController
 };
+use App\Exports\ExampleExport;
+use Maatwebsite\Excel\Facades\Excel;
 
 /*
 |--------------------------------------------------------------------------
@@ -37,11 +39,21 @@ Route::get('/logout', [LoginController::class, 'logout'])->name('auth.logout');
 Route::get('/index', [IndexController::class, 'indexView'])->middleware('check.session')->name('index');
 Route::post('/index/filter', [IndexController::class, 'filterDashboard'])->middleware('check.session')->name('index.filter');
    
-// Route pour afficher la vue d'import
-Route::get('/import/csv', [ImportController::class, 'importView'])->name('import.view');
+// Route pour import données
+Route::get('/import', [ImportController::class, 'importView'])->name('import.view');
+Route::post('/import/process', [ImportController::class, 'processImport'])->name('import.process');
 
-// Route pour traiter l'importation du fichier CSV
-Route::post('/import/csv', [ImportController::class, 'processImport'])->name('import.process');
+Route::get('/export-example/{type}', function ($type) {
+    $fileName = 'Exemple_Import_Lignes-Utilisateur.' . $type;
+    
+    if ($type === 'csv') {
+        return Excel::download(new ExampleExport, $fileName, \Maatwebsite\Excel\Excel::CSV);
+    } elseif ($type === 'xlsx') {
+        return Excel::download(new ExampleExport, $fileName, \Maatwebsite\Excel\Excel::XLSX);
+    }
+    
+    abort(404); // Retourne une erreur 404 si le type est invalide
+})->name('export.example');
 
 // Route pour l'export PDF
 Route::get('/export/pdf', [IndexController::class, 'exportPDF'])->name('export.pdf');

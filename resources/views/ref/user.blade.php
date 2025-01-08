@@ -81,12 +81,12 @@
             </div>
             <div class="card-body">
                 <div class="row mt-2">
-                    {{-- Rechercher par Chantier --}}
+                    {{-- Rechercher par nom et prénom --}}
                     <div class="col">
                         <form action="{{ route('ref.user') }}" method="get">
                             <div class="input-group">
-                                <span class="input-group-text">Chantier</span>
-                                <input class="form-control" type="text" placeholder="Rechercher par Chantier" name="search_user_chantier" value="{{ request('search_user_chantier') }}" />
+                                <span class="input-group-text">Utilisateur</span>
+                                <input class="form-control" type="text" placeholder="Rechercher par nom et prénom(s)" name="search_user_name" value="{{ request('search_user_name') }}" />
                                 <input type="hidden" name="type" value="{{ request('type') }}"> <!-- Conserver le filtre actif par type -->
                                 <button class="btn btn-primary" type="submit">Rechercher</button>
                             </div>
@@ -125,17 +125,18 @@
                             </div>
                         </form>
                     </div>
-                    {{-- Rechercher par nom et prénom --}}
+                    {{-- Rechercher par Localisation --}}
                     <div class="col">
                         <form action="{{ route('ref.user') }}" method="get">
                             <div class="input-group">
-                                <span class="input-group-text">Utilisateur</span>
-                                <input class="form-control" type="text" placeholder="Rechercher par nom et prénom(s)" name="search_user_name" value="{{ request('search_user_name') }}" />
+                                <span class="input-group-text">Localisation</span>
+                                <input class="form-control" type="text" placeholder="Rechercher par Localisation" name="search_user_chantier" value="{{ request('search_user_chantier') }}" />
                                 <input type="hidden" name="type" value="{{ request('type') }}"> <!-- Conserver le filtre actif par type -->
                                 <button class="btn btn-primary" type="submit">Rechercher</button>
                             </div>
                         </form>
                     </div>
+                    
                 </div>
                 <div id="dataTable-1" class="table-responsive mt-2">
                     <table id="dataTable" class="table table-hover table-bordered align-middle">
