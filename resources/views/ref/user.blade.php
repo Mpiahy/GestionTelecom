@@ -182,8 +182,18 @@
                                                 <i class="fas fa-laptop-medical text-success" style="font-size: 20px;"></i>
                                             </a>
 
-                                            <!-- Voir -->
-                                            <a href="#" class="text-decoration-none" data-bs-target="#modal_voir_emp" data-bs-toggle="modal" title="Voir">
+                                            <!-- historique -->
+                                            <a id="btn_histo_user"
+                                                class="text-decoration-none"
+                                                data-bs-target="#modal_histo_user"
+                                                data-bs-toggle="modal"
+                                                title="Historique"
+                                                href="{{ url('/user/histoUser/' . $utilisateur->id_utilisateur) }}"
+                                                data-id-histo="{{ $utilisateur->id_utilisateur }}"
+                                                data-user-histo="{{ $utilisateur->nom }} {{ $utilisateur->prenom }}"
+                                                data-login-histo="{{ $utilisateur->login }}"
+                                                data-fonction-histo="{{ $utilisateur->fonction->fonction }}"
+                                                data-localisation-histo="{{ $utilisateur->localisation->localisation }}">
                                                 <i class="fas fa-history text-primary" style="font-size: 20px;"></i>
                                             </a>
                     

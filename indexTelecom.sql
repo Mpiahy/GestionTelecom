@@ -27,6 +27,25 @@ CREATE INDEX idx_marque_id ON marque (id_marque);
 CREATE INDEX idx_modele_id ON modele (id_modele);
 
 -- Index pour optimiser les sous-requêtes sur affectation
-CREATE INDEX idx_affectation_id_equipement ON affectation (id_equipement);
-CREATE INDEX idx_affectation_id_utilisateur ON affectation (id_utilisateur);
 CREATE INDEX idx_utilisateur_id_localisation ON utilisateur (id_localisation);
+
+-- Index pour améliorer le filtre sur les équipements dans la table affectation
+CREATE INDEX idx_affectation_id_equipement ON affectation (id_equipement);
+
+-- Index pour améliorer les jointures sur l'utilisateur dans la table affectation
+CREATE INDEX idx_affectation_id_utilisateur ON affectation (id_utilisateur);
+
+-- Index pour la jointure entre equipement et type_equipement
+CREATE INDEX idx_equipement_id_type_equipement ON equipement (id_type_equipement);
+
+-- Index pour la jointure entre modele et marque
+CREATE INDEX idx_modele_id_marque ON modele (id_marque);
+
+-- Index pour améliorer le filtre sur les lignes dans la table affectation
+CREATE INDEX idx_affectation_id_ligne ON affectation (id_ligne);
+
+-- Index pour la jointure entre ligne et forfait
+CREATE INDEX idx_ligne_id_forfait ON ligne (id_forfait);
+
+-- Index pour la jointure entre ligne et type_ligne
+CREATE INDEX idx_ligne_id_type_ligne ON ligne (id_type_ligne);

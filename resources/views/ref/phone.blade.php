@@ -251,7 +251,7 @@
                                             data-bs-target="#modal_histo_phone"
                                             data-bs-toggle="modal"
                                             title="Historique"
-                                            href="{{ url('/phone/detailPhone/' . $equipement->id_equipement) }}"
+                                            href="{{ url('/phone/histoPhone/' . $equipement->id_equipement) }}"
                                             style="margin-right: 10px;"
                                             data-id-histo="{{ $equipement->id_equipement }}"
                                             data-marque-histo="{{ $equipement->marque }}"

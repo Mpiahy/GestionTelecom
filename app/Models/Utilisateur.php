@@ -109,4 +109,31 @@ class Utilisateur extends Model
             ->orWhere('matricule', 'ILIKE', "%{$term}%")
             ->get();
     }
+
+    public static function getHistoriqueUtilisateur($id_utilisateur)
+    {
+        // Vérifie si l'utilisateur existe
+        $utilisateurExists = DB::table('utilisateur')
+            ->where('id_utilisateur', $id_utilisateur)
+            ->exists();
+
+        if (!$utilisateurExists) {
+            return null; // Retourne null si l'utilisateur n'existe pas
+        }
+
+        // Récupère l'historique des équipements
+        $sqlEquipements = "SELECT * FROM view_historique_user_equipement WHERE id_utilisateur = :id_utilisateur";
+        $historiqueEquipements = DB::select($sqlEquipements, ['id_utilisateur' => $id_utilisateur]);
+
+        // Récupère l'historique des lignes
+        $sqlLignes = "SELECT * FROM view_historique_user_ligne WHERE id_utilisateur = :id_utilisateur";
+        $historiqueLignes = DB::select($sqlLignes, ['id_utilisateur' => $id_utilisateur]);
+
+        // Combine les deux résultats dans un tableau
+        return [
+            'equipements' => $historiqueEquipements,
+            'lignes' => $historiqueLignes,
+        ];
+    }
+
 }

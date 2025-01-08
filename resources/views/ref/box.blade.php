@@ -248,7 +248,7 @@
                                         data-bs-target="#modal_histo_box" 
                                         data-bs-toggle="modal"
                                         title="Historique" 
-                                        href="{{ url('/box/detailBox/' . $equipement->id_equipement) }}" 
+                                        href="{{ url('/box/histoBox/' . $equipement->id_equipement) }}" 
                                         style="margin-right: 10px;"
                                         data-id-histo="{{ $equipement->id_equipement }}"
                                         data-marque-histo="{{ $equipement->marque }}"

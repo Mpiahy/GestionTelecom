@@ -403,3 +403,111 @@ function configureSearchField(searchInputId, selectId, hiddenInputId, searchUrl)
         equipementSelect.addEventListener('change', toggleAttribuerButton);
     });
 </script>
+
+
+{{-- Voir Historique User --}}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Sélectionne tous les boutons pour voir les détails
+        const voirUserBtns = document.querySelectorAll('#btn_histo_user');
+    
+        // Ajoute un gestionnaire d'événements à chaque bouton
+        voirUserBtns.forEach(btn => {
+            btn.addEventListener('click', function (event) {
+                event.preventDefault(); // Empêche la redirection normale
+    
+                // Récupère les informations depuis les attributs data-*
+                const idUser = this.getAttribute('data-id-histo');
+                const user = this.getAttribute('data-user-histo') || '--';
+                const login = this.getAttribute('data-login-histo') || '--';
+                const fonction = this.getAttribute('data-fonction-histo') || '--';
+                const localisation = this.getAttribute('data-localisation-histo') || '--';
+    
+                // Remplit les champs du modal avec les informations générales
+                document.querySelector('#modal_histo_user .modal-body [data-field="utilisateur"]').textContent = user;
+                document.querySelector('#modal_histo_user .modal-body [data-field="login"]').textContent = login;
+                document.querySelector('#modal_histo_user .modal-body [data-field="fonction"]').textContent = fonction;
+                document.querySelector('#modal_histo_user .modal-body [data-field="localisation"]').textContent = localisation;
+    
+                // Appelle l'API pour récupérer l'historique d'affectation
+                fetch(`/user/histoUser/${idUser}`)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Erreur lors de la récupération des données.');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        // Injecte l'historique d'affectation dans le tableau
+                        populateModal(data);
+    
+                        // Affiche le modal
+                        const modal = new bootstrap.Modal(document.getElementById('modal_histo_user'));
+                        modal.show();
+                    })
+                    .catch(error => {
+                        console.error('Erreur:', error);
+                        alert('Une erreur est survenue lors de la récupération des détails de cet utilisateur.');
+                    });
+            });
+        });
+    
+        // Fonction pour injecter les données d'historique dans les tableaux
+        function populateModal(data) {
+            // Sélectionne les corps des tableaux
+            const tbodyEquipement = document.querySelector('#dataTableEquipement tbody');
+            const tbodyLigne = document.querySelector('#dataTableLigne tbody');
+
+            // Vide les tableaux pour éviter d'afficher des données redondantes
+            tbodyEquipement.innerHTML = '';
+            tbodyLigne.innerHTML = '';
+
+            // Gestion des équipements
+            if (data.equipements && Array.isArray(data.equipements) && data.equipements.length > 0) {
+                data.equipements.forEach(item => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td class="text-dark">${item.marque || '--'} ${item.modele || '--'}</td>
+                        <td class="text-dark">${item.type_equipement || '--'}</td>
+                        <td class="text-dark">${item.imei || '--'}</td>
+                        <td class="text-dark">${item.serial_number || '--'}</td>
+                        <td class="text-dark">${item.debut_affectation || '--'}</td>
+                        <td class="text-dark">${item.fin_affectation || '--'}</td>
+                    `;
+                    tbodyEquipement.appendChild(row);
+                });
+            } else {
+                // Aucun historique d'équipement trouvé
+                const noDataRow = document.createElement('tr');
+                noDataRow.innerHTML = `
+                    <td class="text-dark text-center" colspan="6">Aucun historique d'équipement disponible.</td>
+                `;
+                tbodyEquipement.appendChild(noDataRow);
+            }
+
+            // Gestion des lignes
+            if (data.lignes && Array.isArray(data.lignes) && data.lignes.length > 0) {
+                data.lignes.forEach(item => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td class="text-dark">${item.num_ligne || '--'}</td>
+                        <td class="text-dark">${item.num_sim || '--'}</td>
+                        <td class="text-dark">${item.nom_forfait || '--'}</td>
+                        <td class="text-dark">${item.type_ligne || '--'}</td>
+                        <td class="text-dark">${item.debut_affectation || '--'}</td>
+                        <td class="text-dark">${item.fin_affectation || '--'}</td>
+                    `;
+                    tbodyLigne.appendChild(row);
+                });
+            } else {
+                // Aucun historique de ligne trouvé
+                const noDataRow = document.createElement('tr');
+                noDataRow.innerHTML = `
+                    <td class="text-dark text-center" colspan="6">Aucun historique de ligne disponible.</td>
+                `;
+                tbodyLigne.appendChild(noDataRow);
+            }
+        }
+    });
+    
+    </script>

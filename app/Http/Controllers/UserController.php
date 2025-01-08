@@ -212,4 +212,17 @@ class UserController extends Controller
             return redirect()->route('ref.user')->withErrors(['attr_equipement_errors' => 'Une erreur est survenue.']);
         }
     }
+
+    // Histo User
+    public function histoUser($id_user)
+    {
+        $histoUser = Utilisateur::getHistoriqueUtilisateur($id_user);
+
+        // Retourne un tableau vide si aucun historique n'est trouvé
+        if (empty($histoUser)) {
+            return response()->json([]);
+        }
+
+        return response()->json($histoUser);
+    }
 }

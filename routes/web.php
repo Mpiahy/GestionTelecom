@@ -86,6 +86,9 @@ Route::middleware('check.session')->group(function() {
     Route::get('/box-inactifs', [UserController::class, 'showBoxInactifs']);
     Route::get('/recherche-inactifs', [UserController::class, 'rechercherInactifs']);
     Route::post('/ligne/attrEquipement', [UserController::class, 'attrEquipement'])->name('ligne.attrEquipement');
+    Route::post('/ligne/attrEquipement', [UserController::class, 'attrEquipement'])->name('ligne.attrEquipement');
+    Route::get('/user/histoUser/{id_user}', [UserController::class, 'histoUser'])->name('user.histoUser');
+
 
     Route::get('/chantier', [ChantierController::class, 'chantierView'])->name('ref.chantier');
     Route::post('/addChantier', [ChantierController::class, 'ajouterChantier'])->name('ref.chantier.add');

@@ -1,37 +1,70 @@
-<div id="modal_voir_emp" class="modal fade" role="dialog" tabindex="-1">
-    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h4 class="modal-title text-primary">Historique des affectations pour cet utilisateur</h4><button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <p class="text-dark">Nom et prénom(s): <strong>Randriamanivo Mpiahisoa</strong></p>
-                <div id="dataTable-2" class="table-responsive table mt-2" role="grid" aria-describedby="dataTable_info">
-                    <table id="dataTable" class="table table-hover my-0">
-                        <thead>
-                            <tr>
-                                <th class="text-center">Equipement</th>
-                                <th>Type</th>
-                                <th class="text-center">Ligne</th>
-                                <th>Statut</th>
-                                <th>Localisation</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td class="text-center">Marque + Modèle</td>
-                                <td>Smartphone</td>
-                                <td class="text-center">+261 34 49 599 53</td>
-                                <td>Attribué</td>
-                                <td>SGMAD</td>
-                            </tr>
-                        </tbody>
-                    </table>
+<div id="modal_histo_user" class="modal fade" role="dialog" tabindex="-1" aria-labelledby="modalTitle" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable" role="document">
+            <div class="modal-content shadow-lg border-0">
+                <div class="modal-header bg-primary text-white">
+                    <h4 id="modalTitle" class="modal-title">Historique d'affectation pour cet Utilisateur</h4>
+                </div>
+                <div class="modal-body">
+                    <!-- Détails du Utilisateur -->
+                    <div class="mb-4">
+                        <p class="text-dark mb-1">
+                            <span class="fw-bold">Utilisateur :</span>
+                            <span class="fw-normal" data-field="utilisateur"></span>
+                        </p>
+                        <p class="text-dark mb-1">
+                            <span class="fw-bold">Login :</span>
+                            <span class="fw-normal" data-field="login"></span>
+                        </p>
+                        <p class="text-dark mb-1">
+                            <span class="fw-bold">Fonction :</span>
+                            <span class="fw-normal" data-field="fonction"></span>
+                        </p>
+                        <p class="text-dark">
+                            <span class="fw-bold">Localisation :</span>
+                            <span class="fw-normal" data-field="localisation"></span>
+                        </p>
+                    </div>
+    
+                    <!-- Table des affectations -->
+                    <div class="table-responsive">
+                        <table id="dataTableEquipement" class="table table-bordered table-hover align-middle">
+                            <thead class="table-primary">
+                                <tr>
+                                    <th class="text-dark">Equipement</th>
+                                    <th class="text-dark">Type</th>
+                                    <th class="text-dark">Imei</th>
+                                    <th class="text-dark">SN</th>
+                                    <th class="text-dark">Date d'affectation</th>
+                                    <th class="text-dark">Date de retour</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Les lignes seront ajoutées dynamiquement ici -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Table des affectations -->
+                    <div class="table-responsive">
+                        <table id="dataTableLigne" class="table table-bordered table-hover align-middle">
+                            <thead class="table-primary">
+                                <tr>
+                                    <th class="text-dark">Numéro Ligne</th>
+                                    <th class="text-dark">Numéro SIM</th>
+                                    <th class="text-dark">Forfait</th>
+                                    <th class="text-dark">Type</th>
+                                    <th class="text-dark">Date d'affectation</th>
+                                    <th class="text-dark">Date de retour</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Les lignes seront ajoutées dynamiquement ici -->
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
-            <div class="modal-footer"><button class="btn btn-warning" type="button" data-bs-dismiss="modal">Fermer</button></div>
-        </div>
-    </div>
+      </div>
 </div>
 <div id="modal_edit_emp" class="modal" role="dialog" tabindex="-1">
     <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable" role="document">

@@ -1,0 +1,81 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Support\Facades\DB;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        // View pour avoir historique equipement
+        DB::statement('
+            CREATE OR REPLACE VIEW view_historique_equipement AS
+            SELECT 
+                aff.id_equipement,
+                u.nom AS nom,
+                u.prenom AS prenom,
+                u.login AS login,
+                loc.localisation AS localisation,
+                aff.debut_affectation,
+                aff.fin_affectation
+            FROM 
+                (SELECT * FROM affectation WHERE id_equipement IS NOT NULL) aff
+            INNER JOIN utilisateur u ON aff.id_utilisateur = u.id_utilisateur
+            LEFT JOIN localisation loc ON u.id_localisation = loc.id_localisation;
+        ');
+        // View pour avoir historique equipement utilisateur
+        DB::statement('
+            CREATE OR REPLACE VIEW view_historique_user_equipement AS
+            SELECT 
+                aff.id_utilisateur,
+                ma.marque,
+                mo.nom_modele AS modele,
+                te.type_equipement,
+                eq.imei,
+                eq.serial_number,
+                aff.debut_affectation,
+                aff.fin_affectation
+            FROM 
+                affectation aff
+            INNER JOIN equipement eq ON aff.id_equipement = eq.id_equipement
+            INNER JOIN type_equipement te ON eq.id_type_equipement = te.id_type_equipement
+            INNER JOIN modele mo ON eq.id_modele = mo.id_modele
+            INNER JOIN marque ma ON mo.id_marque = ma.id_marque
+            WHERE 
+                aff.id_equipement IS NOT NULL;
+        ');
+        // View pour avoir historique ligne utilisateur
+        DB::statement('
+            CREATE OR REPLACE VIEW view_historique_user_ligne AS
+            SELECT 
+                aff.id_utilisateur,
+                li.num_ligne,
+                li.num_sim,
+                f.nom_forfait,
+                tl.type_ligne,
+                aff.debut_affectation,
+                aff.fin_affectation
+            FROM 
+                affectation aff
+            INNER JOIN ligne li ON aff.id_ligne = li.id_ligne
+            INNER JOIN forfait f ON li.id_forfait = f.id_forfait
+            INNER JOIN type_ligne tl ON li.id_type_ligne = tl.id_type_ligne
+            WHERE 
+                aff.id_ligne IS NOT NULL; 
+        ');
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        // Supprimer les vues dans l'ordre inverse pour éviter les dépendances
+        DB::statement('DROP VIEW IF EXISTS view_historique_equipement CASCADE;');
+        DB::statement('DROP VIEW IF EXISTS view_historique_user_equipement CASCADE;');
+        DB::statement('DROP VIEW IF EXISTS view_historique_user_ligne CASCADE;');
+    }
+};
