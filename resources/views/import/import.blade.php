@@ -50,91 +50,185 @@
     <!-- Titre principal -->
     <div class="d-sm-flex justify-content-between align-items-center mb-4">
         <h4 class="text-dark mb-0">
-            <i class="fas fa-file-import"></i> Import Lignes inactifs et Utilisateurs avec Localisation
+            <i class="fas fa-file-import"></i> Import Lignes, Utilisateurs et Téléphones
         </h4>
     </div>
 
-    <!-- Formulaire d'importation -->
-    <div class="card shadow-sm mb-4" style="max-width: 800px;">
-        <div class="card-header bg-primary text-white py-3">
-            <h6 class="m-0 font-weight-bold">
-                <i class="fas fa-file-csv"></i> Importer un fichier CSV
-            </h6>
-        </div>
-        <div class="card-body">
-            <form action="{{ route('import.process') }}" method="POST" enctype="multipart/form-data">
-                @csrf
-                <div class="form-group">
-                    <label for="csvFile" class="font-weight-bold">Sélectionnez le fichier CSV</label>
-                    <input 
-                        type="file" 
-                        name="csv_file" 
-                        id="csvFile" 
-                        class="form-control @error('csv_file') is-invalid @enderror" 
-                        accept=".csv" 
-                        required
-                    >
-                    @error('csv_file')
-                        <div class="invalid-feedback">
-                            {{ $message }}
+    <!-- Row pour contenir les deux formulaires côte à côte -->
+    <div class="row gy-4">
+        <!-- Colonne Import Utilisateurs -->
+        <div class="col-lg-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white py-3">
+                    <h6 class="m-0 font-weight-bold">
+                        <i class="fas fa-file-csv"></i> Importer un fichier CSV - SUIVI FLOTTE
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <form action="{{ route('import.process') }}" method="POST" enctype="multipart/form-data">
+                        @csrf
+                        <div class="form-group">
+                            <label for="csvFile" class="font-weight-bold">Sélectionnez le fichier CSV</label>
+                            <input 
+                                type="file" 
+                                name="csv_file" 
+                                id="csvFile" 
+                                class="form-control @error('csv_file') is-invalid @enderror" 
+                                accept=".csv" 
+                                required
+                            >
+                            @error('csv_file')
+                                <div class="invalid-feedback">
+                                    {{ $message }}
+                                </div>
+                            @enderror
                         </div>
-                    @enderror
+                        <div class="text-center">
+                            <button type="submit" class="btn btn-primary mt-2">
+                                <i class="fas fa-upload"></i> Importer
+                            </button>
+                        </div>
+                        <div class="text-center mt-4">
+                            <a href="{{ route('export.example', 'csv') }}" class="btn btn-outline-secondary me-2">
+                                <i class="fas fa-file-csv"></i> Exemple CSV
+                            </a>
+                            <a href="{{ route('export.example', 'xlsx') }}" class="btn btn-outline-success">
+                                <i class="fas fa-file-excel"></i> Exemple XLSX
+                            </a>
+                        </div>                
+                    </form>
                 </div>
-                <div class="text-center">
-                    <button type="submit" class="btn btn-primary mt-2">
-                        <i class="fas fa-upload"></i> Importer
-                    </button>
+            </div>
+        </div>
+
+        <!-- Colonne Import Téléphones -->
+        <div class="col-lg-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-info text-white py-3">
+                    <h6 class="m-0 font-weight-bold">
+                        <i class="fas fa-file-import"></i> Importer un fichier CSV - SUIVI TELEPHONE
+                    </h6>
                 </div>
-                <div class="text-center mt-4">
-                    <a href="{{ route('export.example', 'csv') }}" class="text-white btn btn-success me-2">
-                        <i class="fas fa-file-csv"></i> Télécharger l'exemple CSV
-                    </a>
-                    <a href="{{ route('export.example', 'xlsx') }}" class="text-white btn btn-info">
-                        <i class="fas fa-file-excel"></i> Télécharger l'exemple XLSX
-                    </a>
-                </div>                
-            </form>
+                <div class="card-body">
+                    <form action="{{ route('import.equipement') }}" method="POST" enctype="multipart/form-data">
+                        @csrf
+                        <div class="form-group">
+                            <label for="csvFileEquipement" class="font-weight-bold">Sélectionnez le fichier CSV</label>
+                            <input 
+                                type="file" 
+                                name="csv_file_equipement" 
+                                id="csvFileEquipement" 
+                                class="form-control @error('csv_file_equipement') is-invalid @enderror" 
+                                accept=".csv" 
+                                required
+                            >
+                            @error('csv_file_equipement')
+                                <div class="invalid-feedback">
+                                    {{ $message }}
+                                </div>
+                            @enderror
+                        </div>
+                        <div class="text-center">
+                            <button type="submit" class="text-white btn btn-info mt-2">
+                                <i class="fas fa-upload"></i> Importer
+                            </button>
+                        </div>
+                        <div class="text-center mt-4">
+                            <a href="{{ route('export.example', 'csv') }}" class="btn btn-outline-secondary me-2">
+                                <i class="fas fa-file-csv"></i> Exemple CSV
+                            </a>
+                            <a href="{{ route('export.example', 'xlsx') }}" class="btn btn-outline-success">
+                                <i class="fas fa-file-excel"></i> Exemple XLSX
+                            </a>
+                        </div>                
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Instructions -->
+    <div class="row mt-4">
+        <div class="col-lg-6">
+            <div class="alert alert-primary shadow-sm rounded">
+                <h5 class="fw-bold mb-3">
+                    <i class="fas fa-info-circle text-primary"></i> Instructions pour l'import des Utilisateurs
+                </h5>
+                <p class="mb-4">
+                    Veuillez vous assurer que le fichier CSV contient les colonnes suivantes. Les colonnes doivent être correctement nommées (respect des <strong>majuscules, minuscules, accents, etc</strong>) :
+                </p>
+                <ul class="list-unstyled mb-4 ps-3">
+                    <li class="mb-2">
+                        <code class="bg-light px-1 py-1 rounded">Numero2</code> 
+                        <span class="text-muted ms-2">(exemple : 0340502524)</span>
+                    </li>
+                    <li class="mb-2">
+                        <code class="bg-light px-1 py-1 rounded">Login</code> 
+                        <span class="text-muted ms-2">(exemple : RAKOTOE2)</span>
+                    </li>
+                    <li class="mb-2">
+                        <code class="bg-light px-1 py-1 rounded">Nom et Prénoms</code> 
+                        <span class="text-muted ms-2">(exemple : RAKOTOARISOA Eliot)</span>
+                    </li>
+                    <li class="mb-2">
+                        <code class="bg-light px-1 py-1 rounded">Fonction</code> 
+                        <span class="text-muted ms-2">(exemple : Ingénieur IT)</span>
+                    </li>
+                    <li class="mb-2">
+                        <code class="bg-light px-1 py-1 rounded">SERVICE</code> 
+                        <span class="text-muted ms-2">(exemple : ADM)</span>
+                    </li>
+                    <li class="mb-2">
+                        <code class="bg-light px-1 py-1 rounded">Libelle Imputation</code> 
+                        <span class="text-muted ms-2">(exemple : 2200001AD001 - Service Info - 300800)</span>
+                    </li>
+                    <li class="mb-2">
+                        <code class="bg-light px-1 py-1 rounded">TYPE FORFAIT</code> 
+                        <span class="text-muted ms-2">(exemple : Forfait 3)</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="alert alert-info shadow-sm rounded">
+                <h5 class="fw-bold mb-3">
+                    <i class="fas fa-info-circle text-info"></i> Instructions pour l'import des Téléphones
+                </h5>
+                <p class="mb-4">
+                    Veuillez vous assurer que le fichier CSV contient les colonnes suivantes. Les colonnes doivent être correctement nommées (respect des <strong>majuscules, minuscules, accents, etc</strong>) :
+                </p>
+                <ul class="list-unstyled mb-4 ps-3">
+                    <li class="mb-2">
+                        <code class="bg-light px-1 py-1 rounded">SMARTPHONE</code> 
+                        <span class="text-muted ms-2">(exemple : O [Oui ou Non])</span>
+                    </li>
+                    <li class="mb-2">
+                        <code class="bg-light px-1 py-1 rounded">Enrolle</code> 
+                        <span class="text-muted ms-2">(exemple : O [Oui ou Non] si vide, N)</span>
+                    </li>
+                    <li class="mb-2">
+                        <code class="bg-light px-1 py-1 rounded">Marque</code> 
+                        <span class="text-muted ms-2">(exemple : Samsung)</span>
+                    </li>
+                    <li class="mb-2">
+                        <code class="bg-light px-1 py-1 rounded">Type</code> 
+                        <span class="text-muted ms-2">(exemple : A03S)</span>
+                    </li>
+                    <li class="mb-2">
+                        <code class="bg-light px-1 py-1 rounded">SN</code> 
+                        <span class="text-muted ms-2">(exemple : 351186744997026)</span>
+                    </li>
+                </ul>
+            </div>
         </div>
     </div>
 
     <!-- Section d'instructions -->
-    <div class="alert alert-info mt-4 p-4 shadow-sm rounded" style="max-width: 800px; border-left: 5px solid #0d6efd;">
+    <div class="alert alert-danger mt-4 p-4 shadow-sm rounded" style="border-left: 5px solid #0d6efd;">
         <h5 class="fw-bold mb-3">
-            <i class="bi bi-info-circle-fill text-primary"></i> Instructions pour l'import
+            <i class="fas fa-info-circle text-danger"></i> Instructions Générales pour l'import
         </h5>
-        <p class="mb-4">
-            Veuillez vous assurer que le fichier CSV contient les colonnes suivantes. Les colonnes doivent être correctement nommées (respect des <strong>majuscules et minuscules</strong>) :
-        </p>
-        <ul class="list-unstyled mb-4 ps-3">
-            <li class="mb-2">
-                <code class="bg-light px-1 py-1 rounded">Numero2</code> 
-                <span class="text-muted ms-2">(exemple : 0340502524)</span>
-            </li>
-            <li class="mb-2">
-                <code class="bg-light px-1 py-1 rounded">Login</code> 
-                <span class="text-muted ms-2">(exemple : RAKOTOE2)</span>
-            </li>
-            <li class="mb-2">
-                <code class="bg-light px-1 py-1 rounded">Nom et Prénoms</code> 
-                <span class="text-muted ms-2">(exemple : RAKOTOARISOA Eliot)</span>
-            </li>
-            <li class="mb-2">
-                <code class="bg-light px-1 py-1 rounded">Fonction</code> 
-                <span class="text-muted ms-2">(exemple : Ingénieur IT)</span>
-            </li>
-            <li class="mb-2">
-                <code class="bg-light px-1 py-1 rounded">SERVICE</code> 
-                <span class="text-muted ms-2">(exemple : ADM)</span>
-            </li>
-            <li class="mb-2">
-                <code class="bg-light px-1 py-1 rounded">Libelle Imputation</code> 
-                <span class="text-muted ms-2">(exemple : 2200001AD001 - Service Info - 300800)</span>
-            </li>
-            <li class="mb-2">
-                <code class="bg-light px-1 py-1 rounded">TYPE FORFAIT</code> 
-                <span class="text-muted ms-2">(exemple : Forfait 3)</span>
-            </li>
-        </ul>
+    
         <p class="fw-bold mb-3">Estimation du temps de traitement selon le nombre de lignes :</p>
         <table class="table table-bordered table-hover text-center align-middle mb-4">
             <thead class="table-light">
@@ -166,7 +260,6 @@
             <strong class="text-danger">Note :</strong> Veuillez vérifier attentivement le format et les colonnes avant d'importer le fichier. En cas de doute, contactez le support.
         </p>
     </div>
-
 
 </div>
 @endsection

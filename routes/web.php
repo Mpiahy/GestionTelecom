@@ -43,6 +43,7 @@ Route::post('/index/filter', [IndexController::class, 'filterDashboard'])->middl
 // Route pour import données
 Route::get('/import', [ImportController::class, 'importView'])->name('import.view');
 Route::post('/import/process', [ImportController::class, 'processImport'])->name('import.process');
+Route::post('/import/equipement', [ImportController::class, 'equipementImport'])->name('import.equipement');
 
 Route::get('/export-example/{type}', function ($type) {
     $fileName = 'Exemple_Import_Lignes-Utilisateur.' . $type;

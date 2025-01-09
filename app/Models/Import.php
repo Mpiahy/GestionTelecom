@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Log;
 
 class Import
 {
+    //********************** SECTION LIGNE UTILISATEUR **********************//
     /**
      * Traite et filtre les données du fichier CSV.
      *
@@ -75,6 +76,7 @@ class Import
         return $insertedCount;
     }
 
+    
     /**
      * Importer une ligne de données dans la base.
      */
@@ -235,6 +237,135 @@ class Import
     private static function formatPrenom($prenom)
     {
         return ucwords(strtolower(trim($prenom)));
+    }
+
+
+    //********************** SECTION EQUIPEMENT **********************//
+    /**
+     * Traite et filtre les données du fichier CSV.
+     *
+     * @param string $filePath
+     * @return array
+     */
+    public static function equipementCSV($filePath)
+    {
+        $data = [];
+        if (($handle = fopen($filePath, 'r')) !== false) {
+            $headers = fgetcsv($handle, 0, ';');
+            $headers[0] = preg_replace('/[\x{FEFF}]/u', '', $headers[0]); // Enlever le BOM (UTF-8)
+
+            $allowedHeaders = ['SMARTPHONE', 'Enrolle', 'Marque', 'Type', 'SN'];
+            $headers = array_map('trim', $headers);
+
+            // Mapper les colonnes du fichier CSV aux colonnes autorisées
+            $headerMap = array_flip(array_intersect($headers, $allowedHeaders));
+
+            while (($row = fgetcsv($handle, 0, ';')) !== false) {
+                $rowData = [];
+                foreach ($headerMap as $key => $index) {
+                    $rowData[$key] = $row[$index] ?? null;
+                }
+
+                // Filtrer uniquement les lignes valides (par exemple, colonne SMARTPHONE non vide)
+                if (!empty($rowData['SMARTPHONE']) && !empty($rowData['Marque']) && !empty($rowData['Type'])) {
+                    $data[] = $rowData;
+                }
+            }
+            fclose($handle);
+        }
+
+        return $data;
+    }
+
+    /**
+     * Insère les données en batch dans la base de données.
+     *
+     * @param array $filteredData
+     * @return int Nombre de lignes insérées
+     */
+    public static function batchInsertEquipement(array $filteredData)
+    {
+        $insertedCount = 0;
+    
+        // Diviser les données en chunks pour un traitement par lots
+        $chunks = array_chunk($filteredData, 1000);
+    
+        foreach ($chunks as $chunk) {
+            DB::transaction(function () use ($chunk, &$insertedCount) {
+                foreach ($chunk as $row) {
+                    try {
+                        // Traiter chaque ligne individuellement
+                        self::importRowEquipement($row);
+                        $insertedCount++;
+                    } catch (\Exception $e) {
+                        Log::error('Erreur lors du traitement d\'une ligne CSV : ' . $e->getMessage(), [
+                            'row' => $row,
+                            'stack' => $e->getTraceAsString(),
+                        ]);
+                    }
+                }
+            });
+        }
+    
+        return $insertedCount;
+    }
+    
+    public static function importRowEquipement(array $row)
+    {
+        // 1. Déterminer `id_type_equipement` (SMARTPHONE ou TELEPHONE_TOUCHE)
+        $idTypeEquipement = ($row['SMARTPHONE'] === 'O')
+            ? TypeEquipement::SMARTPHONE
+            : TypeEquipement::TELEPHONE_TOUCHE;
+    
+        // 2. Gérer la colonne Enrolle (O -> true, N/vide -> false)
+        $enrole = ($row['Enrolle'] === 'O');
+    
+        // 3. Normaliser la marque et vérifier si elle existe déjà
+        $marqueNom = strtoupper(trim($row['Marque']));
+        $marque = DB::table('marque')->where('marque', $marqueNom)->first();
+    
+        if (!$marque) {
+            // Générer un nouvel ID pour la marque si elle n'existe pas
+            $idMarque = Marque::generateId($idTypeEquipement);
+            DB::table('marque')->insert([
+                'id_marque' => $idMarque,
+                'marque' => $marqueNom,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+        } else {
+            $idMarque = $marque->id_marque;
+        }
+    
+        // 4. Normaliser le type (modèle) et vérifier si le modèle existe déjà
+        $modeleNom = strtoupper(trim($row['Type']));
+        $modele = DB::table('modele')->where('nom_modele', $modeleNom)->where('id_marque', $idMarque)->first();
+    
+        if (!$modele) {
+            // Générer un nouvel ID pour le modèle si il n'existe pas
+            $idModele = Modele::generateId($idMarque);
+            DB::table('modele')->insert([
+                'id_modele' => $idModele,
+                'nom_modele' => $modeleNom,
+                'id_marque' => $idMarque,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+        } else {
+            $idModele = $modele->id_modele;
+        }
+    
+        // 5. Insérer l'équipement dans la table `equipement`
+        DB::table('equipement')->insert([
+            'imei' => null, // Si le CSV ne fournit pas l'IMEI
+            'serial_number' => $row['SN'] ?? null,
+            'enrole' => $enrole,
+            'id_type_equipement' => $idTypeEquipement,
+            'id_modele' => $idModele,
+            'id_statut_equipement' => StatutEquipement::STATUT_NOUVEAU, // Par défaut : STATUT_NOUVEAU
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
     }
     
 }
