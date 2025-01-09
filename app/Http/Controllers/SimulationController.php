@@ -63,6 +63,7 @@ class SimulationController extends Controller
                     'debut_affectation' => $debutAffectation,
                     'fin_affectation' => $finAffectation, // Null si l'affectation est active
                     'id_ligne' => $ligne->id_ligne,
+                    'id_forfait' => $ligne->id_forfait,
                     'id_equipement' => null,
                     'id_utilisateur' => $utilisateur->id_utilisateur,
                 ]);

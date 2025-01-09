@@ -120,6 +120,7 @@ class LigneController extends Controller
                 'enr_ligne' => 'required|string|max:15', //03xxxxxxxx
                 'enr_date' => 'required|date',
                 'enr_id_ligne' => 'required|integer|exists:ligne,id_ligne', //id_ligne correspondant
+                'enr_id_forfait' => 'required|integer|exists:forfait,id_forfait', //id_forfait correspondant
                 'enr_user' => 'nullable|integer|exists:utilisateur,id_utilisateur', // Nullable pour gérer la récupération depuis le champ caché
                 'selected_user' => 'nullable|integer|exists:utilisateur,id_utilisateur', // Champ caché
             ]);
@@ -135,13 +136,16 @@ class LigneController extends Controller
             }
 
             $idLigne = $validatedData['enr_id_ligne'];
+            $idForfait = $validatedData['enr_id_forfait'];
             $ligne = Ligne::findOrFail($idLigne);
+            Forfait::findOrFail($idForfait);
 
             $ligne->enrLigne($validatedData['enr_ligne']);
 
             Affectation::creerAffectation(
                 $validatedData['enr_date'],
                 $idLigne,
+                $idForfait,
                 $validatedData['enr_user']
             );
 
@@ -285,5 +289,17 @@ class LigneController extends Controller
         }
     }
 
+    // Historique de la ligne
+    public function histoLigne($id_ligne)
+    {
+        $histoLigne = Ligne::getHistoriqueLigne($id_ligne);
+
+        // Retourne un tableau vide si aucun historique n'est trouvé
+        if (empty($histoLigne)) {
+            return response()->json([]);
+        }
+
+        return response()->json($histoLigne);
+    }
 
 }

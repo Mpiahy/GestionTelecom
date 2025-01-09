@@ -12,7 +12,7 @@ return new class extends Migration
     {
         DB::statement('
             CREATE OR REPLACE VIEW view_ligne_details AS
-            SELECT 
+            SELECT
                 ligne.id_ligne,
                 ligne.num_ligne,
                 ligne.num_sim,
@@ -20,11 +20,20 @@ return new class extends Migration
                 ligne.id_statut_ligne,
                 ligne.id_type_ligne,
                 ligne.id_operateur,
-                affectation.id_affectation,
-                affectation.id_utilisateur
-            FROM 
+                recent_affectation.id_affectation,
+                recent_affectation.id_utilisateur
+            FROM
                 ligne
-            LEFT JOIN affectation ON ligne.id_ligne = affectation.id_ligne;
+                LEFT JOIN (
+                    SELECT DISTINCT ON (id_ligne) 
+                        id_ligne,
+                        id_affectation,
+                        id_utilisateur,
+                        debut_affectation
+                    FROM affectation
+                    ORDER BY id_ligne, debut_affectation DESC, id_affectation DESC
+                ) AS recent_affectation
+            ON ligne.id_ligne = recent_affectation.id_ligne;
         ');
         DB::statement('
             CREATE OR REPLACE VIEW view_ligne_big_details AS

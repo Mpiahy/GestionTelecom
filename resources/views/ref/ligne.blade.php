@@ -197,9 +197,9 @@
                         </form>
                     </div>
                 </div>
-                <div id="dataTable-1" class="table-responsive table mt-2" role="grid" aria-describedby="dataTable_info">
-                    <table id="dataTable" class="table table-hover my-0">
-                        <thead>
+                <div id="dataTable-1" class="table-responsive table mt-2">
+                    <table id="dataTable" class="table table-hover table-bordered align-middle">
+                        <thead class="table-light">
                             <tr>
                                 <th>Statut</th>
                                 <th>Type</th>
@@ -208,7 +208,7 @@
                                 <th>Numéro SIM</th>
                                 <th>Utilisateur</th>
                                 <th>Opérateur</th>
-                                <th class="text-center" style="padding-right: 30px;padding-left: 30px;">Action</th>
+                                <th class="text-center" style="padding-right: 0px;padding-left: 0px;">Action</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -231,90 +231,107 @@
                                         {{ $ligne->nom_operateur }}
                                     </a>
                                 </td>
-                                <td class="text-center" style="padding-left: 0px;padding-right: 0px;">
-                                    {{-- Boutons spécifiques au statut --}}
-                                    @if ($ligne->statut_ligne === 'Resilie')
-                                        <a id="btn_react_ligne"
+                                <!-- Actions -->
+                                <td class="text-center">
+                                    <div class="d-flex justify-content-center gap-2">
+                                        {{-- Boutons spécifiques au statut --}}
+                                        @if ($ligne->statut_ligne === 'Resilie')
+                                            <a id="btn_react_ligne"
+                                                class="text-decoration-none"
+                                                style="margin-right: 5px;" 
+                                                data-bs-target="#modal_react_ligne" 
+                                                data-bs-toggle="modal" 
+                                                title="Réactiver" 
+                                                href="#"
+                                                data-sim-react="{{ $ligne->num_sim }}"
+                                                data-operateur-react="{{ $ligne->id_operateur }}"
+                                                data-operateur-email-react="{{ $ligne->contact_email }}"
+                                                data-operateur-name-react="{{ $ligne->nom_operateur }}"
+                                                data-type-react="{{ $ligne->id_type_ligne }}"
+                                                data-forfait-react="{{ $ligne->id_forfait }}" 
+                                                data-id-react="{{ $ligne->id_ligne }}">
+                                                <i class="far fa-arrow-alt-circle-up text-success" style="font-size: 25px;"></i>
+                                            </a>
+                                        @elseif ($ligne->statut_ligne === 'Inactif' || $ligne->statut_ligne === 'En attente')    
+                                            <a href="#"
+                                                id="btn_enr_ligne"
+                                                class="text-decoration-none"
+                                                style="margin-right: 5px;" 
+                                                data-bs-target="#modal_enr_ligne" 
+                                                data-bs-toggle="modal" 
+                                                title="Enregistrer" 
+                                                data-ligne-enr="{{ $ligne->num_ligne ?? 0 }}"
+                                                data-sim-enr="{{ $ligne->num_sim }}" 
+                                                data-id-forfait-enr="{{ $ligne->id_forfait }}" 
+                                                data-forfait-enr="{{ $ligne->nom_forfait }}" 
+                                                data-id-enr="{{ $ligne->id_ligne }}">
+                                                <i class="far fa-save text-info" style="font-size: 25px;"></i>
+                                            </a>
+                                        @elseif ($ligne->statut_ligne === 'Attribue')
+                                            <a href="#" 
+                                                id="btn_resil_ligne"
+                                                style="margin-right: 5px;"
+                                                class="text-decoration-none"
+                                                data-bs-target="#modal_resil_ligne" 
+                                                data-bs-toggle="modal" 
+                                                title="Résilier"
+                                                data-sim-resil="{{ $ligne->num_sim }}"
+                                                data-ligne-resil="{{ $ligne->num_ligne }}"
+                                                data-operateur-resil="{{ $ligne->nom_operateur }}"
+                                                data-email-resil="{{ $ligne->contact_email }}"
+                                                data-type-resil="{{ $ligne->type_ligne }}"
+                                                data-forfait-resil="{{ $ligne->nom_forfait }}"
+                                                data-prix-resil="{{ $ligne->prix_forfait_ht }}"
+                                                data-resp-resil="{{ $ligne->login }}"
+                                                data-localisation-resil="{{ $ligne->localisation }}"
+                                                data-date-resil="{{ $ligne->debut_affectation }}"
+                                                data-id-aff-resil="{{ $ligne->id_affectation }}"
+                                                data-id-resil="{{ $ligne->id_ligne }}">
+                                                <i class="far fa-window-close text-danger" style="font-size: 25px;"></i>
+                                            </a>                     
+                                        @endif
+                                        <a href="{{ url('/ligne/detailLigne/' . $ligne->id_ligne) }}"
+                                            id="btn_voir_ligne"
                                             class="text-decoration-none"
                                             style="margin-right: 5px;" 
-                                            data-bs-target="#modal_react_ligne" 
-                                            data-bs-toggle="modal" 
-                                            title="Réactiver" 
-                                            href="#"
-                                            data-sim-react="{{ $ligne->num_sim }}"
-                                            data-operateur-react="{{ $ligne->id_operateur }}"
-                                            data-operateur-email-react="{{ $ligne->contact_email }}"
-                                            data-operateur-name-react="{{ $ligne->nom_operateur }}"
-                                            data-type-react="{{ $ligne->id_type_ligne }}"
-                                            data-forfait-react="{{ $ligne->id_forfait }}" 
-                                            data-id-react="{{ $ligne->id_ligne }}">
-                                            <i class="far fa-arrow-alt-circle-up text-success" style="font-size: 25px;"></i>
-                                        </a>
-                                    @elseif ($ligne->statut_ligne === 'Inactif' || $ligne->statut_ligne === 'En attente')    
+                                            data-bs-target="#modal_voir_ligne" 
+                                            title="Plus d'information"
+                                            data-bs-toggle="modal"
+                                            data-id-voir="{{ $ligne->id_ligne }}">
+                                            <i class="fas fa-info-circle text-primary" style="font-size: 25px;"></i>
+                                        </a> 
+                                        {{-- Boutons en commun --}}
+                                        <a href="{{ url('/ligne/histoLigne/' . $ligne->id_ligne) }}"
+                                            id="btn_histo_ligne"
+                                            class="text-decoration-none"
+                                            style="margin-right: 5px;" 
+                                            data-bs-target="#modal_histo_ligne" 
+                                            title="Historique"
+                                            data-bs-toggle="modal"
+                                            data-id-histo="{{ $ligne->id_ligne }}"
+                                            data-sim-histo="{{ $ligne->num_sim }}"
+                                            data-operateur-histo="{{ $ligne->nom_operateur }}"
+                                            >
+                                            <i class="fas fa-history text-primary" style="font-size: 25px;"></i>
+                                        </a>   
                                         <a href="#"
-                                            id="btn_enr_ligne"
+                                            id="btn_edt_ligne"
                                             class="text-decoration-none"
-                                            style="margin-right: 5px;" 
-                                            data-bs-target="#modal_enr_ligne" 
+                                            data-bs-target="#modal_edt_ligne" 
                                             data-bs-toggle="modal" 
-                                            title="Enregistrer" 
-                                            data-ligne-enr="{{ $ligne->num_ligne ?? 0 }}"
-                                            data-sim-enr="{{ $ligne->num_sim }}" 
-                                            data-forfait-enr="{{ $ligne->nom_forfait }}" 
-                                            data-id-enr="{{ $ligne->id_ligne }}">
-                                            <i class="far fa-save text-info" style="font-size: 25px;"></i>
+                                            title="Modifier"
+                                            data-sim-edt="{{ $ligne->num_sim }}"
+                                            data-ligne-edt="{{ $ligne->num_ligne }}"
+                                            data-operateur-edt="{{ $ligne->id_operateur }}"
+                                            data-type-edt="{{ $ligne->id_type_ligne }}"
+                                            data-forfait-edt="{{ $ligne->id_forfait }}"
+                                            data-responsable-edt="{{ $ligne->login }}"
+                                            data-date-edt="{{ $ligne->debut_affectation }}"
+                                            data-id-edt="{{ $ligne->id_ligne }}"
+                                            data-statut-edt="{{ $ligne->statut_ligne }}">
+                                            <i class="far fa-edit text-warning" style="font-size: 25px;"></i>
                                         </a>
-                                    @elseif ($ligne->statut_ligne === 'Attribue')
-                                        <a href="#" 
-                                            id="btn_resil_ligne"
-                                            style="margin-right: 5px;"
-                                            class="text-decoration-none"
-                                            data-bs-target="#modal_resil_ligne" 
-                                            data-bs-toggle="modal" 
-                                            title="Résilier"
-                                            data-sim-resil="{{ $ligne->num_sim }}"
-                                            data-ligne-resil="{{ $ligne->num_ligne }}"
-                                            data-operateur-resil="{{ $ligne->nom_operateur }}"
-                                            data-email-resil="{{ $ligne->contact_email }}"
-                                            data-type-resil="{{ $ligne->type_ligne }}"
-                                            data-forfait-resil="{{ $ligne->nom_forfait }}"
-                                            data-prix-resil="{{ $ligne->prix_forfait_ht }}"
-                                            data-resp-resil="{{ $ligne->login }}"
-                                            data-localisation-resil="{{ $ligne->localisation }}"
-                                            data-date-resil="{{ $ligne->debut_affectation }}"
-                                            data-id-aff-resil="{{ $ligne->id_affectation }}"
-                                            data-id-resil="{{ $ligne->id_ligne }}">
-                                            <i class="far fa-window-close text-danger" style="font-size: 25px;"></i>
-                                        </a>
-                                    @endif
-                                    {{-- Boutons en commun --}}
-                                    <a href="{{ url('/ligne/detailLigne/' . $ligne->id_ligne) }}"
-                                        id="btn_voir_ligne"
-                                        class="text-decoration-none"
-                                        style="margin-right: 5px;" 
-                                        data-bs-target="#modal_voir_ligne" 
-                                        title="Plus d'information"
-                                        data-bs-toggle="modal"
-                                        data-id-voir="{{ $ligne->id_ligne }}">
-                                        <i class="fas fa-info-circle text-primary" style="font-size: 25px;"></i>
-                                    </a>                                 
-                                    <a href="#"
-                                        id="btn_edt_ligne"
-                                        class="text-decoration-none"
-                                        data-bs-target="#modal_edt_ligne" 
-                                        data-bs-toggle="modal" 
-                                        title="Modifier"
-                                        data-sim-edt="{{ $ligne->num_sim }}"
-                                        data-ligne-edt="{{ $ligne->num_ligne }}"
-                                        data-operateur-edt="{{ $ligne->id_operateur }}"
-                                        data-type-edt="{{ $ligne->id_type_ligne }}"
-                                        data-forfait-edt="{{ $ligne->id_forfait }}"
-                                        data-responsable-edt="{{ $ligne->login }}"
-                                        data-date-edt="{{ $ligne->debut_affectation }}"
-                                        data-id-edt="{{ $ligne->id_ligne }}"
-                                        data-statut-edt="{{ $ligne->statut_ligne }}">
-                                        <i class="far fa-edit text-warning" style="font-size: 25px;"></i>
-                                    </a>
+                                    </div>
                                 </td>
                             </tr>
                             @empty

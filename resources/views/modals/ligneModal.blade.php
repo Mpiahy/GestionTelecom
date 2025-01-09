@@ -142,6 +142,7 @@
                                             <strong>Forfait</strong>
                                         </label>
                                         <input id="enr_forfait" class="form-control" type="text" name="enr_forfait" readonly value="{{ old('enr_forfait') }}"/>
+                                        <input id="enr_id_forfait" class="form-control" type="hidden" name="enr_id_forfait" readonly value="{{ old('enr_id_forfait') }}"/>
                                     </div>
                                     <div class="mb-3">
                                         <label class="form-label" for="enr_ligne">
@@ -640,6 +641,57 @@
             <div class="modal-footer">
                 <button id="close_modal_react" class="btn btn-warning" type="button" data-bs-dismiss="modal">Fermer</button>
                 <button id="btn_demander" class="btn btn-primary" type="submit" form="form_react_ligne">Demander</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="modal_histo_ligne" class="modal fade" role="dialog" tabindex="-1" aria-labelledby="modalTitle" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-custom modal-dialog-centered modal-dialog-scrollable" role="document">
+        <div class="modal-content shadow-lg border-0">
+            <div class="modal-header bg-primary text-white">
+                <h4 id="modalTitle" class="modal-title">Historique d'affectation pour cette ligne</h4>
+            </div>
+            <div class="modal-body">
+                <!-- Détails du téléphone -->
+                <div class="mb-4">
+                    <div class="row">
+                        <div class="col">
+                            <p class="text-dark mb-1">
+                                <span class="fw-bold">SIM :</span>
+                                <span class="fw-normal" data-field="sim"></span>
+                            </p>
+                        </div>
+                        <div class="col"> 
+                            <p class="text-dark mb-1">
+                                <span class="fw-bold">Opérateur :</span>
+                                <span class="fw-normal" data-field="operateur"></span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Table des affectations -->
+                <div class="table-responsive">
+                    <table id="dataTable" class="table table-bordered table-hover align-middle">
+                        <thead class="table-primary">
+                            <tr>
+                                <th class="text-dark">Utilisateur</th>
+                                <th class="text-dark">Login</th>
+                                <th class="text-dark">Localisation</th>
+                                <th class="text-dark">Numéro Ligne</th>
+                                <th class="text-dark">Type</th>
+                                <th class="text-dark">Forfait</th>
+                                <th class="text-dark">Prix HT Mensuel</th>
+                                <th class="text-dark">Date d'affectation</th>
+                                <th class="text-dark">Date de retour</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Les lignes seront ajoutées dynamiquement ici -->
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>

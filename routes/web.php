@@ -103,6 +103,7 @@ Route::middleware('check.session')->group(function() {
     Route::post('/ligne/enr', [LigneController::class, 'enrLigne'])->name('ligne.enr');
     Route::get('/ligne/searchUser', [LigneController::class, 'searchUser'])->name('ligne.searchUser');
     Route::get('/ligne/detailLigne/{id_ligne}', [LigneController::class, 'detailLigne'])->name('ligne.detailLigne');
+    Route::get('/ligne/histoLigne/{id_ligne}', [LigneController::class, 'histoLigne'])->name('ligne.histoLigne');
     Route::get('/ligne/edt', [LigneController::class, 'edtLigne'])->name('ligne.edt');
     Route::post('/ligne/rsl', [LigneController::class, 'rslLigne'])->name('ligne.rsl');
     Route::post('/ligne/react', [LigneController::class, 'reactLigne'])->name('ligne.react');

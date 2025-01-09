@@ -66,6 +66,39 @@ return new class extends Migration
             WHERE 
                 aff.id_ligne IS NOT NULL; 
         ');
+        // View pour avoir historique ligne utilisateur
+        DB::statement('
+            CREATE OR REPLACE VIEW view_historique_ligne AS
+            SELECT 
+                l.id_ligne,
+                u.nom,
+                u.prenom,
+                u.login,
+                loc.localisation,
+                l.num_ligne,
+                l.num_sim,
+                tf.type_forfait,
+                f.nom_forfait AS forfait,
+                vfp.prix_forfait_ht,
+                a.debut_affectation,
+                a.fin_affectation
+            FROM 
+                affectation a
+            INNER JOIN 
+                utilisateur u ON a.id_utilisateur = u.id_utilisateur
+            INNER JOIN 
+                localisation loc ON u.id_localisation = loc.id_localisation
+            INNER JOIN 
+                ligne l ON a.id_ligne = l.id_ligne
+            INNER JOIN 
+                forfait f ON a.id_forfait = f.id_forfait
+            INNER JOIN 
+                type_forfait tf ON f.id_type_forfait = tf.id_type_forfait
+            INNER JOIN 
+                view_forfait_prix vfp ON f.id_forfait = vfp.id_forfait
+            WHERE 
+                a.id_ligne IS NOT NULL;
+        ');
     }
 
     /**
@@ -77,5 +110,6 @@ return new class extends Migration
         DB::statement('DROP VIEW IF EXISTS view_historique_equipement CASCADE;');
         DB::statement('DROP VIEW IF EXISTS view_historique_user_equipement CASCADE;');
         DB::statement('DROP VIEW IF EXISTS view_historique_user_ligne CASCADE;');
+        DB::statement('DROP VIEW IF EXISTS view_historique_ligne CASCADE;');
     }
 };

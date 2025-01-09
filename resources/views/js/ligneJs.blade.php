@@ -243,12 +243,14 @@
                 // Récupérer les données des attributs data-*
                 const ligneEnr = button.getAttribute('data-ligne-enr'); 
                 const simEnr = button.getAttribute('data-sim-enr'); 
+                const idForfaitEnr = button.getAttribute('data-id-forfait-enr');
                 const forfaitEnr = button.getAttribute('data-forfait-enr');
                 const idEnr = button.getAttribute('data-id-enr');
 
                 // Injecter les valeurs dans le formulaire du modal
                 document.getElementById('enr_ligne').value = ligneEnr || ''; 
                 document.getElementById('enr_sim').value = simEnr || ''; 
+                document.getElementById('enr_id_forfait').value = idForfaitEnr || '';
                 document.getElementById('enr_forfait').value = forfaitEnr || '';
                 document.getElementById('enr_id_ligne').value = idEnr || '';
             });
@@ -804,5 +806,94 @@
 
         // Filtre les options de "react_forfait" au premier chargement de la page
         filterForfaits();
+    });
+</script>
+
+{{-- Historique Affectation Ligne --}}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Sélectionne tous les boutons pour voir les détails
+        const histoLigneBtns = document.querySelectorAll('#btn_histo_ligne');
+    
+        // Ajoute un gestionnaire d'événements à chaque bouton
+        histoLigneBtns.forEach(btn => {
+            btn.addEventListener('click', function (event) {
+                event.preventDefault(); // Empêche la redirection normale
+    
+                // Récupère les informations depuis les attributs data-*
+                const idLigne = this.getAttribute('data-id-histo');
+                const sim = this.getAttribute('data-sim-histo') || '--';
+                const operateur = this.getAttribute('data-operateur-histo') || '--';
+    
+                // Remplit les champs du modal avec les informations générales
+                document.querySelector('#modal_histo_ligne .modal-body [data-field="sim"]').textContent = sim;
+                document.querySelector('#modal_histo_ligne .modal-body [data-field="operateur"]').textContent = operateur;
+    
+                // Appelle l'API pour récupérer l'historique d'affectation
+                fetch(`/ligne/histoLigne/${idLigne}`)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Erreur lors de la récupération des données.');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        // Injecte l'historique d'affectation dans le tableau
+                        populateModal(data);
+    
+                        // Affiche le modal
+                        const modal = new bootstrap.Modal(document.getElementById('modal_histo_ligne'));
+                        modal.show();
+                    })
+                    .catch(error => {
+                        console.error('Erreur:', error);
+                        alert('Une erreur est survenue lors de la récupération des détails de cette ligne.');
+                    });
+            });
+        });
+    
+        // Fonction pour injecter les données d'historique dans le tableau
+        function populateModal(data) {
+            const tbody = document.querySelector('#modal_histo_ligne .modal-body #dataTable tbody');
+    
+            // Vide le tableau pour éviter d'afficher des données redondantes
+            tbody.innerHTML = '';
+    
+            if (data && Array.isArray(data) && data.length > 0) {
+                data.forEach(item => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td class="text-dark">${item.nom || ''} ${item.prenom || ''}</td>
+                        <td class="text-dark">${item.login || '--'}</td>
+                        <td class="text-dark">${item.localisation || '--'}</td>
+                        <td class="text-dark">${item.num_ligne || '--'}</td>
+                        <td class="text-dark">${item.type_forfait || '--'}</td>
+                        <td class="text-dark">${item.forfait || '--'}</td>
+                        <td class="text-dark">${formatPrix(item.prix_forfait_ht)}</td>
+                        <td class="text-dark">${item.debut_affectation || '--'}</td>
+                        <td class="text-dark">${item.fin_affectation || '--'}</td>
+                    `;
+                    tbody.appendChild(row);
+                });
+            } else {
+                // Aucun historique trouvé
+                const noDataRow = document.createElement('tr');
+                noDataRow.innerHTML = `
+                    <td class="text-dark text-center" colspan="9">Aucun historique disponible.</td>
+                `;
+                tbody.appendChild(noDataRow);
+            }
+        }
+
+        function formatPrix(prix) {
+            if (!prix) {
+                return '--'; // Retourne '--' si la valeur est absente ou 0
+            }
+            // Convertir en nombre et formater
+            return parseFloat(prix).toLocaleString('fr-FR', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+            }) + ' MGA';
+        }
     });
 </script>

@@ -49,3 +49,6 @@ CREATE INDEX idx_ligne_id_forfait ON ligne (id_forfait);
 
 -- Index pour la jointure entre ligne et type_ligne
 CREATE INDEX idx_ligne_id_type_ligne ON ligne (id_type_ligne);
+
+CREATE INDEX idx_affectation_ligne_debut ON affectation (id_ligne, debut_affectation DESC);
+CREATE INDEX idx_affectation_id ON affectation (id_affectation);

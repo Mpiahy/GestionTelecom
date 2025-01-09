@@ -65,6 +65,10 @@
     max-width: 80%; /* Ou utilisez une autre valeur comme 900px */
 }
 
+.modal-custom {
+    max-width: 95%; /* Ajustez la largeur à 90% de l'écran, ou toute autre valeur */
+}
+
 </style>
 
 <body id="page-top">

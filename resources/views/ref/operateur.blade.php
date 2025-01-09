@@ -51,9 +51,9 @@
             <p class="m-0 fw-bold" style="color: #0a4866;">Gestion des opérateurs</p>
         </div>
         <div class="card-body">
-            <div id="dataTable-1" class="table-responsive table mt-2" role="grid" aria-describedby="dataTable_info">
-                <table id="dataTable" class="table table-hover my-0">
-                    <thead>
+            <div id="dataTable-1" class="table-responsive table mt-2">
+                <table id="dataTable" class="table table-hover table-bordered align-middle">
+                    <thead class="table-light">
                         <tr>
                             <th>Opérateur</th>
                             <th>Contact</th>

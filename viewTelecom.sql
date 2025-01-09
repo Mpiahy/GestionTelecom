@@ -75,7 +75,7 @@ FROM (
 
 -- View pour détails d'une ligne
 CREATE OR REPLACE VIEW view_ligne_details AS
-SELECT 
+SELECT
     ligne.id_ligne,
     ligne.num_ligne,
     ligne.num_sim,
@@ -83,11 +83,20 @@ SELECT
     ligne.id_statut_ligne,
     ligne.id_type_ligne,
     ligne.id_operateur,
-    affectation.id_affectation,
-    affectation.id_utilisateur
-FROM 
+    recent_affectation.id_affectation,
+    recent_affectation.id_utilisateur
+FROM
     ligne
-LEFT JOIN affectation ON ligne.id_ligne = affectation.id_ligne;
+    LEFT JOIN (
+        SELECT DISTINCT ON (id_ligne) 
+            id_ligne,
+            id_affectation,
+            id_utilisateur,
+            debut_affectation
+        FROM affectation
+        ORDER BY id_ligne, debut_affectation DESC, id_affectation DESC
+    ) AS recent_affectation
+ON ligne.id_ligne = recent_affectation.id_ligne;
 
 -- View pour big détails d'une ligne
 CREATE OR REPLACE VIEW view_ligne_big_details AS
@@ -255,3 +264,34 @@ FROM
     (SELECT * FROM affectation WHERE id_equipement IS NOT NULL) aff
 INNER JOIN utilisateur u ON aff.id_utilisateur = u.id_utilisateur
 LEFT JOIN localisation loc ON u.id_localisation = loc.id_localisation;
+
+CREATE OR REPLACE VIEW view_historique_ligne AS
+SELECT 
+    l.id_ligne,
+    u.nom,
+    u.prenom,
+    u.login,
+    loc.localisation,
+    l.num_ligne,
+    l.num_sim,
+    tf.type_forfait,
+    f.nom_forfait AS forfait,
+    vfp.prix_forfait_ht,
+    a.debut_affectation,
+    a.fin_affectation
+FROM 
+    affectation a
+INNER JOIN 
+    utilisateur u ON a.id_utilisateur = u.id_utilisateur
+INNER JOIN 
+    localisation loc ON u.id_localisation = loc.id_localisation
+INNER JOIN 
+    ligne l ON a.id_ligne = l.id_ligne
+INNER JOIN 
+    forfait f ON a.id_forfait = f.id_forfait
+INNER JOIN 
+    type_forfait tf ON f.id_type_forfait = tf.id_type_forfait
+INNER JOIN 
+    view_forfait_prix vfp ON f.id_forfait = vfp.id_forfait
+WHERE 
+    a.id_ligne IS NOT NULL;

@@ -17,6 +17,7 @@ return new class extends Migration
             $table->date('debut_affectation');
             $table->date('fin_affectation')->nullable();
             $table->unsignedBigInteger('id_ligne')->nullable();
+            $table->unsignedBigInteger('id_forfait')->nullable();
             $table->unsignedBigInteger('id_equipement')->nullable();
             $table->unsignedBigInteger('id_utilisateur')->nullable();
 
@@ -24,6 +25,11 @@ return new class extends Migration
             $table->foreign('id_ligne')
                 ->references('id_ligne')
                 ->on('ligne')
+                ->onDelete('cascade');
+
+            $table->foreign('id_forfait')
+                ->references('id_forfait')
+                ->on('forfait')
                 ->onDelete('cascade');
 
             $table->foreign('id_equipement')

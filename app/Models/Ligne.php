@@ -170,4 +170,20 @@ class Ligne extends Model
         ];
     }
 
+    public static function getHistoriqueLigne($id_ligne)
+    {
+        // Vérifie si l'équipement existe
+        $equipmentExists = DB::table('ligne')
+            ->where('id_ligne', $id_ligne)
+            ->exists();
+
+        if (!$equipmentExists) {
+            return null; // Retourne null si l'équipement n'existe pas
+        }
+
+        // Récupère les détails de l'historique s'il existe
+        $sql = "SELECT * FROM view_historique_ligne WHERE id_ligne = :id_ligne";
+        return DB::select($sql, ['id_ligne' => $id_ligne]);
+    }
+
 }

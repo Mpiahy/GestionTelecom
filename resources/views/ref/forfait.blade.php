@@ -135,9 +135,9 @@
                 <div class="row">
                     <div class="col">
                         @if($forfaitDetails)
-                        <div id="dataTable-forfait_prix" class="table-responsive table mt-2" role="grid">
-                            <table id="dataTable" class="table table-hover my-0">
-                                <thead>
+                        <div id="dataTable-1" class="table-responsive table mt-2">
+                            <table id="dataTable" class="table table-hover table-bordered align-middle">
+                                <thead class="table-light">
                                     <tr>
                                         <th>Libellé</th>
                                         <th>Prix</th>
@@ -167,9 +167,9 @@
                         </div>
                     @endif
                         @if($elements)
-                            <div id="dataTable-forfait_element" class="table-responsive table mt-2" role="grid">
-                                <table id="dataTable" class="table table-hover my-0">
-                                    <thead>
+                            <div id="dataTable-1" class="table-responsive table mt-2">
+                                <table id="dataTable" class="table table-hover table-bordered align-middle">
+                                    <thead class="table-light">
                                         <tr>
                                             <th>Éléments</th>
                                             <th>Quantité</th>

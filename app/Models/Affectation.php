@@ -20,6 +20,7 @@ class Affectation extends Model
         'debut_affectation',
         'fin_affectation',
         'id_ligne',
+        'id_forfait',
         'id_equipement',
         'id_utilisateur',
     ];
@@ -29,12 +30,13 @@ class Affectation extends Model
         return $this->belongsTo(Utilisateur::class, 'id_utilisateur');
     }
 
-    public static function creerAffectation($dateDebut, $idLigne, $idUtilisateur)
+    public static function creerAffectation($dateDebut, $idLigne, $idForfait, $idUtilisateur)
     {
         self::create([
             'debut_affectation' => $dateDebut,
             'fin_affectation' => null,
             'id_ligne' => $idLigne,
+            'id_forfait' => $idForfait,
             'id_equipement' => null,
             'id_utilisateur' => $idUtilisateur,
         ]);
