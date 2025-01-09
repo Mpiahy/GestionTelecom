@@ -42,7 +42,7 @@
         document.addEventListener('DOMContentLoaded', function () {
             const toastElList = [].slice.call(document.querySelectorAll('.toast'));
             toastElList.map(function (toastEl) {
-                const toast = new bootstrap.Toast(toastEl, { delay: 15000 }); // Disparaît après 15s
+                const toast = new bootstrap.Toast(toastEl, { delay: 25000 }); // Disparaît après 25s
                 toast.show();
             });
         });
@@ -63,10 +63,11 @@
             </h6>
         </div>
         <div class="card-body">
-            <div class="alert alert-info p-4 shadow-sm rounded" style="max-width: 800px; border-left: 5px solid #0d6efd;">
+            <div class="alert alert-warning p-4 shadow-sm rounded" style="max-width: 800px; border-left: 5px solid #0d6efd;">
                 <p class="card-text">
-                    Cliquez sur le bouton ci-dessous pour générer des affectations aléatoires entre utilisateurs et lignes.
-                    Une affectation sera créée pour chaque utilisateur et ligne avec des dates aléatoires.
+                    <i class="fas fa-info-circle text-warning"></i>
+                    Cliquez sur le bouton ci-dessous pour générer des affectations aléatoires entre utilisateurs lignes et équipements.
+                    Une affectation sera créée pour chaque utilisateur, ligne et équipement avec des dates aléatoires.
                 </p>
             </div>
             <form action="{{ route('simulation.run') }}" method="POST">

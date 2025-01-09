@@ -41,7 +41,7 @@
         document.addEventListener('DOMContentLoaded', function () {
             const toastElList = [].slice.call(document.querySelectorAll('.toast'));
             toastElList.map(function (toastEl) {
-                const toast = new bootstrap.Toast(toastEl, { delay: 15000 }); // Disparaît après 15s
+                const toast = new bootstrap.Toast(toastEl, { delay: 25000 }); // Disparaît après 25s
                 toast.show();
             });
         });
