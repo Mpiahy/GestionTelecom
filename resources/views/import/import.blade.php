@@ -96,6 +96,9 @@
                                 <i class="fas fa-file-excel"></i> Exemple XLSX
                             </a>
                         </div>                
+                        <p class="mt-2 text-center">
+                            <i class="fas fa-info-circle text-warning"></i> Ce ne sont que des exemples de colonnes obligatoires.
+                        </p>
                     </form>
                 </div>
             </div>
@@ -134,13 +137,16 @@
                             </button>
                         </div>
                         <div class="text-center mt-4">
-                            <a href="{{ route('export.example', 'csv') }}" class="btn btn-outline-secondary me-2">
+                            <a href="{{ route('export.example.equipement', 'csv') }}" class="btn btn-outline-secondary me-2">
                                 <i class="fas fa-file-csv"></i> Exemple CSV
                             </a>
-                            <a href="{{ route('export.example', 'xlsx') }}" class="btn btn-outline-success">
+                            <a href="{{ route('export.example.equipement', 'xlsx') }}" class="btn btn-outline-success">
                                 <i class="fas fa-file-excel"></i> Exemple XLSX
                             </a>
-                        </div>                
+                        </div>       
+                        <p class="mt-2 text-center">
+                            <i class="fas fa-info-circle text-warning"></i> Ce ne sont que des exemples de colonnes obligatoires.
+                        </p>         
                     </form>
                 </div>
             </div>
@@ -212,7 +218,7 @@
                     </li>
                     <li class="mb-2">
                         <code class="bg-light px-1 py-1 rounded">Type</code> 
-                        <span class="text-muted ms-2">(exemple : A03S)</span>
+                        <span class="text-muted ms-2">(exemple : A05)</span>
                     </li>
                     <li class="mb-2">
                         <code class="bg-light px-1 py-1 rounded">SN</code> 

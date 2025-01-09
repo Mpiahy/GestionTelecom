@@ -1,5 +1,6 @@
 <?php
 
+use App\Exports\ExampleExportEquipement;
 use Illuminate\Support\Facades\Route;
 use \App\Http\Controllers\{
     LoginController, 
@@ -56,6 +57,18 @@ Route::get('/export-example/{type}', function ($type) {
     
     abort(404); // Retourne une erreur 404 si le type est invalide
 })->name('export.example');
+
+Route::get('/export-example-equipement/{type}', function ($type) {
+    $fileName = 'Exemple_Import_Equipement.' . $type;
+    
+    if ($type === 'csv') {
+        return Excel::download(new ExampleExportEquipement, $fileName, \Maatwebsite\Excel\Excel::CSV);
+    } elseif ($type === 'xlsx') {
+        return Excel::download(new ExampleExportEquipement, $fileName, \Maatwebsite\Excel\Excel::XLSX);
+    }
+    
+    abort(404); // Retourne une erreur 404 si le type est invalide
+})->name('export.example.equipement');
 
 // Afficher la page de simulation
 Route::get('/simulation', [SimulationController::class, 'simulationView'])->name('simulation.view');
