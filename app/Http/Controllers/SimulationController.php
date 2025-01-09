@@ -25,7 +25,7 @@ class SimulationController extends Controller
      */
     public function runSimulation()
     {
-        // Récupérer 150 utilisateurs et 150 lignes
+        // Récupérer utilisateurs et lignes
         $utilisateurs = Utilisateur::all();
         $lignes = Ligne::all();
     

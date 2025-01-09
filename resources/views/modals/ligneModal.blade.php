@@ -176,7 +176,7 @@
                                     
                                     <div class="mb-3">
                                         <label class="form-label" for="enr_date">
-                                            <strong>Date d&#39;affectation</strong>
+                                            <strong>Date d&#39;affectation(activation)</strong>
                                         </label>
                                         <input id="enr_date" class="form-control @error('enr_date', 'enr_ligne_errors') is-invalid @enderror" 
                                                name="enr_date" type="date" value="{{ old('enr_date') }}" />
@@ -381,7 +381,7 @@
                                     <!-- Date d'affectation -->                                    
                                     <div class="mb-3">
                                         <label class="form-label" for="edt_date">
-                                            <strong>Date d&#39;affectation</strong>
+                                            <strong>Date d&#39;affectation(activation)</strong>
                                         </label>
                                         <input id="edt_date" class="form-control @error('edt_date', 'edt_ligne_errors') is-invalid @enderror" type="date" name="edt_date" value="{{ old('edt_date') }}" />
                                         @error('edt_date', 'edt_ligne_errors')
@@ -487,7 +487,7 @@
                                         </div>
                                         <div class="col-md-6">
                                             <label class="form-label" for="resil_date_affectation">
-                                                <strong>Date d'affectation</strong>
+                                                <strong>Date d'affectation(activation)</strong>
                                             </label>
                                             <input id="resil_date_affectation" class="form-control" type="text" name="resil_date_affectation" readonly />
                                         </div>
@@ -496,7 +496,7 @@
                                     <div class="row mb-4">
                                         <div class="col">
                                             <label class="form-label" for="resil_date">
-                                                <strong>Date de Résiliation <span class="text-danger">*</span></strong>
+                                                <strong>Date de Résiliation<span class="text-danger">*</span></strong>
                                             </label>
                                             <input 
                                                 id="resil_date" 
@@ -510,13 +510,12 @@
                                                 <div class="invalid-feedback">{{ $message }}</div>
                                             @enderror
                                         </div>
-                                    </div>
-                                                                       
+                                    </div>                          
 
                                     <!-- Texte de warning -->
                                     <div class="row mb-0">
                                         <div class="col">
-                                            <p class="text-info small mb-0">
+                                            <p class="text-danger small mb-0">
                                                 <em>*Ce formulaire génère automatiquement un email de demande de résiliation après sa soumission.</em>
                                             </p>
                                         </div>
@@ -543,27 +542,93 @@
     <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="modal-title text-primary">Demander la réactivation de cette ligne</h4><button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
+                <h4 class="modal-title text-primary">Demande de réactivation d'une ligne</h4>
+                <button id="close_modal_react" class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <div class="row">
                     <div class="col">
                         <div></div>
                     </div>
-                    <div class="col-xl-7">
+                    <div class="col-xl-8">
                         <div class="card shadow">
                             <div class="card-body">
-                                <form id="form_react_ligne" action="react_mobile" method="get" style="color: #a0c8d8;">
-                                    <div class="mb-3"><label class="form-label" for="react_ligne"><strong>Numéro Ligne</strong></label><input id="react_ligne" class="form-control" type="text" name="react_ligne" value="+261 32 65 466 32" readonly /></div>
-                                    <div class="mb-3"><label class="form-label" for="react_sim"><strong>Numéro SIM</strong></label><input id="react_sim" class="form-control" type="text" name="react_sim" value="98745632145698" readonly /></div>
-                                    <div class="mb-3"><label class="form-label" for="react_operateur"><strong>Opérateur</strong></label><input id="react_operateur" class="form-control" type="text" name="react_operateur" value="Orange" readonly /></div>
-                                    <div class="mb-3"><label class="form-label" for="react_type"><strong>Type</strong></label><input id="react_type" class="form-control" type="text" name="react_type" value="Internet mobile" readonly /></div>
-                                    <div class="mb-3"><label class="form-label" for="react_forfait"><strong>Forfait</strong></label><select id="react_forfait" class="form-select" name="react_forfait">
-                                            <option value="0" disabled selected>Choisir le forfait</option>
-                                            <option value="1">Forfait 0</option>
-                                            <option value="2">Forfait 1</option>
-                                        </select></div>
-                                </form>
+                                <form id="form_react_ligne" action="{{ route('ligne.react') }}" method="POST" style="color: #a0c8d8;">
+                                    @csrf <!-- Protection CSRF -->
+
+                                    <!-- Champ caché pour l'ID de la ligne -->
+                                    <input type="hidden" id="react_ligne_id" name="react_ligne_id" value="">
+
+                                    <!-- Numéro SIM -->
+                                    <div class="mb-3">
+                                        <label class="form-label" for="react_sim"><strong>Numéro SIM</strong></label>
+                                        <input id="react_sim" class="form-control @error('react_sim', 'react_ligne_errors') is-invalid @enderror" 
+                                            type="number" name="react_sim" placeholder="Numéro SIM" 
+                                            value="{{ old('react_sim') }}" required />
+                                        @error('react_sim', 'react_ligne_errors')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+
+                                    <!-- Opérateur (en lecture seule) -->
+                                    <div class="mb-3">
+                                        <label class="form-label" for="react_operateur"><strong>Opérateur</strong></label>
+                                        <input id="react_operateur_name" class="form-control" type="text" name="react_operateur_name"
+                                            readonly />
+                                        <!-- Champ caché pour envoyer l'ID de l'opérateur au backend -->
+                                        <input id="react_operateur" type="hidden" name="react_operateur" value="">
+                                        <!-- Champ caché pour envoyer l'email de l'opérateur -->
+                                        <input id="react_operateur_email" type="hidden" name="react_operateur_email" value="">
+                                    </div>
+
+                                    <!-- Type -->
+                                    <div class="mb-3">
+                                        <label class="form-label" for="react_type"><strong>Type</strong></label>
+                                        <select id="react_type" class="form-select @error('react_type', 'react_ligne_errors') is-invalid @enderror" 
+                                                name="react_type" required>
+                                            <option value="" disabled {{ old('react_type') ? '' : 'selected' }}>Choisir le type</option>
+                                            @foreach ($types as $type)
+                                                <option value="{{ $type->id_type_ligne }}"
+                                                    {{ old('react_type') == $type->id_type_ligne ? 'selected' : '' }}>
+                                                    {{ $type->type_ligne }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                        @error('react_type', 'react_ligne_errors')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+
+                                    <!-- Forfait -->
+                                    <div class="mb-3">
+                                        <label class="form-label" for="react_forfait"><strong>Forfait</strong></label>
+                                        <select id="react_forfait" class="form-select @error('react_forfait', 'react_ligne_errors') is-invalid @enderror" 
+                                                name="react_forfait" {{ old('react_forfait') ? '' : 'disabled' }}>
+                                            <option value="" disabled>Choisir le forfait</option>
+                                            @foreach ($forfaits as $forfait)
+                                                <option value="{{ $forfait->id_forfait }}" 
+                                                        data-id-operateur="{{ $forfait->id_operateur }}" 
+                                                        data-id-type-forfait="{{ $forfait->id_type_forfait }}"
+                                                    {{ old('react_forfait') == $forfait->id_forfait ? 'selected' : '' }}>
+                                                    {{ $forfait->nom_forfait }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                        @error('react_forfait', 'react_ligne_errors')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+
+                                    <!-- Texte de warning -->
+                                    <div class="row mb-2">
+                                        <div class="col">
+                                            <p class="text-info small mb-0">
+                                                <em>*Ce formulaire génère automatiquement un email de demande de réactivation après sa soumission.</em>
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <!-- Fin Texte de warning -->
+                                </form>                                
                             </div>
                         </div>
                     </div>
@@ -573,8 +638,9 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button class="btn btn-warning" type="button" data-bs-dismiss="modal">Fermer</button>
-                <button class="btn btn-info" type="submit" form="form_react_ligne">Réactiver</button></div>
+                <button id="close_modal_react" class="btn btn-warning" type="button" data-bs-dismiss="modal">Fermer</button>
+                <button id="btn_demander" class="btn btn-primary" type="submit" form="form_react_ligne">Demander</button>
+            </div>
         </div>
     </div>
 </div>

@@ -19,7 +19,7 @@
                                         <select id="add_lib_service" class="form-select" name="add_lib_service">
                                             <option value="0" selected disabled>Choisir Service</option>
                                             @foreach ($services as $service)
-                                                <option value="{{$service->id_lib_service}}">{{$service->libelle_lib_service}}</option>
+                                                <option value="{{$service->id_service}}">{{$service->libelle_service}}</option>
                                             @endforeach
                                         </select>
                                     </div>
@@ -44,11 +44,11 @@
     <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="modal-title text-danger">Voulez vous vraiment supprimer ce chantier?</h4>
+                <h4 class="modal-title text-danger">Voulez vous vraiment supprimer cette localisation?</h4>
                 <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <p class="text-dark" style="margin-bottom: 0px;">Chantier: <strong></strong></p>
+                <p class="text-dark" style="margin-bottom: 0px;">Localisation: <strong></strong></p>
             </div>
             <div class="modal-footer">
                 <button class="btn btn-warning" type="button" data-bs-dismiss="modal">Fermer</button>
@@ -62,7 +62,7 @@
     <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="modal-title text-primary">Modifier cee localisation</h4>
+                <h4 class="modal-title text-primary">Modifier cette localisation</h4>
                 <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -80,7 +80,7 @@
                                         <select id="edt_lib_service" class="form-select" name="edt_lib_service">
                                             <option value="0" disabled>Choisir Service</option>
                                             @foreach ($services as $service)
-                                                <option value="{{$service->id_lib_service}}">{{$service->libelle_lib_service}}</option>
+                                                <option value="{{ $service->id_service }}" {{ old('id_service') == $service->id_service ? 'selected' : '' }}">{{$service->libelle_service}}</option>
                                             @endforeach
                                         </select>
                                     </div>

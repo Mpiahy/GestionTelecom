@@ -28,56 +28,94 @@
             // Générer et assigner le lien `mailto` dynamique
             link.href = `mailto:${email}?subject=${subject}&body=${body}`;
         });
+    });
+</script>
 
-        // Gestion du formulaire pour générer un lien mailto dynamique
-        const form = document.getElementById('form_act_ligne');
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Fonction pour gérer l'email d'activation de ligne
+         function setupFormHandler(formId, simId, operateurId, typeId, forfaitId, subjectPrefix) {
+            const form = document.getElementById(formId);
 
-        if (form) {
-            form.addEventListener('submit', function (event) {
-                event.preventDefault(); // Empêche l'envoi normal du formulaire
+            if (form) {
+                form.addEventListener('submit', function (event) {
+                    event.preventDefault(); // Empêche l'envoi normal du formulaire
 
-                // Récupère les données du formulaire
-                const sim = document.getElementById('act_sim').value;
+                    // Récupère les données du formulaire
+                    const sim = document.getElementById(simId).value;
 
-                const operateurSelect = document.getElementById('act_operateur');
-                const typeSelect = document.getElementById('act_type');
-                const forfaitSelect = document.getElementById('act_forfait');
+                    // Gestion de l'opérateur (support pour input caché ou select)
+                    let operateur = '';
+                    let email = '';
+                    const operateurElement = document.getElementById(operateurId);
 
-                // Récupération des valeurs et validation des champs
-                const operateur = operateurSelect.options[operateurSelect.selectedIndex]?.text || '';
-                const email = operateurSelect.options[operateurSelect.selectedIndex]?.dataset.email || '';
-                const type = typeSelect.options[typeSelect.selectedIndex]?.text || '';
-                const forfait = forfaitSelect.options[forfaitSelect.selectedIndex]?.text || '';
+                    if (operateurElement.tagName === 'SELECT') {
+                        // Si c'est un select (comme dans act_ligne)
+                        operateur = operateurElement.options[operateurElement.selectedIndex]?.text || '';
+                        email = operateurElement.options[operateurElement.selectedIndex]?.dataset.email || '';
+                    } else if (operateurElement.tagName === 'INPUT') {
+                        // Si c'est un input readonly avec un champ caché
+                        operateur = document.getElementById('react_operateur_name')?.value || ''; // Nom opérateur
+                        email = document.getElementById('react_operateur_email')?.value || ''; // Email récupéré dans le champ caché
+                    }
 
-                // Vérifie si un e-mail est défini pour l'opérateur sélectionné
-                if (!email) {
-                    alert('Veuillez sélectionner un opérateur avec une adresse e-mail valide.');
-                    return;
-                }
+                    // Vérifie si un e-mail est défini pour l'opérateur sélectionné
+                    if (!email) {
+                        alert('Veuillez sélectionner un opérateur avec une adresse e-mail valide.');
+                        return;
+                    }
 
-                // Préparation du lien mailto avec les données encodées
-                const subject = encodeURIComponent("Demande d'activation d'une ligne");
-                const body = encodeURIComponent(
-                    `Bonjour,
+                    // Récupération des autres champs
+                    const typeSelect = document.getElementById(typeId);
+                    const forfaitSelect = document.getElementById(forfaitId);
 
-                    Merci d'activer une ligne sur la SIM : ${sim}.
+                    const type = typeSelect.options[typeSelect.selectedIndex]?.text || '';
+                    const forfait = forfaitSelect.options[forfaitSelect.selectedIndex]?.text || '';
 
-                    Forfait : ${forfait}
+                    // Préparation du lien mailto
+                    const subject = encodeURIComponent("Demande d'activation d'une ligne");
+                    const body = encodeURIComponent(
+                        `Bonjour,
 
-                    Merci de bien vouloir traiter cette demande dans les meilleurs délais.
+                        Merci d'activer une ligne sur la SIM : ${sim}.
 
-                    Cordialement,`
-                );
+                        Opérateur : ${operateur}
+                        Type : ${type}
+                        Forfait : ${forfait}
 
-                const mailtoLink = `mailto:${email}?subject=${subject}&body=${body}`;
+                        Merci de bien vouloir traiter cette demande dans les meilleurs délais.
 
-                // Ouvre le client de messagerie par défaut avec le lien généré
-                window.location.href = mailtoLink;
+                        Cordialement,`
+                    );
 
-                // Optionnel : soumettre le formulaire après avoir ouvert le client de messagerie
-                form.submit();
-            });
+                    const mailtoLink = `mailto:${email}?subject=${subject}&body=${body}`;
+
+                    // Ouvre le client de messagerie par défaut
+                    window.location.href = mailtoLink;
+
+                    // Optionnel : soumettre le formulaire après avoir ouvert le client de messagerie
+                    form.submit();
+                });
+            }
         }
+
+        // Gestion du formulaire `act_ligne`
+        setupFormHandler(
+            'form_act_ligne',        // ID du formulaire
+            'act_sim',               // ID du champ SIM
+            'act_operateur',         // ID du select opérateur
+            'act_type',              // ID du select type
+            'act_forfait',           // ID du select forfait
+        );
+
+        // Gestion du formulaire `react_ligne`
+        setupFormHandler(
+            'form_react_ligne',      // ID du formulaire
+            'react_sim',             // ID du champ SIM
+            'react_operateur',       // ID du champ caché opérateur
+            'react_type',            // ID du select type
+            'react_forfait',         // ID du select forfait
+        );
     });
 </script>
 
@@ -640,5 +678,131 @@
             const modalRslLigne = new bootstrap.Modal(document.getElementById('modal_resil_ligne'));
             modalRslLigne.show(); // Affiche automatiquement le modal pour corriger les erreurs
         @endif
+    });
+</script>
+
+{{-- REACTIVATION --}}
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // Vérifie si des erreurs sont présentes dans `react_ligne_errors` (backend Laravel)
+        @if ($errors->hasBag('react_ligne_errors') && $errors->react_ligne_errors->any())
+            const modalReactLigne = new bootstrap.Modal(document.getElementById('modal_react_ligne'));
+            modalReactLigne.show(); // Affiche automatiquement le modal pour corriger les erreurs
+        @endif
+    });
+</script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const operateurSelect = document.getElementById('react_operateur');
+        const typeSelect = document.getElementById('react_type');
+        const forfaitSelect = document.getElementById('react_forfait');
+        const simInput = document.getElementById('react_sim');
+        const ligneIdInput = document.getElementById('react_ligne_id');
+        const operateurNameInput = document.getElementById('react_operateur_name'); // Nom affiché
+        const operateurEmailInput = document.getElementById('react_operateur_email'); // Email caché
+
+        /**
+         * Fonction pour filtrer les options du champ "react_forfait"
+         * selon l'opérateur et le type sélectionnés.
+         */
+        function filterForfaits() {
+            const selectedOperateur = operateurSelect.value;
+            const selectedType = typeSelect.value;
+
+            let hasVisibleOptions = false; // Vérifie si des options sont visibles
+            let firstVisibleOption = null; // Stocke la première option visible
+
+            // Parcourt toutes les options de "react_forfait"
+            Array.from(forfaitSelect.options).forEach(option => {
+                const optionOperateurId = option.getAttribute('data-id-operateur');
+                const optionTypeId = option.getAttribute('data-id-type-forfait');
+
+                // Applique les conditions de visibilité
+                const isVisible =
+                    (optionOperateurId === selectedOperateur || !selectedOperateur) &&
+                    (optionTypeId === selectedType || !selectedType);
+
+                // Affiche ou masque l'option selon les conditions
+                option.style.display = isVisible ? '' : 'none';
+
+                if (isVisible) {
+                    hasVisibleOptions = true;
+                    if (!firstVisibleOption) {
+                        firstVisibleOption = option; // Stocke la première option visible
+                    }
+                }
+            });
+
+            // Active ou désactive le champ "react_forfait" selon la disponibilité des options
+            forfaitSelect.disabled = !hasVisibleOptions;
+
+            if (hasVisibleOptions) {
+                const existingValue = forfaitSelect.value;
+                const existingOption = forfaitSelect.querySelector(
+                    `option[value="${existingValue}"]`
+                );
+
+                // Si une valeur existante est encore valide, on la garde
+                if (existingOption && existingOption.style.display !== 'none') {
+                    forfaitSelect.value = existingValue;
+                } else {
+                    // Sinon, on sélectionne la première option visible
+                    forfaitSelect.value = firstVisibleOption ? firstVisibleOption.value : '';
+                }
+            } else {
+                // Réinitialise la valeur si aucune option n'est visible
+                forfaitSelect.value = '';
+            }
+        }
+
+        /**
+         * Fonction pour gérer les modifications dans les sélecteurs (opérateur, type).
+         */
+        function handleInputChange() {
+            filterForfaits();
+        }
+
+        /**
+         * Fonction pour remplir les champs du formulaire après un clic sur un bouton "Réactiver".
+         * @param {HTMLElement} button - Le bouton "Réactiver" cliqué.
+         */
+        function fillFormFromButton(button) {
+            const simNum = button.getAttribute('data-sim-react') || '';
+            const operateurId = button.getAttribute('data-operateur-react') || '';
+            const operateurEmail = button.getAttribute('data-operateur-email-react') || '';
+            const operateurName = button.getAttribute('data-operateur-name-react') || '';
+            const typeId = button.getAttribute('data-type-react') || '';
+            const forfaitId = button.getAttribute('data-forfait-react') || '';
+            const ligneId = button.getAttribute('data-id-react') || '';
+
+            // Remplit les champs du formulaire avec les données extraites
+            if (simInput) simInput.value = simNum;
+            if (operateurSelect) operateurSelect.value = operateurId;
+            if (operateurEmailInput) operateurEmailInput.value = operateurEmail;
+            if (operateurNameInput) operateurNameInput.value = operateurName;
+            if (typeSelect) typeSelect.value = typeId;
+            if (forfaitSelect) forfaitSelect.value = forfaitId;
+            if (ligneIdInput) ligneIdInput.value = ligneId;
+
+            // Refiltre les options de "react_forfait" après mise à jour
+            filterForfaits();
+        }
+
+        // Ajoute des écouteurs pour réagir aux changements dans les sélecteurs
+        [operateurSelect, typeSelect].forEach(el =>
+            el.addEventListener('change', handleInputChange)
+        );
+
+        // Ajoute des écouteurs pour gérer le clic sur les boutons "Réactiver"
+        const reactButtons = document.querySelectorAll('#btn_react_ligne');
+        reactButtons.forEach(button => {
+            button.addEventListener('click', function () {
+                fillFormFromButton(button);
+            });
+        });
+
+        // Filtre les options de "react_forfait" au premier chargement de la page
+        filterForfaits();
     });
 </script>

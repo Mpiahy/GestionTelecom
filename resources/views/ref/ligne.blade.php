@@ -240,7 +240,14 @@
                                             data-bs-target="#modal_react_ligne" 
                                             data-bs-toggle="modal" 
                                             title="Réactiver" 
-                                            href="#">
+                                            href="#"
+                                            data-sim-react="{{ $ligne->num_sim }}"
+                                            data-operateur-react="{{ $ligne->id_operateur }}"
+                                            data-operateur-email-react="{{ $ligne->contact_email }}"
+                                            data-operateur-name-react="{{ $ligne->nom_operateur }}"
+                                            data-type-react="{{ $ligne->id_type_ligne }}"
+                                            data-forfait-react="{{ $ligne->id_forfait }}" 
+                                            data-id-react="{{ $ligne->id_ligne }}">
                                             <i class="far fa-arrow-alt-circle-up text-success" style="font-size: 25px;"></i>
                                         </a>
                                     @elseif ($ligne->statut_ligne === 'Inactif' || $ligne->statut_ligne === 'En attente')    

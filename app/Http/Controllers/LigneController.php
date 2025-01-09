@@ -82,6 +82,36 @@ class LigneController extends Controller
         }
     }
 
+    // Demander l'activation
+    public function reactLigne(Request $request)
+    {
+        try {
+            $validatedData = $request->validate([
+                'react_ligne_id' => 'required|exists:ligne,id_ligne', // Vérifie que la ligne existe dans la table "ligne"
+                'react_sim' => 'required|integer', // Enlever la contrainte "unique" ici
+                'react_operateur' => 'required|exists:contact_operateur,id_operateur', // Vérifie que l'opérateur existe
+                'react_type' => 'required|exists:type_ligne,id_type_ligne', // Vérifie que le type de ligne existe
+                'react_forfait' => 'required|exists:forfait,id_forfait', // Vérifie que le forfait existe
+            ]);            
+
+            Ligne::reactLigne($validatedData['react_ligne_id'],$validatedData);
+
+            return redirect()
+                ->route('ref.ligne')
+                ->with('success', 'Ligne réactivée avec succès.');
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return redirect()
+                ->route('ref.ligne')
+                ->withErrors($e->errors(), 'react_ligne_errors')
+                ->withInput();
+        } catch (Exception $e) {
+            return redirect()
+                ->route('ref.ligne')
+                ->withErrors(['error' => 'Une erreur inattendue est survenue: ' . $e->getMessage()], 'react_ligne_errors')
+                ->withInput();
+        }
+    }
+
     // Enregistrer ligne(num d'appel) & Attribuer vers Utilisateur
     public function enrLigne(Request $request)
     {
@@ -254,4 +284,6 @@ class LigneController extends Controller
                 ->withInput();
         }
     }
+
+
 }

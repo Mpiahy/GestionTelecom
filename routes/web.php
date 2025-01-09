@@ -105,6 +105,7 @@ Route::middleware('check.session')->group(function() {
     Route::get('/ligne/detailLigne/{id_ligne}', [LigneController::class, 'detailLigne'])->name('ligne.detailLigne');
     Route::get('/ligne/edt', [LigneController::class, 'edtLigne'])->name('ligne.edt');
     Route::post('/ligne/rsl', [LigneController::class, 'rslLigne'])->name('ligne.rsl');
+    Route::post('/ligne/react', [LigneController::class, 'reactLigne'])->name('ligne.react');
 
     Route::get('/fibre', [FibreController::class, 'fibreView'])->name('ref.fibre');
 

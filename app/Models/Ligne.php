@@ -75,7 +75,6 @@ class Ligne extends Model
         return DB::select($sql);
     }
     
-
     public static function createLigneWithDetails($data)
     {
         $ligne = self::create([
@@ -87,6 +86,16 @@ class Ligne extends Model
             'id_operateur' => $data['act_operateur'],
         ]);
         return $ligne;
+    }
+
+    public static function reactLigne($idLigne, $data)
+    {
+        return self::where('id_ligne', $idLigne)->update([
+            'num_ligne' => null, // Réinitialise le numéro de ligne
+            'id_forfait' => $data['react_forfait'], // Met à jour le forfait
+            'id_statut_ligne' => StatutLigne::STATUT_EN_ATTENTE, // Statut en attente
+            'id_type_ligne' => $data['react_type'], // Met à jour le type de ligne
+        ]);
     }
 
     public function enrLigne($numLigne)

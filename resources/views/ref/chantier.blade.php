@@ -123,7 +123,7 @@
                                         data-bs-target="#modifier_chantier" 
                                         data-bs-toggle="modal" 
                                         data-id="{{ $localisation->id_localisation }}" 
-                                        data-service="{{ $localisation->service->libelle_service }}" 
+                                        data-service="{{ $localisation->service->id_service }}" 
                                         data-imputation="{{ $localisation->imputation->libelle_imputation }}"
                                         class="open-edit-modal" 
                                         style="margin-right: 10px; text-decoration: none">
