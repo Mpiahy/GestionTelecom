@@ -15,7 +15,7 @@ class FlotteService
     public function getSuiviFlotteData(int $annee): array
     {
         // Requête SQL pour récupérer les données nécessaires
-        $affectations = DB::table('affectation as a')
+        $affectations = DB::table('aaffectation as a')
             ->join('ligne as l', 'a.id_ligne', '=', 'l.id_ligne')
             ->join('view_forfait_prix as vfp', 'l.id_forfait', '=', 'vfp.id_forfait')
             ->join('utilisateur as u', 'a.id_utilisateur', '=', 'u.id_utilisateur')

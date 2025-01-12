@@ -84,6 +84,14 @@ class Import
     {
         try {
             DB::transaction(function () use ($row) {
+                // Mappage des faux services aux services réels
+                $fauxServicesMap = [
+                    'ADM' => ['LABORATOIRE', 'AP'],
+                    'CBCI' => ['DTIP', 'TPC'],
+                    'GRAND PROJET' => ['RN6', 'RN13'],
+                    'CENTRE ROUTE' => ['TOPO', 'QHSE'],
+                ];
+
                 // Convertir les champs critiques en majuscule pour les comparaisons
                 $row['Fonction'] = strtoupper(trim($row['Fonction'] ?? ''));
                 $row['Libelle Imputation'] = strtoupper(trim($row['Libelle Imputation'] ?? ''));
@@ -92,7 +100,6 @@ class Import
                 // Vérifier la validité de TYPE FORFAIT
                 $forfait = DB::table('forfait')->where('nom_forfait', trim($row['TYPE FORFAIT'] ?? ''))->first();
                 if (!$forfait) {
-                    // Si le forfait est introuvable, ignorer toute la ligne
                     Log::info('Ligne ignorée : TYPE FORFAIT introuvable.', ['row' => $row]);
                     return;
                 }
@@ -105,12 +112,22 @@ class Import
                         'created_at' => now(),
                         'updated_at' => now()
                     ], 'id_fonction');
-                    Log::info('Nouvelle fonction créée.', ['fonction' => $row['Fonction']]);
                     $fonction = DB::table('fonction')->where('id_fonction', $id_fonction)->first();
                 }
 
                 // Gestion du 'SERVICE' (libelle_service)
-                $libelleService = $row['SERVICE'] ?: 'NEANT';
+                $originalService = strtoupper(trim($row['SERVICE'] ?? 'NEANT'));
+                $libelleService = $originalService;
+
+                // Vérifier si le service est un faux service
+                $isFauxService = false;
+                foreach ($fauxServicesMap as $realService => $fauxServices) {
+                    if (in_array($originalService, $fauxServices)) {
+                        $libelleService = $realService; // Remplace par le service réel
+                        $isFauxService = true; // Indique qu'il s'agit d'un faux service
+                        break;
+                    }
+                }
 
                 $service = DB::table('service')
                     ->where('libelle_service', $libelleService)
@@ -122,12 +139,17 @@ class Import
                         'created_at' => now(),
                         'updated_at' => now()
                     ], 'id_service');
-                    Log::info('Nouveau service créé.', ['service' => $libelleService]);
                     $service = DB::table('service')->where('id_service', $id_service)->first();
                 }
 
                 // Gestion de l'imputation (libelle_imputation)
                 $libelleImputation = $row['Libelle Imputation'] ?: 'NEANT';
+
+                // Ajouter le faux service à la fin si c'est un faux service
+                if ($isFauxService) {
+                    $libelleImputation = $libelleImputation . ' - ' . $originalService;
+                }
+
                 $imputation = DB::table('imputation')
                     ->where('libelle_imputation', $libelleImputation)
                     ->first();
@@ -139,12 +161,12 @@ class Import
                         'created_at' => now(),
                         'updated_at' => now()
                     ], 'id_imputation');
-                    Log::info('Nouvelle imputation créée.', ['imputation' => $libelleImputation]);
                     $imputation = DB::table('imputation')->where('id_imputation', $id_imputation)->first();
                 }
 
-                // Insérer ou récupérer la localisation
+                // Construire la localisation
                 $localisationValue = $libelleService . ' - ' . $libelleImputation;
+
                 $localisation = DB::table('localisation')
                     ->where('localisation', $localisationValue)
                     ->where('id_service', $service->id_service)
@@ -159,17 +181,12 @@ class Import
                         'created_at' => now(),
                         'updated_at' => now()
                     ], 'id_localisation');
-                    Log::info('Nouvelle localisation créée.', ['localisation' => $localisationValue]);
                     $localisation = DB::table('localisation')->where('id_localisation', $id_localisation)->first();
                 }
 
                 // Gestion des noms et prénoms
                 $nomPrenomParts = explode(' ', trim($row['Nom et Prenom'] ?? ''));
-
-                // Gestion du NOM (toujours en majuscule)
                 $nom = strtoupper($nomPrenomParts[0] ?? 'INCONNU');
-
-                // Gestion du PRENOM (chaque mot commence par une majuscule)
                 $prenom = self::formatPrenom(implode(' ', array_slice($nomPrenomParts, 1)));
 
                 // Gestion du login
@@ -192,32 +209,29 @@ class Import
                     ->first();
 
                 if (!$utilisateur) {
-                    // Si l'utilisateur n'existe pas, insérez-le
                     $utilisateurId = DB::table('utilisateur')->insertGetId([
                         'nom' => $nom,
                         'prenom' => $prenom,
                         'login' => $login,
-                        'id_type_utilisateur' => 1, // COLLABORATEUR
+                        'id_type_utilisateur' => 1,
                         'id_fonction' => $fonction->id_fonction,
                         'id_localisation' => $localisation->id_localisation,
                         'created_at' => now(),
                         'updated_at' => now()
                     ], 'id_utilisateur');
-                    Log::info('Nouvel utilisateur créé.', ['nom' => $nom, 'prenom' => $prenom, 'login' => $login]);
                 }
 
                 // Insérer dans 'ligne'
                 DB::table('ligne')->insert([
                     'num_ligne' => $row['Numero2'],
                     'num_sim' => random_int(10000000000000, 99999999999999),
-                    'id_forfait' => $forfait->id_forfait, // Utilisation de l'ID de forfait validé
-                    'id_statut_ligne' => 1, // Inactif
-                    'id_type_ligne' => 1, // Standard
+                    'id_forfait' => $forfait->id_forfait,
+                    'id_statut_ligne' => 1,
+                    'id_type_ligne' => 1,
                     'id_operateur' => 34,
                     'created_at' => now(),
                     'updated_at' => now()
                 ]);
-                Log::info('Nouvelle ligne créée.', ['num_ligne' => $row['Numero2']]);
             });
         } catch (\Exception $e) {
             Log::error('Erreur lors du traitement d\'une ligne : ' . $e->getMessage(), [
@@ -226,7 +240,7 @@ class Import
             ]);
             throw $e;
         }
-    }
+    }   
 
     /**
      * Formater le prénom : chaque mot commence par une majuscule.

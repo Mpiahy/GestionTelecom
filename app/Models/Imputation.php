@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Imputation extends Model
 {
     use HasFactory;
+
     protected $table = 'imputation';
     protected $primaryKey = 'id_imputation';
     protected $fillable = ['libelle_imputation', 'id_service'];
@@ -17,8 +18,8 @@ class Imputation extends Model
         return $this->belongsTo(Service::class, 'id_service');
     }
 
-    public function localisation()
+    public function localisations()
     {
-        return $this->hasOne(Localisation::class, 'id_imputation');
+        return $this->hasMany(Localisation::class, 'id_imputation');
     }
 }

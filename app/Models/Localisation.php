@@ -22,15 +22,16 @@ class Localisation extends Model
         return $this->belongsTo(Imputation::class, 'id_imputation');
     }
 
-    // Méthode pour filtrer par libellé de service
+    // Méthode pour filtrer par service
     public function scopeFilterByService($query, $filterService)
     {
         if ($filterService) {
             $query->whereHas('service', function ($q) use ($filterService) {
-                $q->where('libelle_service', 'like', "%{$filterService}%");
+                $q->where('id_service', 'like', "%{$filterService}%");
             });
         }
-        return $query;
+        // Ajouter un tri par les plus récents
+        return $query->orderBy('created_at', 'desc');
     }
 
     // Méthode pour filtrer par libelle imputation
@@ -44,23 +45,6 @@ class Localisation extends Model
         return $query;
     }
 
-    /**
-     * Supprime une localisation avec son service et ses imputations associées.
-     */
-    public function deleteWithRelations()
-    {
-        try {
-            if ($this->service) {
-                $this->service->imputations()->delete();
-                $this->service->delete();
-            }
-            
-            $this->delete();
-        } catch (\Exception $e) {
-            throw new \Exception("Une erreur est survenue lors de la suppression de la localisation : " . $e->getMessage());
-        }
-    }
-
     // Recherche d'un Chantier
     public static function searchByTerm(string $term)
     {
@@ -72,5 +56,64 @@ class Localisation extends Model
                     'label' => $chantier->localisation,
                 ];
             });
+    }
+
+    /**
+     * Crée une localisation avec les relations nécessaires.
+     */
+    public static function createWithRelations(array $data)
+    {
+        $service = Service::findOrFail($data['add_service']);
+
+        $imputation = Imputation::create([
+            'libelle_imputation' => strtoupper($data['add_imp']),
+            'id_service' => $service->id_service,
+        ]);
+
+        $localisation_value = "{$service->libelle_service} - {$imputation->libelle_imputation}";
+        return self::create([
+            'localisation' => $localisation_value,
+            'id_service' => $service->id_service,
+            'id_imputation' => $imputation->id_imputation,
+        ]);
+    }
+
+    /**
+     * Met à jour une localisation avec ses relations.
+     */
+    public function updateWithRelations(array $data)
+    {
+        $service = Service::findOrFail($data['edt_service']);
+
+        // Met à jour l'imputation
+        $this->imputation->update([
+            'libelle_imputation' => strtoupper($data['edt_imp']),
+        ]);
+
+        // Met à jour la localisation
+        $this->update([
+            'localisation' => "{$service->libelle_service} - {$this->imputation->libelle_imputation}",
+            'id_service' => $service->id_service,
+        ]);
+    }
+
+    /**
+     * Supprime une localisation avec vérification des relations.
+     */
+    public function deleteWithRelations()
+    {
+        $imputation = $this->imputation;
+
+        if ($imputation && $imputation->localisations()->count() <= 1) {
+            $imputation->delete();
+        }
+
+        $service = $this->service;
+
+        if ($service && $service->imputations()->count() <= 1 && $service->localisations()->count() <= 1) {
+            $service->delete();
+        }
+
+        $this->delete();
     }
 }

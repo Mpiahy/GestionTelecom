@@ -93,10 +93,10 @@
                                 <!-- Boutons dynamiques pour chaque UE -->
                                 @foreach ($services as $service)
                                     <button 
-                                        class="btn btn-outline-primary {{ request('service') == $service->libelle_service ? 'active' : '' }}" 
+                                        class="btn btn-outline-primary {{ request('service') == $service->id_service ? 'active' : '' }}" 
                                         type="submit" 
                                         name="service" 
-                                        value="{{ $service->libelle_service }}">
+                                        value="{{ $service->id_service }}">
                                         {{ $service->libelle_service }}
                                     </button>
                                 @endforeach
