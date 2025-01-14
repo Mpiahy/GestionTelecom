@@ -233,7 +233,7 @@
 </div>
 
 <div id="modal_histo_phone" class="modal fade" role="dialog" tabindex="-1" aria-labelledby="modalTitle" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable" role="document">
+    <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable" role="document">
         <div class="modal-content shadow-lg border-0">
             <div class="modal-header bg-primary text-white">
                 <h4 id="modalTitle" class="modal-title">Historique d'affectation pour ce téléphone</h4>

@@ -280,12 +280,6 @@ class Equipement extends Model
         ]);
     }
 
-    public function retourEquipement()
-    {
-        $this->id_statut_equipement = StatutEquipement::STATUT_RETOURNE;
-        $this->save();
-    }
-
     public static function getHistoriqueEquipement($id_equipement)
     {
         // Vérifie si l'équipement existe
@@ -299,7 +293,19 @@ class Equipement extends Model
 
         // Récupère les détails de l'historique s'il existe
         $sql = "SELECT * FROM view_historique_equipement WHERE id_equipement = :id_equipement";
-        return DB::select($sql, ['id_equipement' => $id_equipement]);
+        $historiqueEquipement = DB::select($sql, ['id_equipement' => $id_equipement]);
+
+        // Extraire un commentaire unique (s'il existe)
+        $commentaire = null;
+        if (!empty($historiqueEquipement)) {
+            $commentaire = $historiqueEquipement[0]->commentaire ?? null; // Prend le commentaire du premier enregistrement
+        }
+
+        // Retourner les données avec le commentaire unique
+        return [
+            'historique' => $historiqueEquipement,
+            'commentaire' => $commentaire,
+        ];
     }
 
     public static function getStats()
@@ -311,4 +317,20 @@ class Equipement extends Model
         ];
     }
 
+    public function retourEquipement()
+    {
+        $this->id_statut_equipement = StatutEquipement::STATUT_RETOURNE;
+        $this->save();
+    }
+
+    // Retourner plusieurs équipements
+    public static function retourEquipements(array $equipements)
+    {
+        foreach ($equipements as $idEquipement) {
+            $equipement = self::find($idEquipement);
+            if ($equipement) {
+                $equipement->retourEquipement();
+            }
+        }
+    }
 }

@@ -23,6 +23,17 @@ class Ligne extends Model
         'id_type_ligne',
         'id_operateur',
     ];
+
+    public function forfait()
+    {
+        return $this->belongsTo(Forfait::class, 'id_forfait');
+    }
+
+    public function operateur()
+    {
+        return $this->belongsTo(Operateur::class, 'id_operateur');
+    }
+    
     // Mise à jour du statut de la ligne
     public function updateStatut($statut)
     {
@@ -184,6 +195,38 @@ class Ligne extends Model
         // Récupère les détails de l'historique s'il existe
         $sql = "SELECT * FROM view_historique_ligne WHERE id_ligne = :id_ligne";
         return DB::select($sql, ['id_ligne' => $id_ligne]);
+    }
+
+    public function genererLienMailto($email, $dateResiliation)
+    {
+        $subject = urlencode("Demande de résiliation d'une ligne");
+        $body = urlencode(
+            "Bonjour,\n\n" .
+            "Veuillez procéder à la résiliation de la ligne sur la SIM : {$this->num_sim}\n\n" .
+            "- Numéro de ligne : {$this->num_ligne}\n" .
+            "- Forfait : {$this->forfait->nom_forfait}\n\n" .
+            "Date de résiliation : {$dateResiliation}\n\n" .
+            "Merci de traiter cette demande dans les meilleurs délais.\n\n" .
+            "Cordialement,"
+        );
+
+        return "mailto:{$email}?subject={$subject}&body={$body}";
+    }
+
+    public function resilier()
+    {
+        $this->id_statut_ligne = StatutLigne::STATUT_RESILIE;
+        $this->save();
+    }
+
+    public static function resilierLignes(array $lignes)
+    {
+        foreach ($lignes as $idLigne) {
+            $ligne = self::find($idLigne);
+            if ($ligne) {
+                $ligne->resilier();
+            }
+        }
     }
 
 }

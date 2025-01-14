@@ -93,16 +93,16 @@ Route::middleware('check.session')->group(function() {
     Route::get('/user', [UserController::class, 'userView'])->name('ref.user');
     Route::post('/utilisateur/ajouter', [UserController::class, 'ajouterUtilisateur'])->name('ajouter.utilisateur');
     Route::post('/utilisateur/modifier', [UserController::class, 'modifierUtilisateur'])->name('modifier.utilisateur');
-    Route::get('/utilisateur/supprimer/{id}', [UserController::class, 'supprimerUtilisateur'])->name('utilisateur.supprimer');
+    Route::post('/utilisateur/supprimer/{id}', [UserController::class, 'supprimerUtilisateur'])->name('utilisateur.supprimer');
     Route::get('/ligne/searchFonction', [UserController::class, 'searchFonction'])->name('ligne.searchFonction');
     Route::get('/ligne/searchChantier', [UserController::class, 'searchChantier'])->name('ligne.searchChantier');
     Route::get('/phones-inactifs', [UserController::class, 'showPhonesInactifs']);
     Route::get('/box-inactifs', [UserController::class, 'showBoxInactifs']);
     Route::get('/recherche-inactifs', [UserController::class, 'rechercherInactifs']);
     Route::post('/ligne/attrEquipement', [UserController::class, 'attrEquipement'])->name('ligne.attrEquipement');
-    Route::post('/ligne/attrEquipement', [UserController::class, 'attrEquipement'])->name('ligne.attrEquipement');
     Route::get('/user/histoUser/{id_user}', [UserController::class, 'histoUser'])->name('user.histoUser');
-
+    Route::get('/user/equipementsAffectes/{id_user}', [UserController::class, 'equipementsAffectes'])->name('user.equipementsAffectes');
+    Route::get('/user/lignesAffectes/{id_user}', [UserController::class, 'lignesAffectes'])->name('user.lignesAffectes');
 
     Route::get('/chantier', [ChantierController::class, 'chantierView'])->name('ref.chantier');
     Route::post('/addChantier', [ChantierController::class, 'ajouterChantier'])->name('ref.chantier.add');

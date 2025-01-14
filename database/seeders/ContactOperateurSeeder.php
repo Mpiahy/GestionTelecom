@@ -17,10 +17,10 @@ class ContactOperateurSeeder extends Seeder
 
         $contacts = [
             '34' => [ // ID de Yas
-                ['nom' => 'Mpiahisoa Yas', 'email' => 'andriamahaleompiahisoa.randriamanivo@colas-mg.com'],
+                ['nom' => 'Yas', 'email' => 'andriamahaleompiahisoa.randriamanivo@colas-mg.com'],
             ],
             '32' => [ // ID de Orange
-                ['nom' => 'Mpiahisoa Orange', 'email' => 'mpiahyandriam@gmail.com'],
+                ['nom' => 'Orange', 'email' => 'mpiahyandriam@gmail.com'],
             ],
         ];
 

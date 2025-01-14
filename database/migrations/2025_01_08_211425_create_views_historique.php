@@ -19,6 +19,7 @@ return new class extends Migration
                 u.prenom AS prenom,
                 u.login AS login,
                 loc.localisation AS localisation,
+                aff.commentaire,
                 aff.debut_affectation,
                 aff.fin_affectation
             FROM 
@@ -31,11 +32,13 @@ return new class extends Migration
             CREATE OR REPLACE VIEW view_historique_user_equipement AS
             SELECT 
                 aff.id_utilisateur,
+                eq.id_equipement,
                 ma.marque,
                 mo.nom_modele AS modele,
                 te.type_equipement,
                 eq.imei,
                 eq.serial_number,
+                aff.commentaire,
                 aff.debut_affectation,
                 aff.fin_affectation
             FROM 
@@ -52,19 +55,24 @@ return new class extends Migration
             CREATE OR REPLACE VIEW view_historique_user_ligne AS
             SELECT 
                 aff.id_utilisateur,
+                li.id_ligne,
                 li.num_ligne,
                 li.num_sim,
                 f.nom_forfait,
                 tl.type_ligne,
+                aff.commentaire,
                 aff.debut_affectation,
-                aff.fin_affectation
+                aff.fin_affectation,
+                co.email
             FROM 
                 affectation aff
             INNER JOIN ligne li ON aff.id_ligne = li.id_ligne
             INNER JOIN forfait f ON li.id_forfait = f.id_forfait
             INNER JOIN type_ligne tl ON li.id_type_ligne = tl.id_type_ligne
+            INNER JOIN operateur o ON f.id_operateur = o.id_operateur
+            LEFT JOIN contact_operateur co ON o.id_operateur = co.id_operateur
             WHERE 
-                aff.id_ligne IS NOT NULL; 
+                aff.id_ligne IS NOT NULL;
         ');
         // View pour avoir historique ligne utilisateur
         DB::statement('

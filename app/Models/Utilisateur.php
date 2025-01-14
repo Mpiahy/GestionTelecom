@@ -4,15 +4,17 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\DB;
 
 class Utilisateur extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     protected $table = 'utilisateur';
     protected $primaryKey = 'id_utilisateur';
     protected $fillable = ['matricule', 'nom', 'prenom', 'login', 'id_type_utilisateur', 'id_fonction', 'id_localisation'];
+    protected $dates = ['deleted_at'];
 
     // Relations avec les autres tables
     public function typeUtilisateur()
@@ -39,25 +41,27 @@ class Utilisateur extends Model
             'prenom' => $data['prenom_add'],
             'login' => $data['login_add'],
             'id_type_utilisateur' => $data['id_type_utilisateur_add'],
-            'id_fonction' => $data['id_fonction'],
+            'id_fonction' => $data['id_fonction_add'],
             'id_localisation' => $data['id_localisation_add'],
         ]);
     }
 
-    public static function modifierUtilisateur($id, $data)
+    public static function modifierUtilisateur($data)
     {
+        $id= $data['id_edt'];
+
         // Récupération de l'utilisateur par ID
         $utilisateur = self::findOrFail($id);
 
         // Mise à jour des données
         $utilisateur->update([
-            'matricule' => $data['matricule'] ?? $utilisateur->matricule, // Garde l'ancien matricule si non fourni
-            'nom' => $data['nom'],
-            'prenom' => $data['prenom'],
-            'login' => $data['login'],
-            'id_type_utilisateur' => $data['id_type_utilisateur'],
-            'id_fonction' => $data['id_fonction'],
-            'id_localisation' => $data['id_localisation'],
+            'matricule' => $data['matricule_edt'] ?? $utilisateur->matricule, // Garde l'ancien matricule si non fourni
+            'nom' => $data['nom_edt'],
+            'prenom' => $data['prenom_edt'],
+            'login' => $data['login_edt'],
+            'id_type_utilisateur' => $data['id_type_utilisateur_edt'],
+            'id_fonction' => $data['id_fonction_edt'],
+            'id_localisation' => $data['id_localisation_edt'],
         ]);
 
         return $utilisateur;
@@ -116,24 +120,31 @@ class Utilisateur extends Model
         $utilisateurExists = DB::table('utilisateur')
             ->where('id_utilisateur', $id_utilisateur)
             ->exists();
-
+    
         if (!$utilisateurExists) {
             return null; // Retourne null si l'utilisateur n'existe pas
         }
-
+    
         // Récupère l'historique des équipements
         $sqlEquipements = "SELECT * FROM view_historique_user_equipement WHERE id_utilisateur = :id_utilisateur";
         $historiqueEquipements = DB::select($sqlEquipements, ['id_utilisateur' => $id_utilisateur]);
-
+    
+        // Récupère le commentaire unique (extrait du premier équipement, s'il existe)
+        $commentaire = null;
+        if (!empty($historiqueEquipements)) {
+            $commentaire = $historiqueEquipements[0]->commentaire ?? null; // Récupère le commentaire du premier équipement
+        }
+    
         // Récupère l'historique des lignes
         $sqlLignes = "SELECT * FROM view_historique_user_ligne WHERE id_utilisateur = :id_utilisateur";
         $historiqueLignes = DB::select($sqlLignes, ['id_utilisateur' => $id_utilisateur]);
-
-        // Combine les deux résultats dans un tableau
+    
+        // Combine les deux résultats dans un tableau avec le commentaire unique
         return [
             'equipements' => $historiqueEquipements,
             'lignes' => $historiqueLignes,
+            'commentaire' => $commentaire, // Ajoute le commentaire unique au retour
         ];
-    }
+    }    
 
 }

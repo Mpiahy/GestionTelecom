@@ -21,7 +21,7 @@ return new class extends Migration
         // TABLE type_ligne
         Schema::create('type_ligne', function (Blueprint $table) {
             $table->unsignedBigInteger('id_type_ligne')->primary(); // Pas d'auto-incrément
-            $table->string('type_ligne', 20);
+            $table->string('type_ligne', 50);
             $table->timestamps();
         });
 

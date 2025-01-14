@@ -300,79 +300,101 @@ document.addEventListener('DOMContentLoaded', function () {
 
 {{-- Voir Historique Phone --}}
 <script>
-document.addEventListener('DOMContentLoaded', function () {
-    // Sélectionne tous les boutons pour voir les détails
-    const voirPhoneBtns = document.querySelectorAll('#btn_histo_phone');
+    document.addEventListener('DOMContentLoaded', function () {
+        // Sélectionne tous les boutons pour voir les détails
+        const voirPhoneBtns = document.querySelectorAll('#btn_histo_phone');
 
-    // Ajoute un gestionnaire d'événements à chaque bouton
-    voirPhoneBtns.forEach(btn => {
-        btn.addEventListener('click', function (event) {
-            event.preventDefault(); // Empêche la redirection normale
+        // Ajoute un gestionnaire d'événements à chaque bouton
+        voirPhoneBtns.forEach(btn => {
+            btn.addEventListener('click', function (event) {
+                event.preventDefault(); // Empêche la redirection normale
 
-            // Récupère les informations depuis les attributs data-*
-            const idPhone = this.getAttribute('data-id-histo');
-            const marque = this.getAttribute('data-marque-histo') || '--';
-            const modele = this.getAttribute('data-modele-histo') || '--';
-            const serialNumber = this.getAttribute('data-serial-number-histo') || '--';
-            const imei = this.getAttribute('data-imei-histo') || '--';
+                // Récupère les informations depuis les attributs data-*
+                const idPhone = this.getAttribute('data-id-histo');
+                const marque = this.getAttribute('data-marque-histo') || '--';
+                const modele = this.getAttribute('data-modele-histo') || '--';
+                const serialNumber = this.getAttribute('data-serial-number-histo') || '--';
+                const imei = this.getAttribute('data-imei-histo') || '--';
 
-            // Remplit les champs du modal avec les informations générales
-            document.querySelector('#modal_histo_phone .modal-body [data-field="marque"]').textContent = marque;
-            document.querySelector('#modal_histo_phone .modal-body [data-field="modele"]').textContent = modele;
-            document.querySelector('#modal_histo_phone .modal-body [data-field="serial_number"]').textContent = serialNumber;
-            document.querySelector('#modal_histo_phone .modal-body [data-field="imei"]').textContent = imei;
+                // Remplit les champs du modal avec les informations générales
+                document.querySelector('#modal_histo_phone .modal-body [data-field="marque"]').textContent = marque;
+                document.querySelector('#modal_histo_phone .modal-body [data-field="modele"]').textContent = modele;
+                document.querySelector('#modal_histo_phone .modal-body [data-field="serial_number"]').textContent = serialNumber;
+                document.querySelector('#modal_histo_phone .modal-body [data-field="imei"]').textContent = imei;
 
-            // Appelle l'API pour récupérer l'historique d'affectation
-            fetch(`/phone/histoPhone/${idPhone}`)
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Erreur lors de la récupération des données.');
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    // Injecte l'historique d'affectation dans le tableau
-                    populateModal(data);
+                // Appelle l'API pour récupérer l'historique d'affectation
+                fetch(`/phone/histoPhone/${idPhone}`)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Erreur lors de la récupération des données.');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        // Injecte l'historique d'affectation dans le tableau
+                        populateModal(data);
 
-                    // Affiche le modal
-                    const modal = new bootstrap.Modal(document.getElementById('modal_histo_phone'));
-                    modal.show();
-                })
-                .catch(error => {
-                    console.error('Erreur:', error);
-                    alert('Une erreur est survenue lors de la récupération des détails du téléphone.');
-                });
-        });
-    });
-
-    // Fonction pour injecter les données d'historique dans le tableau
-    function populateModal(data) {
-        const tbody = document.querySelector('#modal_histo_phone .modal-body #dataTable tbody');
-
-        // Vide le tableau pour éviter d'afficher des données redondantes
-        tbody.innerHTML = '';
-
-        if (data && Array.isArray(data) && data.length > 0) {
-            data.forEach(item => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td class="text-dark">${item.nom || ''} ${item.prenom || ''}</td>
-                    <td class="text-dark">${item.login || '--'}</td>
-                    <td class="text-dark">${item.localisation || '--'}</td>
-                    <td class="text-dark">${item.debut_affectation || '--'}</td>
-                    <td class="text-dark">${item.fin_affectation || '--'}</td>
-                `;
-                tbody.appendChild(row);
+                        // Affiche le modal
+                        const modal = new bootstrap.Modal(document.getElementById('modal_histo_phone'));
+                        modal.show();
+                    })
+                    .catch(error => {
+                        console.error('Erreur:', error);
+                        alert('Une erreur est survenue lors de la récupération des détails du téléphone.');
+                    });
             });
-        } else {
-            // Aucun historique trouvé
-            const noDataRow = document.createElement('tr');
-            noDataRow.innerHTML = `
-                <td class="text-dark text-center" colspan="5">Aucun historique disponible.</td>
-            `;
-            tbody.appendChild(noDataRow);
+        });
+
+        // Fonction pour injecter les données d'historique dans le tableau
+        function populateModal(data) {
+            const tbody = document.querySelector('#modal_histo_phone .modal-body #dataTable tbody');
+            const modalBody = document.querySelector('#modal_histo_phone .modal-body'); // Conteneur principal du modal
+
+            // Vide le tableau pour éviter d'afficher des données redondantes
+            tbody.innerHTML = '';
+
+            // Supprime le commentaire précédent s'il existe
+            const existingCommentElement = document.querySelector('#phoneComment');
+            if (existingCommentElement) {
+                existingCommentElement.remove();
+            }
+
+            // Affichage des historiques
+            if (data.historique && Array.isArray(data.historique) && data.historique.length > 0) {
+                data.historique.forEach(item => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td class="text-dark">${item.nom || ''} ${item.prenom || ''}</td>
+                        <td class="text-dark">${item.login || '--'}</td>
+                        <td class="text-dark">${item.localisation || '--'}</td>
+                        <td class="text-dark">${item.debut_affectation || '--'}</td>
+                        <td class="text-dark">${item.fin_affectation || '--'}</td>
+                    `;
+                    tbody.appendChild(row);
+                });
+            } else {
+                // Aucun historique trouvé
+                const noDataRow = document.createElement('tr');
+                noDataRow.innerHTML = `
+                    <td class="text-dark text-center" colspan="5">Aucun historique disponible.</td>
+                `;
+                tbody.appendChild(noDataRow);
+            }
+
+            // Ajout du commentaire unique à la fin
+            if (data.commentaire) {
+                const commentaireDiv = document.createElement('div'); // Conteneur pour le commentaire
+                commentaireDiv.id = 'phoneComment';
+                commentaireDiv.classList.add('mt-4', 'p-3', 'bg-light', 'border', 'rounded');
+                commentaireDiv.innerHTML = `
+                    <p class="text-dark fw-bold mb-0">Commentaire :</p>
+                    <p class="text-dark fw-normal">${data.commentaire}</p>
+                `;
+                modalBody.appendChild(commentaireDiv); // Ajoute le commentaire après le tableau
+            } else {
+                console.warn('Aucun commentaire trouvé pour ce téléphone.');
+            }
         }
-    }
-});
+    });
 
 </script>

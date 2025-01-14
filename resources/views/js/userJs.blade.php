@@ -46,13 +46,13 @@
                 const chantier = this.getAttribute('data-edt-chantier');
 
                 // Remplir les champs du formulaire avec les données récupérées
-                document.getElementById('edt_emp_id').value = idEdt;
-                document.getElementById('edt_emp_matricule').value = matricule;
-                document.getElementById('edt_emp_nom').value = nom;
-                document.getElementById('edt_emp_prenom').value = prenom;
-                document.getElementById('edt_emp_login').value = login;
-                document.getElementById('edt_emp_type').value = type;
-                document.getElementById('fonction-select').value = fonction;
+                document.getElementById('id_edt').value = idEdt;
+                document.getElementById('matricule_edt').value = matricule;
+                document.getElementById('nom_edt').value = nom;
+                document.getElementById('prenom_edt').value = prenom;
+                document.getElementById('login_edt').value = login;
+                document.getElementById('type-select-edt').value = type;
+                document.getElementById('fonction-select-edt').value = fonction;
                 document.getElementById('chantier-select').value = chantier;
             });
         });
@@ -72,7 +72,7 @@
 
         deleteButtons.forEach(button => {
             button.addEventListener("click", function () {
-                // Récupérer les données utilisateur
+                // Récupération des données utilisateur
                 const id = this.getAttribute("data-id");
                 const name = this.getAttribute("data-name");
                 const matricule = this.getAttribute("data-matricule");
@@ -81,7 +81,7 @@
                 const fonction = this.getAttribute("data-fonction");
                 const chantier = this.getAttribute("data-chantier");
 
-                // Mettre à jour les champs de la modale
+                // Mise à jour des champs de la modale
                 const modal = {
                     id: document.querySelector("#supprimer_utilisateur .modal-body #utilisateur_id"),
                     nom: document.querySelector("#supprimer_utilisateur .modal-body #utilisateur_nom"),
@@ -90,9 +90,10 @@
                     type: document.querySelector("#supprimer_utilisateur .modal-body #utilisateur_type"),
                     fonction: document.querySelector("#supprimer_utilisateur .modal-body #utilisateur_fonction"),
                     chantier: document.querySelector("#supprimer_utilisateur .modal-body #utilisateur_chantier"),
-                    confirmButton: document.querySelector("#supprimer_utilisateur .modal-footer #confirm_delete_utilisateur"),
+                    equipements: document.querySelector("#equipements_affectes"),
                 };
 
+                // Mise à jour des informations utilisateur dans la modale
                 if (modal.id) modal.id.textContent = id;
                 if (modal.nom) modal.nom.textContent = name;
                 if (modal.matricule) modal.matricule.textContent = matricule;
@@ -101,11 +102,170 @@
                 if (modal.fonction) modal.fonction.textContent = fonction;
                 if (modal.chantier) modal.chantier.textContent = chantier;
 
-                // Mettre à jour l'URL du bouton "Supprimer"
-                if (modal.confirmButton) modal.confirmButton.href = `/utilisateur/supprimer/${id}`;
+                // Charger les équipements affectés via la nouvelle route
+                fetch(`/user/equipementsAffectes/${id}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success && data.equipements.length > 0) {
+                            let equipementHTML = "";
+
+                            data.equipements.forEach(equipement => {
+                                equipementHTML += `
+                                    <div class="form-check">
+                                        <input class="form-check-input equipement-checkbox" type="checkbox" value="${equipement.id_equipement}" id="equipement_${equipement.id_equipement}">
+                                        <label class="form-check-label" for="equipement_${equipement.id_equipement}">
+                                            ${equipement.marque} ${equipement.modele} (${equipement.type_equipement})
+                                        </label>
+                                    </div>
+                                `;
+                            });
+
+                            modal.equipements.innerHTML = equipementHTML;
+
+                            // Ajouter un événement pour gérer l'affichage du champ de commentaire
+                            const checkboxes = document.querySelectorAll(".equipement-checkbox");
+                            const commentaireField = document.querySelector("#commentaire_retour");
+
+                            checkboxes.forEach(checkbox => {
+                                checkbox.addEventListener("change", function () {
+                                    const isChecked = Array.from(checkboxes).some(cb => cb.checked);
+                                    commentaireField.classList.toggle("d-none", !isChecked);
+                                });
+                            });
+                        } else {
+                            // Aucun équipement affecté trouvé
+                            modal.equipements.innerHTML = '<p class="text-muted">Aucun équipement affecté.</p>';
+                        }
+                    })
+                    .catch(error => {
+                        console.error("Erreur lors du chargement des équipements :", error);
+                        modal.equipements.innerHTML = '<p class="text-danger">Erreur lors du chargement des équipements.</p>';
+                    });
+
+                // Charger les lignes associées à l'utilisateur
+                fetch(`/user/lignesAffectes/${id}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            let lignesHTML = "";
+
+                            // Vérifier si des lignes existent dans "data.lignes"
+                            if (data.lignes && data.lignes.length > 0) {
+                                // Supposons que "data.lignes" soit un tableau contenant les lignes associées
+                                data.lignes.forEach(ligne => {
+                                    const mailtoLink = generateMailtoLink(
+                                        ligne.email,
+                                        ligne.num_ligne,
+                                        ligne.num_sim,
+                                        ligne.nom_forfait,
+                                        ligne.debut_affectation,
+                                        document.querySelector("#date_depart").value // Date de départ saisie dans le modal
+                                    );
+
+                                    // Génération dynamique des éléments HTML pour chaque ligne
+                                    lignesHTML += `
+                                        <div class="ligne-item d-flex justify-content-between align-items-center border-bottom pb-2 mb-2">
+                                            <div>
+                                                <p class="mb-0"><strong>Numéro de ligne :</strong> ${ligne.num_ligne}</p>
+                                                <p class="mb-0"><strong>Forfait :</strong> ${ligne.nom_forfait}</p>
+                                                <p class="mb-0"><strong>Date d'activation :</strong> ${ligne.debut_affectation}</p>
+                                            </div>
+                                            <button type="button" class="btn btn-outline-danger btn-sm ouvrir-mailto" data-mailto="${mailtoLink}">
+                                                Résilier
+                                            </button>
+                                        </div>
+                                    `;
+                                });
+
+                                // Insérer les lignes générées dans le conteneur
+                                document.querySelector("#lignes_associees").innerHTML = lignesHTML;
+                            } else {
+                                // Si aucune ligne n'est trouvée, afficher le message par défaut
+                                document.querySelector("#lignes_associees").innerHTML = '<p class="text-muted">Aucune ligne trouvée.</p>';
+                            }
+
+                            // Ajouter des événements pour les boutons "Résilier"
+                            const mailtoButtons = document.querySelectorAll(".ouvrir-mailto");
+                            mailtoButtons.forEach(button => {
+                                button.addEventListener("click", function () {
+                                    const mailto = this.getAttribute("data-mailto");
+                                    window.location.href = mailto; // Ouvrir le client de messagerie avec le lien mailto
+                                });
+                            });
+                        } else {
+                            // Si la réponse "data.success" est fausse, afficher le message d'erreur par défaut
+                            document.querySelector("#lignes_associees").innerHTML = '<p class="text-muted">Aucune ligne trouvée.</p>';
+                        }
+
+                    })
+                    .catch(error => {
+                        console.error("Erreur lors du chargement des lignes :", error);
+                        document.querySelector("#lignes_associees").innerHTML = '<p class="text-danger">Erreur lors du chargement des lignes.</p>';
+                    });
+
+                    function generateMailtoLink(email, numLigne, numSim, forfaitNom, dateResiliation) {
+                        const subject = encodeURIComponent("Demande de résiliation d'une ligne");
+                        const body = encodeURIComponent(
+                            `Bonjour,
+
+                            Veuillez procéder à la résiliation de la ligne suivante :
+
+                            - Numéro de ligne : ${numLigne}
+                            - SIM : ${numSim}
+                            - Forfait : ${forfaitNom}
+
+                            Merci de traiter cette demande dans les meilleurs délais.
+
+                            Cordialement,`
+                        );
+
+                        return `mailto:${email}?subject=${subject}&body=${body}`;
+                    }
             });
         });
+
+        // Validation du départ
+        const validateButton = document.querySelector("#valider_depart_utilisateur");
+        validateButton.addEventListener("click", function () {
+            const idUtilisateur = document.querySelector("#utilisateur_id").textContent;
+            const dateDepart = document.querySelector("#date_depart").value;
+            const commentaire = document.querySelector("#commentaire").value;
+            const equipements = Array.from(document.querySelectorAll(".equipement-checkbox:checked")).map(cb => cb.value);
+
+            // Vérification minimale
+            if (!dateDepart) {
+                alert("Veuillez sélectionner une date de départ.");
+                return;
+            }
+
+            fetch(`/utilisateur/supprimer/${idUtilisateur}`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute("content"),
+                },
+                body: JSON.stringify({
+                    date_depart: dateDepart,
+                    equipements: equipements,
+                    commentaire: commentaire,
+                }),
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert("Départ validé avec succès.");
+                        window.location.reload();
+                    } else {
+                        alert(data.message || "Erreur lors du départ de l'utilisateur.");
+                    }
+                })
+                .catch(error => {
+                    console.error("Erreur lors de la validation du départ :", error);
+                    alert("Erreur serveur. Veuillez réessayer.");
+                });
+        });
     });
+    
 </script>
 
 {{-- AJOUTER --}}
@@ -118,29 +278,39 @@
         @endif
 
         // Afficher/masquer le champ "Nouvelle Fonction"
-        const fonctionSelectAdd = document.getElementById("fonction-select-add");
+        const toggleBtn = document.getElementById("toggle-fonction-btn");
+        const toggleIcon = document.getElementById("toggle-icon");
+        const toggleText = document.getElementById("toggle-text");
+        const fonctionDropdown = document.getElementById("fonction-dropdown");
         const newFonctionInput = document.getElementById("new-fonction-input");
 
-        if (fonctionSelectAdd && newFonctionInput) {
-            fonctionSelectAdd.addEventListener("change", function () {
-                newFonctionInput.style.display = this.value === "new" ? "block" : "none";
-            });
-        }
+        if (toggleBtn && toggleIcon && toggleText && fonctionDropdown && newFonctionInput) {
+            // Gestion du clic sur le bouton
+            toggleBtn.addEventListener("click", function () {
+                const isDropdownVisible = fonctionDropdown.style.display !== "none"; // Vérifie si le dropdown est visible
 
-        // Initialisation des filtres dynamiques pour les champs
-        setupDynamicSearch("search-fonction-add", "fonction-select-add");
-        setupDynamicSearch("search-chantier", "chantier-select");
+                if (isDropdownVisible) {
+                    // Masquer le dropdown et afficher l'input
+                    fonctionDropdown.style.display = "none";
+                    newFonctionInput.style.display = "block";
 
-        // Validation avant soumission du formulaire
-        const form = document.querySelector("#modal_add_emp form");
-        const newFonctionField = document.querySelector("input[name='new_fonction']");
+                    // Mettre à jour le style et le contenu du bouton
+                    toggleBtn.classList.remove("btn-outline-success");
+                    toggleBtn.classList.add("btn-outline-secondary");
+                    toggleIcon.classList.remove("fa-plus");
+                    toggleIcon.classList.add("fa-minus");
+                    toggleText.textContent = "Choisir une fonction existante";
+                } else {
+                    // Afficher le dropdown et masquer l'input
+                    fonctionDropdown.style.display = "block";
+                    newFonctionInput.style.display = "none";
 
-        if (form && fonctionSelectAdd && newFonctionField) {
-            form.addEventListener("submit", function (e) {
-                if (fonctionSelectAdd.value === "new" && !newFonctionField.value.trim()) {
-                    e.preventDefault();
-                    alert("Veuillez entrer une nouvelle fonction avant de soumettre le formulaire.");
-                    newFonctionField.focus();
+                    // Revenir au style et contenu par défaut du bouton
+                    toggleBtn.classList.remove("btn-outline-secondary");
+                    toggleBtn.classList.add("btn-outline-success");
+                    toggleIcon.classList.remove("fa-minus");
+                    toggleIcon.classList.add("fa-plus");
+                    toggleText.textContent = "Ajouter une nouvelle fonction";
                 }
             });
         }
@@ -215,9 +385,9 @@
 document.addEventListener('DOMContentLoaded', function () {
     // Recherche des fonctions
     configureSearchField(
-        'search-fonction',       // ID du champ de recherche
-        'fonction-select',       // ID du <select> à mettre à jour
-        'selected_fonction_hidden', // ID du champ caché
+        'search-fonction-edt',       // ID du champ de recherche
+        'fonction-select-edt',       // ID du <select> à mettre à jour
+        'selected_fonction_edt_hidden', // ID du champ caché
         '/ligne/searchFonction'  // URL pour récupérer les données
     );
 
@@ -454,15 +624,22 @@ function configureSearchField(searchInputId, selectId, hiddenInputId, searchUrl)
     
         // Fonction pour injecter les données d'historique dans les tableaux
         function populateModal(data) {
-            // Sélectionne les corps des tableaux
+            // 1. Sélection des tableaux et du conteneur modal
             const tbodyEquipement = document.querySelector('#dataTableEquipement tbody');
             const tbodyLigne = document.querySelector('#dataTableLigne tbody');
+            const modalBody = document.querySelector('#modal_histo_user .modal-body'); // Le conteneur principal du modal
 
-            // Vide les tableaux pour éviter d'afficher des données redondantes
-            tbodyEquipement.innerHTML = '';
-            tbodyLigne.innerHTML = '';
+            // 2. Vider les tableaux et retirer tout commentaire précédent
+            tbodyEquipement.innerHTML = ''; // Vide le tableau des équipements
+            tbodyLigne.innerHTML = ''; // Vide le tableau des lignes
 
-            // Gestion des équipements
+            // Retire l'ancien commentaire s'il existe
+            const existingCommentElement = document.querySelector('#userComment');
+            if (existingCommentElement) {
+                existingCommentElement.remove();
+            }
+
+            // 3. Gérer les équipements
             if (data.equipements && Array.isArray(data.equipements) && data.equipements.length > 0) {
                 data.equipements.forEach(item => {
                     const row = document.createElement('tr');
@@ -477,15 +654,14 @@ function configureSearchField(searchInputId, selectId, hiddenInputId, searchUrl)
                     tbodyEquipement.appendChild(row);
                 });
             } else {
-                // Aucun historique d'équipement trouvé
-                const noDataRow = document.createElement('tr');
-                noDataRow.innerHTML = `
+                const noEquipementRow = document.createElement('tr');
+                noEquipementRow.innerHTML = `
                     <td class="text-dark text-center" colspan="6">Aucun historique d'équipement disponible.</td>
                 `;
-                tbodyEquipement.appendChild(noDataRow);
+                tbodyEquipement.appendChild(noEquipementRow);
             }
 
-            // Gestion des lignes
+            // 4. Gérer les lignes
             if (data.lignes && Array.isArray(data.lignes) && data.lignes.length > 0) {
                 data.lignes.forEach(item => {
                     const row = document.createElement('tr');
@@ -500,14 +676,30 @@ function configureSearchField(searchInputId, selectId, hiddenInputId, searchUrl)
                     tbodyLigne.appendChild(row);
                 });
             } else {
-                // Aucun historique de ligne trouvé
-                const noDataRow = document.createElement('tr');
-                noDataRow.innerHTML = `
+                const noLigneRow = document.createElement('tr');
+                noLigneRow.innerHTML = `
                     <td class="text-dark text-center" colspan="6">Aucun historique de ligne disponible.</td>
                 `;
-                tbodyLigne.appendChild(noDataRow);
+                tbodyLigne.appendChild(noLigneRow);
+            }
+
+            // 5. Ajouter le commentaire à la fin du modal
+            if (data.commentaire) {
+                const commentaireDiv = document.createElement('div'); // Créer un conteneur pour le commentaire
+                commentaireDiv.id = 'userComment';
+                commentaireDiv.classList.add('mt-4', 'p-3', 'bg-light', 'border', 'rounded');
+                commentaireDiv.innerHTML = `
+                    <p class="text-dark fw-bold mb-0">Commentaire :</p>
+                    <p class="text-dark fw-normal">${data.commentaire}</p>
+                `;
+
+                // Ajout du commentaire après les tableaux
+                modalBody.appendChild(commentaireDiv);
+            } else {
+                console.warn('Aucun commentaire trouvé pour cet utilisateur.');
             }
         }
+
     });
     
-    </script>
+</script>

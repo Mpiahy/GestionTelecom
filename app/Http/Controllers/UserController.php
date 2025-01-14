@@ -9,10 +9,12 @@ use Illuminate\Support\Facades\Session;
 use App\Models\Utilisateur;
 use App\Models\TypeUtilisateur;
 use App\Models\Fonction;
+use App\Models\Ligne;
 use App\Models\Localisation;
 use App\Models\StatutEquipement;
 use Exception;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class UserController extends Controller
 {
@@ -25,12 +27,14 @@ class UserController extends Controller
         $chantiers = Localisation::all();
     
         // Appliquer les filtres avec pagination
-        $utilisateurs = Utilisateur::with(['typeUtilisateur', 'fonction', 'localisation'])
+        $utilisateurs = Utilisateur::withTrashed()
+            ->with(['typeUtilisateur', 'fonction', 'localisation'])
             ->filterByType($request->input('type'))
             ->filterByChantier($request->input('search_user_chantier'))
             ->filterByLogin($request->input('search_user_login'))
             ->filterByName($request->input('search_user_name'))
-            ->paginate(5);
+            ->orderBy('updated_at', 'desc')
+            ->paginate(10);
     
         return view('ref.user', compact('login', 'types', 'fonctions', 'chantiers', 'utilisateurs'));
     }    
@@ -39,6 +43,7 @@ class UserController extends Controller
     public function ajouterUtilisateur(Request $request)
     {
         try {
+            // Validation des champs de base
             $validatedData = $request->validate([
                 'matricule_add' => 'nullable|unique:utilisateur,matricule',
                 'nom_add' => 'required|string|max:50',
@@ -46,28 +51,41 @@ class UserController extends Controller
                 'login_add' => 'required|string|max:40|unique:utilisateur,login',
                 'id_type_utilisateur_add' => 'required|exists:type_utilisateur,id_type_utilisateur',
                 'id_localisation_add' => 'required|exists:localisation,id_localisation',
-                'new_fonction' => 'nullable|string|max:50',
             ]);
-              
-            if ($request->id_fonction === 'new') {
-                $request->validate(['new_fonction' => 'required|string|max:50']);
-                $fonction = Fonction::create(['fonction' => $request->new_fonction]);
-                $validatedData['id_fonction'] = $fonction->id_fonction;
+    
+            // Gestion de la fonction
+            if ($request->filled('new_fonction_add')) {
+                // Valider le champ "new_fonction_add" s'il est rempli
+                $request->validate([
+                    'new_fonction_add' => 'required|string|max:100', // Ajout d'une limite de caractères
+                ]);
+    
+                // Utilisation de la méthode du modèle pour créer une nouvelle fonction
+                $fonction = Fonction::creerNouvelleFonction($request->new_fonction_add);
+    
+                // Assigner l'ID de la nouvelle fonction
+                $validatedData['id_fonction_add'] = $fonction->id_fonction;
             } else {
-                $request->validate(['id_fonction' => 'nullable|exists:fonction,id_fonction']);
-                $validatedData['id_fonction'] = $request->id_fonction;
+                // Sinon, on utilise une fonction existante
+                $request->validate([
+                    'id_fonction_add' => 'required|exists:fonction,id_fonction',
+                ]);
+    
+                $validatedData['id_fonction_add'] = $request->id_fonction_add;
             }
-
+    
+            // Création de l'utilisateur
             Utilisateur::ajouterUtilisateur($validatedData);
-
+    
             return redirect()->route('ref.user')->with('success', __('Utilisateur ajouté avec succès !'));
         } catch (\Illuminate\Validation\ValidationException $e) {
+            // Retourner les erreurs de validation avec les données du formulaire et rouvrir le modal
             return redirect()->route('ref.user')
                 ->withErrors($e->validator)
                 ->withInput()
                 ->with('modal_with_error', 'modal_add_emp');
         }
-    }
+    }    
 
     // Modification d'un utilisateur existant
     public function modifierUtilisateur(Request $request)
@@ -75,16 +93,37 @@ class UserController extends Controller
         try {
             // Validation des données
             $validated = $request->validate([
-                'matricule' => 'nullable|exists:utilisateur,matricule', // Nullable pour éviter d'obliger la saisie
-                'nom' => 'required|string|max:255',
-                'prenom' => 'required|string|max:255',
-                'login' => 'required|string|max:255|unique:utilisateur,login,' . $request->id . ',id_utilisateur',
-                'id_type_utilisateur' => 'required|exists:type_utilisateur,id_type_utilisateur',
-                'id_fonction' => 'required|exists:fonction,id_fonction',
-                'id_localisation' => 'required|exists:localisation,id_localisation',
+                'id_edt' => 'required|exists:utilisateur,id_utilisateur',
+                'matricule_edt' => 'nullable', // Nullable pour éviter d'obliger la saisie
+                'nom_edt' => 'required|string|max:255',
+                'prenom_edt' => 'required|string|max:255',
+                'login_edt' => 'required|string|max:255|unique:utilisateur,login,' . $request->id_edt . ',id_utilisateur',
+                'id_type_utilisateur_edt' => 'required|exists:type_utilisateur,id_type_utilisateur',
+                'id_localisation_edt' => 'required|exists:localisation,id_localisation',
             ]);
 
-            Utilisateur::modifierUtilisateur($request->id, $validated);
+            // Gestion de la fonction
+            if ($request->filled('new_fonction_edt')) {
+                // Valider le champ "new_fonction_edt" s'il est rempli
+                $request->validate([
+                    'new_fonction_edt' => 'required|string|max:100', // Ajout d'une limite de caractères
+                ]);
+    
+                // Utilisation de la méthode du modèle pour créer une nouvelle fonction
+                $fonction = Fonction::creerNouvelleFonction($request->new_fonction_edt);
+    
+                // Assigner l'ID de la nouvelle fonction
+                $validated['id_fonction_edt'] = $fonction->id_fonction;
+            } else {
+                // Sinon, on utilise une fonction existante
+                $request->validate([
+                    'id_fonction_edt' => 'required|exists:fonction,id_fonction',
+                ]);
+    
+                $validated['id_fonction_edt'] = $request->id_fonction_edt;
+            }
+
+            Utilisateur::modifierUtilisateur($validated);
 
             return redirect()->route('ref.user')->with('success', __('Utilisateur modifié avec succès.'));
         } catch (\Illuminate\Validation\ValidationException $e) {
@@ -96,19 +135,78 @@ class UserController extends Controller
         }
     } 
 
-    // Suppression d'un utilisateur
-    public function supprimerUtilisateur($id)
+    public function supprimerUtilisateur(Request $request, $id)
     {
-        $utilisateur = Utilisateur::find($id);
+        Log::info("Début de la suppression de l'utilisateur", ['id' => $id]);
 
-        if ($utilisateur) {
-            $utilisateur->delete();
-            return redirect()->route('ref.user')->with('success', __('Utilisateur supprimé avec succès.'));
+        // Vérifier si l'utilisateur existe
+        $utilisateur = Utilisateur::find($id);
+        if (!$utilisateur) {
+            Log::error("Utilisateur introuvable", ['id' => $id]);
+            return response()->json(['success' => false, 'message' => __('Utilisateur introuvable.')], 404);
         }
 
-        return redirect()->route('ref.user')->with('error', __('Utilisateur introuvable.'));
+        Log::info("Utilisateur trouvé", ['utilisateur' => $utilisateur]);
+
+        // Récupérer les données envoyées depuis le frontend
+        $dateDepart = $request->input('date_depart');
+        $equipements = $request->input('equipements', []);
+        $commentaire = $request->input('commentaire');
+
+        Log::info("Données reçues", [
+            'date_depart' => $dateDepart,
+            'equipements' => $equipements,
+            'commentaire' => $commentaire
+        ]);
+
+        if (!$dateDepart) {
+            Log::error("Date de départ manquante");
+            return response()->json(['success' => false, 'message' => __('Date de départ manquante.')], 422);
+        }
+
+        try {
+            // Exemple de log avant chaque étape
+            Log::info("Début de la gestion des équipements");
+            Equipement::retourEquipements($equipements);
+
+            Log::info("Retour des équipements réussi", ['equipements' => $equipements]);
+
+            Log::info("Récupération des lignes associées");
+            $lignes = Affectation::where('id_utilisateur', $id)
+                ->whereNotNull('id_ligne')
+                ->with('ligne', 'ligne.forfait', 'ligne.operateur')
+                ->get();
+
+            Log::info("Lignes récupérées", ['lignes' => $lignes]);
+
+            $idLignes = $lignes->pluck('ligne.id_ligne')->toArray();
+
+            Log::info("Résiliation des lignes", ['id_lignes' => $idLignes]);
+            Ligne::resilierLignes($idLignes);
+
+            Log::info("Clôture des affectations");
+            Affectation::cloturerAffectationsUtilisateur($id, $dateDepart, $commentaire);
+
+            Log::info("Suppression logique de l'utilisateur");
+            $utilisateur->deleted_at = $dateDepart;
+            $utilisateur->save();
+
+            Log::info("Utilisateur supprimé avec succès");
+            return response()->json(['success' => true, 'message' => __('Utilisateur supprimé avec succès.')]);
+        } catch (Exception $e) {
+            Log::error("Erreur lors de la suppression de l'utilisateur", [
+                'message' => $e->getMessage(),
+                'stack' => $e->getTraceAsString()
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => __('Erreur lors de la suppression de l\'utilisateur.')
+            ], 500);
+        }
     }
 
+    
     // Recherche des fonctions
     public function searchFonction(Request $request)
     {
@@ -225,4 +323,56 @@ class UserController extends Controller
 
         return response()->json($histoUser);
     }
+
+    // Equipements affectés DEPART
+    public function equipementsAffectes($id_user)
+    {
+        // Vérifie si l'utilisateur existe
+        $utilisateurExists = DB::table('utilisateur')
+            ->where('id_utilisateur', $id_user)
+            ->exists();
+
+        if (!$utilisateurExists) {
+            return response()->json(['success' => false, 'message' => __('Utilisateur introuvable.')], 404);
+        }
+
+        // Récupère uniquement les équipements affectés à l'utilisateur
+        $sqlEquipements = "
+            SELECT 
+                id_utilisateur, marque, modele, type_equipement, imei, serial_number, debut_affectation, fin_affectation, id_equipement
+            FROM view_historique_user_equipement 
+            WHERE id_utilisateur = :id_utilisateur AND fin_affectation IS NULL
+        ";
+
+        $equipements = DB::select($sqlEquipements, ['id_utilisateur' => $id_user]);
+
+        return response()->json(['success' => true, 'equipements' => $equipements]);
+    }
+    
+    // Lignes affectés DEPART
+    public function lignesAffectes($id_user)
+    {
+        // Vérifier si l'utilisateur existe
+        $utilisateurExists = DB::table('utilisateur')
+            ->where('id_utilisateur', $id_user)
+            ->exists();
+    
+        if (!$utilisateurExists) {
+            return response()->json(['success' => false, 'message' => __('Utilisateur introuvable.')], 404);
+        }
+    
+        // Récupérer les lignes associées à l'utilisateur (actives)
+        $sqllignes = "
+            SELECT 
+                *
+            FROM view_historique_user_ligne 
+            WHERE id_utilisateur = :id_utilisateur AND fin_affectation IS NULL
+        ";
+    
+        $lignes = DB::select($sqllignes, ['id_utilisateur' => $id_user]);
+    
+        // Répondre avec les lignes associées
+        return response()->json(['success' => true, 'lignes' => $lignes]);
+    }
+
 }

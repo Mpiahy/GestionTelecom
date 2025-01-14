@@ -168,20 +168,9 @@
                                     </td>
                                     <!-- Actions -->
                                     <td class="text-center">
-                                        <div class="d-flex justify-content-center gap-2">
-                                            <!-- Attribuer Équipement -->
-                                            <a href="#"
-                                                class="text-decoration-none"
-                                                data-bs-toggle="modal"
-                                                data-bs-target="#modal_attribuer_equipement"
-                                                data-id-utilisateur-attr="{{ $utilisateur->id_utilisateur }}"
-                                                data-login-attr="{{ $utilisateur->login }}"
-                                                data-nom-attr="{{ $utilisateur->nom }}"
-                                                data-prenom-attr="{{ $utilisateur->prenom }}"
-                                                title="Attribuer un équipement">
-                                                <i class="fas fa-laptop-medical text-success" style="font-size: 20px;"></i>
-                                            </a>
-
+                                        @if ($utilisateur->deleted_at)
+                                            <!-- Si l'utilisateur est supprimé (soft delete), afficher la date et l'heure de suppression -->
+                                            <span class="text-danger">Départ: {{ $utilisateur->deleted_at->format('d/m/Y') }}</span>
                                             <!-- historique -->
                                             <a id="btn_histo_user"
                                                 class="text-decoration-none"
@@ -192,45 +181,74 @@
                                                 data-id-histo="{{ $utilisateur->id_utilisateur }}"
                                                 data-user-histo="{{ $utilisateur->nom }} {{ $utilisateur->prenom }}"
                                                 data-login-histo="{{ $utilisateur->login }}"
-                                                data-fonction-histo="{{ $utilisateur->fonction->fonction }}"
+                                                data-fonction-histo="{{ $utilisateur->fonction->fonction ?? 'N/A' }}"
                                                 data-localisation-histo="{{ $utilisateur->localisation->localisation }}">
                                                 <i class="fas fa-history text-primary" style="font-size: 20px;"></i>
                                             </a>
-                    
-                                            <!-- Modifier -->
-                                            <a href="#"
-                                            class="text-decoration-none"
-                                            data-bs-toggle="modal"
-                                            data-bs-target="#modal_edit_emp"
-                                            data-id-edt="{{ $utilisateur->id_utilisateur }}"
-                                            data-edt-matricule="{{ $utilisateur->matricule }}"
-                                            data-edt-nom="{{ $utilisateur->nom }}"
-                                            data-edt-prenom="{{ $utilisateur->prenom }}"
-                                            data-edt-login="{{ $utilisateur->login }}"
-                                            data-edt-type="{{ $utilisateur->typeUtilisateur->id_type_utilisateur }}"
-                                            data-edt-fonction="{{ $utilisateur->fonction->id_fonction }}"
-                                            data-edt-chantier="{{ $utilisateur->localisation->id_localisation }}"
-                                            title="Modifier">
-                                                <i class="far fa-edit text-warning" style="font-size: 20px;"></i>
-                                            </a>
-                    
-                                            <!-- Supprimer -->
-                                            <a href="#"
-                                            class="text-decoration-none open-delete-modal"
-                                            data-bs-target="#supprimer_utilisateur"
-                                            data-bs-toggle="modal"
-                                            data-id="{{ $utilisateur->id_utilisateur }}"
-                                            data-matricule="{{ $utilisateur->matricule }}"
-                                            data-name="{{ $utilisateur->nom }} {{ $utilisateur->prenom }}"
-                                            data-login="{{ $utilisateur->login }}"
-                                            data-type="{{ $utilisateur->typeUtilisateur->type_utilisateur }}"
-                                            data-fonction="{{ $utilisateur->fonction->fonction }}"
-                                            data-chantier="{{ $utilisateur->localisation->localisation }}"
-                                            title="Départ">
-                                                <i class="fas fa-sign-out-alt text-danger" style="font-size: 20px;"></i>
-                                            </a>
+                                        @else
+                                            <div class="d-flex justify-content-center gap-2">
+                                                <!-- Attribuer Équipement -->
+                                                <a href="#"
+                                                    class="text-decoration-none"
+                                                    data-bs-toggle="modal"
+                                                    data-bs-target="#modal_attribuer_equipement"
+                                                    data-id-utilisateur-attr="{{ $utilisateur->id_utilisateur }}"
+                                                    data-login-attr="{{ $utilisateur->login }}"
+                                                    data-nom-attr="{{ $utilisateur->nom }}"
+                                                    data-prenom-attr="{{ $utilisateur->prenom }}"
+                                                    title="Attribuer un équipement">
+                                                    <i class="fas fa-laptop-medical text-success" style="font-size: 20px;"></i>
+                                                </a>
 
-                                        </div>
+                                                <!-- historique -->
+                                                <a id="btn_histo_user"
+                                                    class="text-decoration-none"
+                                                    data-bs-target="#modal_histo_user"
+                                                    data-bs-toggle="modal"
+                                                    title="Historique"
+                                                    href="{{ url('/user/histoUser/' . $utilisateur->id_utilisateur) }}"
+                                                    data-id-histo="{{ $utilisateur->id_utilisateur }}"
+                                                    data-user-histo="{{ $utilisateur->nom }} {{ $utilisateur->prenom }}"
+                                                    data-login-histo="{{ $utilisateur->login }}"
+                                                    data-fonction-histo="{{ $utilisateur->fonction->fonction ?? 'N/A' }}"
+                                                    data-localisation-histo="{{ $utilisateur->localisation->localisation }}">
+                                                    <i class="fas fa-history text-primary" style="font-size: 20px;"></i>
+                                                </a>
+                        
+                                                <!-- Modifier -->
+                                                <a href="#"
+                                                class="text-decoration-none"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#modal_edit_emp"
+                                                data-id-edt="{{ $utilisateur->id_utilisateur }}"
+                                                data-edt-matricule="{{ $utilisateur->matricule }}"
+                                                data-edt-nom="{{ $utilisateur->nom }}"
+                                                data-edt-prenom="{{ $utilisateur->prenom }}"
+                                                data-edt-login="{{ $utilisateur->login }}"
+                                                data-edt-type="{{ $utilisateur->typeUtilisateur->id_type_utilisateur }}"
+                                                data-edt-fonction="{{ $utilisateur->fonction->id_fonction ?? '' }}"
+                                                data-edt-chantier="{{ $utilisateur->localisation->id_localisation }}"
+                                                title="Modifier">
+                                                    <i class="far fa-edit text-warning" style="font-size: 20px;"></i>
+                                                </a>
+                        
+                                                <!-- Supprimer -->
+                                                <a href="#"
+                                                class="text-decoration-none open-delete-modal"
+                                                data-bs-target="#supprimer_utilisateur"
+                                                data-bs-toggle="modal"
+                                                data-id="{{ $utilisateur->id_utilisateur }}"
+                                                data-matricule="{{ $utilisateur->matricule ?? 'N/A'}}"
+                                                data-name="{{ $utilisateur->nom }} {{ $utilisateur->prenom ?? 'N/A'}}"
+                                                data-login="{{ $utilisateur->login ?? 'N/A'}}"
+                                                data-type="{{ $utilisateur->typeUtilisateur->type_utilisateur ?? 'N/A'}}"
+                                                data-fonction="{{ $utilisateur->fonction->fonction ?? 'N/A' }}"
+                                                data-chantier="{{ $utilisateur->localisation->localisation ?? 'N/A'}}"
+                                                title="Départ">
+                                                    <i class="fas fa-sign-out-alt text-danger" style="font-size: 20px;"></i>
+                                                </a>
+                                            </div>
+                                        @endif
                                     </td>
                                 @empty
                                     <tr>

@@ -14,7 +14,7 @@ class TypeLigneSeeder extends Seeder
     {
         TypeLigne::truncate();
         $types = [
-            ['id_type_ligne' => TypeLigne::TYPE_STANDARD, 'type_ligne' => 'Standard'],
+            ['id_type_ligne' => TypeLigne::TYPE_STANDARD, 'type_ligne' => 'Voix et Internet'],
             ['id_type_ligne' => TypeLigne::TYPE_INTERNET, 'type_ligne' => 'Internet'],
             ['id_type_ligne' => TypeLigne::TYPE_FIXE, 'type_ligne' => 'Fixe'],
         ];

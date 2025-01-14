@@ -14,13 +14,13 @@ return new class extends Migration
         // TABLE service
         Schema::create('service', function (Blueprint $table) {
             $table->id('id_service');
-            $table->string('libelle_service', 50)->unique();
+            $table->string('libelle_service', 80)->unique();
             $table->timestamps();
         });
         // TABLE imputation
         Schema::create('imputation', function (Blueprint $table) {
             $table->id('id_imputation');
-            $table->string('libelle_imputation', 100)->unique();
+            $table->string('libelle_imputation', 170)->unique();
             $table->unsignedBigInteger('id_service');
             $table->foreign('id_service')->references('id_service')->on('service')->onDelete('cascade');
             $table->timestamps();
@@ -28,7 +28,7 @@ return new class extends Migration
         // TABLE localisation
         Schema::create('localisation', function (Blueprint $table) {
             $table->id('id_localisation');
-            $table->string('localisation', 150)->unique();
+            $table->string('localisation', 255)->unique();
             $table->unsignedBigInteger('id_service');
             $table->unsignedBigInteger('id_imputation')->nullable();
             $table->foreign('id_service')->references('id_service')->on('service')->onDelete('cascade');

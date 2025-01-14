@@ -19,6 +19,7 @@ class Affectation extends Model
     protected $fillable = [
         'debut_affectation',
         'fin_affectation',
+        'commentaire',
         'id_ligne',
         'id_forfait',
         'id_equipement',
@@ -28,6 +29,11 @@ class Affectation extends Model
     public function utilisateur()
     {
         return $this->belongsTo(Utilisateur::class, 'id_utilisateur');
+    }
+    
+    public function ligne()
+    {
+        return $this->belongsTo(Ligne::class, 'id_ligne');
     }
 
     public static function creerAffectation($dateDebut, $idLigne, $idForfait, $idUtilisateur)
@@ -219,6 +225,16 @@ class Affectation extends Model
         $data['Total']['total_annuel'] = $totalAnnuelTousTypes;
 
         return $data;
+    }
+    
+    public static function cloturerAffectationsUtilisateur($idUtilisateur, $dateDepart, $commentaire = null)
+    {
+        self::where('id_utilisateur', $idUtilisateur)
+            ->whereNull('fin_affectation')
+            ->update([
+                'fin_affectation' => $dateDepart,
+                'commentaire' => $commentaire,
+            ]);
     }
 
 }

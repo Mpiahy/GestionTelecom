@@ -16,6 +16,7 @@ return new class extends Migration
             $table->id('id_affectation');
             $table->date('debut_affectation');
             $table->date('fin_affectation')->nullable();
+            $table->string('commentaire',255)->nullable();
             $table->unsignedBigInteger('id_ligne')->nullable();
             $table->unsignedBigInteger('id_forfait')->nullable();
             $table->unsignedBigInteger('id_equipement')->nullable();

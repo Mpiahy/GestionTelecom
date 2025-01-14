@@ -198,5 +198,4 @@ class PhoneController extends Controller
 
         return response()->json($histoPhone);
     }
-
 }

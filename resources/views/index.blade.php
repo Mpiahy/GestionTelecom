@@ -78,7 +78,7 @@
 
                 <!-- Boutons d'exportation -->
                 <div class="d-flex justify-content-center mt-4 gap-2">
-                    <a href="{{ route('export.pdf', ['annee' => request('annee')]) }}" class="btn btn-outline-primary">
+                    <a href="{{ route('export.pdf', ['annee' => request('annee')]) }}" class="btn btn-outline-danger">
                         <i class="fas fa-file-pdf me-2"></i> Export TBD PDF
                     </a>
                     <a href="{{ route('export.xlsx', ['annee' => request('annee')]) }}" class="btn btn-outline-success">

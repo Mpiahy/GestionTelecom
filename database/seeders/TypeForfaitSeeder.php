@@ -15,7 +15,7 @@ class TypeForfaitSeeder extends Seeder
     {
         TypeForfait::truncate();
         $types = [
-            ['id_type_forfait' => TypeLigne::TYPE_STANDARD, 'type_forfait' => 'Standard'],
+            ['id_type_forfait' => TypeLigne::TYPE_STANDARD, 'type_forfait' => 'Voix et Internet'],
             ['id_type_forfait' => TypeLigne::TYPE_INTERNET, 'type_forfait' => 'Internet'],
             ['id_type_forfait' => TypeLigne::TYPE_FIXE, 'type_forfait' => 'Fixe'],
         ];

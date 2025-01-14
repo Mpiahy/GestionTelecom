@@ -14,7 +14,7 @@ return new class extends Migration
         // TABLE type_forfait
         Schema::create('type_forfait', function (Blueprint $table) {
             $table->id('id_type_forfait');
-            $table->string('type_forfait', 20);
+            $table->string('type_forfait', 50);
             $table->timestamps();
         });
         
