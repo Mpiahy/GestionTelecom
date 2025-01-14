@@ -11,6 +11,7 @@ use App\Models\TypeUtilisateur;
 use App\Models\Fonction;
 use App\Models\Ligne;
 use App\Models\Localisation;
+use App\Models\Operateur;
 use App\Models\StatutEquipement;
 use Exception;
 use Illuminate\Support\Facades\DB;
@@ -25,6 +26,7 @@ class UserController extends Controller
         $types = TypeUtilisateur::all();
         $fonctions = Fonction::all();
         $chantiers = Localisation::all();
+        $operateurs = Operateur::all();
     
         // Appliquer les filtres avec pagination
         $utilisateurs = Utilisateur::withTrashed()
@@ -36,7 +38,7 @@ class UserController extends Controller
             ->orderBy('updated_at', 'desc')
             ->paginate(10);
     
-        return view('ref.user', compact('login', 'types', 'fonctions', 'chantiers', 'utilisateurs'));
+        return view('ref.user', compact('login', 'types', 'fonctions', 'chantiers', 'utilisateurs', 'operateurs'));
     }    
 
     // Insertion d'un nouvel utilisateur
@@ -285,6 +287,32 @@ class UserController extends Controller
         }
         return response()->json($resultats);
     }
+    public function rechercherLigneInactifs(Request $request)
+    {
+        // Récupérer les paramètres de recherche
+        $operateurId = $request->get('operateur');
+        $searchTerm = $request->get('searchTerm');
+
+        // Requête pour les deux vues : `view_ligne_inactif` et `view_ligne_en_attente`
+        $resultats = DB::table('view_ligne_inactif')
+            ->where('id_operateur', $operateurId)
+            ->where(function ($query) use ($searchTerm) {
+                $query->where('num_ligne', 'LIKE', "%{$searchTerm}%")
+                    ->orWhere('num_sim', 'LIKE', "%{$searchTerm}%");
+            })
+            ->union(
+                DB::table('view_ligne_en_attente')
+                    ->where('id_operateur', $operateurId)
+                    ->where(function ($query) use ($searchTerm) {
+                        $query->where('num_ligne', 'LIKE', "%{$searchTerm}%")
+                            ->orWhere('num_sim', 'LIKE', "%{$searchTerm}%");
+                    })
+            )
+            ->get();
+
+        // Retourner les résultats au format JSON
+        return response()->json($resultats);
+    }
 
     public function attrEquipement(Request $request)
     {
@@ -308,6 +336,31 @@ class UserController extends Controller
             return redirect()->route('ref.user')->withErrors(['attr_equipement_errors' => $e->getMessage()]);
         } catch (Exception $e) {
             return redirect()->route('ref.user')->withErrors(['attr_equipement_errors' => 'Une erreur est survenue.']);
+        }
+    }
+
+    public function attrLigne(Request $request)
+    {
+        try {
+            $validated = $request->validate([
+                'id_utilisateur_attr_ligne' => 'required|integer|exists:utilisateur,id_utilisateur',
+                'id_ligne_attr_ligne' => 'required|integer|exists:ligne,id_ligne',
+                'date_attr_ligne' => 'required|date',
+            ]);
+
+            Affectation::attrLigne(
+                $validated['id_utilisateur_attr_ligne'],
+                $validated['id_ligne_attr_ligne'],
+                $validated['date_attr_ligne']
+            );
+
+            Ligne::attrLigne($validated['id_ligne_attr_ligne']);
+            
+            return redirect()->route('ref.user')->with('success', 'Ligne attribué avec succès.');
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return redirect()->route('ref.user')->withErrors(['attr_ligne_errors' => $e->getMessage()]);
+        } catch (Exception $e) {
+            return redirect()->route('ref.user')->withErrors(['attr_ligne_errors' => 'Une erreur est survenue.']);
         }
     }
 

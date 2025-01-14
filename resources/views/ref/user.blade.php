@@ -187,6 +187,19 @@
                                             </a>
                                         @else
                                             <div class="d-flex justify-content-center gap-2">
+                                                <!-- Attribuer Ligne -->
+                                                <a href="#"
+                                                    class="text-decoration-none"
+                                                    data-bs-toggle="modal"
+                                                    data-bs-target="#modal_attribuer_ligne"
+                                                    data-id-utilisateur-attr-ligne="{{ $utilisateur->id_utilisateur }}"
+                                                    data-login-attr-ligne="{{ $utilisateur->login }}"
+                                                    data-nom-attr-ligne="{{ $utilisateur->nom }}"
+                                                    data-prenom-attr-ligne="{{ $utilisateur->prenom }}"
+                                                    title="Attribuer une ligne">
+                                                    <i class="fas fa-sim-card text-info" style="font-size: 20px;"></i>
+                                                </a>
+
                                                 <!-- Attribuer Équipement -->
                                                 <a href="#"
                                                     class="text-decoration-none"

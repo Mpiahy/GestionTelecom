@@ -99,7 +99,9 @@ Route::middleware('check.session')->group(function() {
     Route::get('/phones-inactifs', [UserController::class, 'showPhonesInactifs']);
     Route::get('/box-inactifs', [UserController::class, 'showBoxInactifs']);
     Route::get('/recherche-inactifs', [UserController::class, 'rechercherInactifs']);
+    Route::get('/recherche-ligne-inactifs', [UserController::class, 'rechercherLigneInactifs']);
     Route::post('/ligne/attrEquipement', [UserController::class, 'attrEquipement'])->name('ligne.attrEquipement');
+    Route::post('/ligne/attrLigne', [UserController::class, 'attrLigne'])->name('ligne.attrLigne');
     Route::get('/user/histoUser/{id_user}', [UserController::class, 'histoUser'])->name('user.histoUser');
     Route::get('/user/equipementsAffectes/{id_user}', [UserController::class, 'equipementsAffectes'])->name('user.equipementsAffectes');
     Route::get('/user/lignesAffectes/{id_user}', [UserController::class, 'lignesAffectes'])->name('user.lignesAffectes');

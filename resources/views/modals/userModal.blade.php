@@ -483,7 +483,7 @@
                         <input type="text" class="form-control" id="login_attr" readonly>
                     </div>
                     <div class="mb-3">
-                        <label for="nom_prenom_attr" class="form-label">Nom et Prénom de l'utilisateur</label>
+                        <label for="nom_prenom_attr" class="form-label">Nom et prénom(s) de l'utilisateur</label>
                         <input type="text" class="form-control" id="nom_prenom_attr" readonly>
                     </div>
 
@@ -524,6 +524,78 @@
             <div class="modal-footer">
                 <button type="button" class="btn btn-warning" data-bs-dismiss="modal">Annuler</button>
                 <button id="btn_attribuer_equipement" class="btn btn-primary" form="form_attr_equipement" disabled>Attribuer</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{{-- ATTRIBUTION LIGNE --}}
+<div id="modal_attribuer_ligne" class="modal" role="dialog" tabindex="-1">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <!-- En-tête du modal -->
+            <div class="modal-header">
+                <h4 class="modal-title text-primary">Attribuer une Ligne</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body text-dark">
+                <form id="form_attr_ligne" action="{{ route('ligne.attrLigne') }}" method="post">
+                    @csrf
+                    <input id="id_utilisateur_attr_ligne" type="hidden" name="id_utilisateur_attr_ligne">
+                    <!-- Informations sur l'utilisateur -->
+                    <div class="mb-3">
+                        <label for="login_attr_ligne" class="form-label">Login de l'utilisateur</label>
+                        <input type="text" class="form-control" id="login_attr_ligne" readonly>
+                    </div>
+                    <div class="mb-3">
+                        <label for="nom_prenom_attr_ligne" class="form-label">Nom et prénom(s) de l'utilisateur</label>
+                        <input type="text" class="form-control" id="nom_prenom_attr_ligne" readonly>
+                    </div>
+
+                    <!-- Choix entre Téléphones ou Box -->
+                    <div class="mb-3">
+                        <label for="id_operateur_attr_ligne" class="form-label">
+                            Opérateur <span class="text-danger">*</span>
+                        </label>
+                        <select class="form-select" id="id_operateur_attr_ligne" required>
+                            <option value="" disabled selected>Choisir un Opérateur</option>
+                            @foreach ($operateurs as $operateur)
+                                <option value="{{ $operateur->id_operateur }}" {{ old('id_operateur_attr_ligne') == $operateur->id_operateur ? 'selected' : '' }}>
+                                    {{ $operateur->nom_operateur }}
+                                </option>
+                            @endforeach
+                        </select>
+                    @error('id_operateur_attr_ligne')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
+                    </div>
+
+                    <!-- Liste des Lignes -->
+                    <div class="mb-3">
+                        <label for="ligne_attr_ligne" class="form-label">
+                            Ligne <span class="text-danger">*</span>
+                        </label>
+                        <input type="text" class="form-control mb-1" id="search-ligne-attr" placeholder="Rechercher une ligne inactif ou en attente...">
+                        <select class="form-select" id="ligne_attr_ligne" required disabled name="id_ligne_attr_ligne">
+                            <option value="" disabled selected>Choisir une ligne</option>
+                        </select>
+                    </div>
+
+                    <!-- Date d'attribution -->
+                    <div class="mb-3">
+                        <label for="date_attr_ligne" class="form-label">
+                            Date d'attribution(activation) <span class="text-danger">*</span>
+                        </label>
+                        <input type="date" class="form-control" id="date_attr_ligne" name="date_attr_ligne" required>
+                    </div>
+
+                </form>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-warning" data-bs-dismiss="modal">Annuler</button>
+                <button id="btn_attribuer_ligne" class="btn btn-primary" form="form_attr_ligne" disabled>Attribuer</button>
             </div>
         </div>
     </div>

@@ -565,7 +565,7 @@
                                         <label class="form-label" for="react_sim"><strong>Numéro SIM</strong></label>
                                         <input id="react_sim" class="form-control @error('react_sim', 'react_ligne_errors') is-invalid @enderror" 
                                             type="number" name="react_sim" placeholder="Numéro SIM" 
-                                            value="{{ old('react_sim') }}" required />
+                                            value="{{ old('react_sim') }}" readonly/>
                                         @error('react_sim', 'react_ligne_errors')
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror

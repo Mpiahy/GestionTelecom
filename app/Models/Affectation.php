@@ -82,6 +82,16 @@ class Affectation extends Model
             'updated_at' => now(),
         ]);
     }
+    public static function attrLigne(int $idUtilisateur, int $idLigne, string $dateDebutAffectation)
+    {
+        self::create([
+            'debut_affectation' => $dateDebutAffectation,
+            'id_utilisateur' => $idUtilisateur,
+            'id_ligne' => $idLigne,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+    }
 
     public function retourAffectationEquipement(string $retourDate)
     {

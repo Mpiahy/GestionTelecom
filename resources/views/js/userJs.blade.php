@@ -574,6 +574,88 @@ function configureSearchField(searchInputId, selectId, hiddenInputId, searchUrl)
     });
 </script>
 
+{{-- ATTRIBUER LIGNE --}}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Sélection des éléments
+        const modal = document.getElementById('modal_attribuer_ligne');
+        const operateurSelect = document.getElementById('id_operateur_attr_ligne');
+        const searchLigneInput = document.getElementById('search-ligne-attr');
+        const ligneSelect = document.getElementById('ligne_attr_ligne');
+        const btnAttribuer = document.getElementById('btn_attribuer_ligne');
+
+        // Fonction pour gérer l'état du bouton "Attribuer"
+        function toggleAttribuerButton() {
+            btnAttribuer.disabled = !ligneSelect.value; // Activer si une ligne est sélectionnée
+        }
+
+        // Fonction pour charger les lignes dynamiquement via API
+        function rechercherLignes() {
+            const operateurId = operateurSelect.value; // ID de l'opérateur sélectionné
+            const searchTerm = searchLigneInput.value; // Terme de recherche
+
+            // Désactiver les champs pendant le chargement
+            ligneSelect.disabled = true;
+            ligneSelect.innerHTML = '<option value="" disabled selected>Chargement...</option>';
+            btnAttribuer.disabled = true;
+
+            // Vérifier si un opérateur est sélectionné
+            if (!operateurId) return;
+
+            // Appel AJAX vers l'API
+            fetch(`/recherche-ligne-inactifs?operateur=${operateurId}&searchTerm=${searchTerm}`)
+                .then(response => response.json())
+                .then(data => {
+                    ligneSelect.innerHTML = '<option value="" disabled selected>Choisir une ligne</option>';
+
+                    if (data.length > 0) {
+                        // Ajouter les options au select
+                        data.forEach(ligne => {
+                            const option = document.createElement('option');
+                            option.value = ligne.id_ligne;
+                            option.textContent = `N°: ${ligne.num_ligne} - SIM: ${ligne.num_sim}`;
+                            ligneSelect.appendChild(option);
+                        });
+
+                        ligneSelect.disabled = false; // Activer le select
+                        ligneSelect.selectedIndex = 1; // Sélectionner la première option par défaut
+                    } else {
+                        ligneSelect.innerHTML = '<option value="" disabled selected>Aucun résultat trouvé</option>';
+                        ligneSelect.disabled = true;
+                    }
+
+                    toggleAttribuerButton(); // Vérifier l'état du bouton
+                })
+                .catch(error => {
+                    console.error('Erreur lors de la recherche:', error);
+                    ligneSelect.innerHTML = '<option value="" disabled selected>Erreur de chargement</option>';
+                    ligneSelect.disabled = true;
+                });
+        }
+
+        // Réinitialiser les champs du formulaire à l'ouverture du modal
+        modal.addEventListener('show.bs.modal', function (event) {
+            const button = event.relatedTarget;
+
+            // Alimenter les champs avec les data-*
+            document.getElementById('id_utilisateur_attr_ligne').value = button.getAttribute('data-id-utilisateur-attr-ligne');
+            document.getElementById('login_attr_ligne').value = button.getAttribute('data-login-attr-ligne');
+            document.getElementById('nom_prenom_attr_ligne').value = `${button.getAttribute('data-nom-attr-ligne')} ${button.getAttribute('data-prenom-attr-ligne')}`;
+
+            // Réinitialiser les autres champs
+            operateurSelect.value = '';
+            searchLigneInput.value = '';
+            ligneSelect.innerHTML = '<option value="" disabled selected>Choisir une ligne</option>';
+            ligneSelect.disabled = true;
+            btnAttribuer.disabled = true;
+        });
+
+        // Écouteurs pour les changements
+        operateurSelect.addEventListener('change', rechercherLignes);
+        searchLigneInput.addEventListener('input', rechercherLignes);
+        ligneSelect.addEventListener('change', toggleAttribuerButton);
+    });
+</script>
 
 {{-- Voir Historique User --}}
 <script>

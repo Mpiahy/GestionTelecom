@@ -78,14 +78,14 @@ return new class extends Migration
         ");
 
         DB::statement("
-            CREATE VIEW view_ligne_actif AS
+            CREATE OR REPLACE VIEW view_ligne_actif AS
             SELECT *
             FROM ligne
             WHERE id_statut_ligne = 3;
         ");
 
         DB::statement("
-            CREATE VIEW view_ligne_en_attente AS
+            CREATE OR REPLACE VIEW view_ligne_en_attente AS
             SELECT *
             FROM ligne
             WHERE id_statut_ligne = 2;
