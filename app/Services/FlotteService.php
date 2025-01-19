@@ -2,7 +2,9 @@
 
 namespace App\Services;
 
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class FlotteService
 {
@@ -15,7 +17,7 @@ class FlotteService
     public function getSuiviFlotteData(int $annee): array
     {
         // Requête SQL pour récupérer les données nécessaires
-        $affectations = DB::table('aaffectation as a')
+        $affectations = DB::table('affectation as a')
             ->join('ligne as l', 'a.id_ligne', '=', 'l.id_ligne')
             ->join('view_forfait_prix as vfp', 'l.id_forfait', '=', 'vfp.id_forfait')
             ->join('utilisateur as u', 'a.id_utilisateur', '=', 'u.id_utilisateur')
@@ -74,33 +76,45 @@ class FlotteService
                 'localisation'    => $affectation->localisation,
                 'nom_forfait'     => $affectation->nom_forfait,
             ];
-
+    
             $totalAnnuel = 0;
-
-            // Calcul des montants pour chaque mois
+    
+            // Calcul des montants pour chaque mois avec prorata
             for ($mois = 1; $mois <= 12; $mois++) {
-                $debutMois = "$annee-" . str_pad($mois, 2, '0', STR_PAD_LEFT) . "-01";
-                $finMois = date('Y-m-t', strtotime($debutMois));
-
-                if (
-                    $affectation->debut_affectation <= $finMois &&
-                    (is_null($affectation->fin_affectation) || $affectation->fin_affectation >= $debutMois)
-                ) {
-                    $prix = $affectation->prix_forfait_ht;
-                } else {
-                    $prix = 0; // 0 si résilié
+                $debutMois = Carbon::create($annee, $mois, 1)->startOfMonth();
+                $finMois = Carbon::create($annee, $mois, 1)->endOfMonth();
+    
+                $debutAffectation = Carbon::parse($affectation->debut_affectation);
+                $finAffectation = $affectation->fin_affectation
+                    ? Carbon::parse($affectation->fin_affectation)
+                    : Carbon::create($annee, 12, 31);
+    
+                // Si l'affectation ne couvre pas le mois en question
+                if ($debutAffectation->gt($finMois) || $finAffectation->lt($debutMois)) {
+                    $row["mois_$mois"] = 0; // Pas de facturation
+                    continue;
                 }
-
-                $row["mois_$mois"] = $prix;
-                $totalAnnuel += $prix;
+    
+                // Calculer le prorata
+                $debutFacture = max($debutAffectation, $debutMois);
+                $finFacture = min($finAffectation, $finMois);
+                $joursFactures = $finFacture->diffInDays($debutFacture) + 1;
+                $joursTotalMois = $debutMois->daysInMonth;
+                $prorata = $joursFactures / $joursTotalMois;
+    
+                // Appliquer le prorata
+                $montant = $affectation->prix_forfait_ht * $prorata;
+    
+                $row["mois_$mois"] = round($montant, 2);
+                $totalAnnuel += $montant;
             }
-
+    
             // Ajouter le total annuel
-            $row['total_annuel'] = $totalAnnuel;
-
+            $row['total_annuel'] = round($totalAnnuel, 2);
+    
             $rows[] = $row;
         }
-
+    
         return $rows;
-    }
+    }    
 }

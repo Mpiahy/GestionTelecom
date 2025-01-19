@@ -37,8 +37,8 @@ class SimulationService
             }
 
             // Étape 3 : Mélanger les ressources
-            $lignes = $lignes->shuffle();
-            $equipements = $equipements->shuffle();
+            // $lignes = $lignes->shuffle();
+            // $equipements = $equipements->shuffle();
 
             // Étape 4 : Exécution dans une transaction
             DB::transaction(function () use ($utilisateurs, $lignes, $equipements) {

@@ -335,7 +335,7 @@
     </div>
 </div>
 
-<div id="modal_retour_phone" class="modal" role="dialog" tabindex="-1">
+<div id="modal_retour_phone" class="modal text-dark" role="dialog" tabindex="-1">
     <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -409,12 +409,14 @@
                                                    readonly>
                                         </div>
                                         <div class="col-md-6">
-                                            <label class="form-label" for="retour_statut"><strong>Etat</strong></label>
+                                            <label class="form-label" for="retour_statut"><strong>Etat</strong><span class="text-danger"> *</span></label>
                                             <select id="retour_statut"
                                                     name="retour_statut"
                                                     class="form-select"
-                                                    readonly>
-                                                <option value="" {{ old('retour_statut') === '' ? 'selected' : '' }}>Retourné</option>
+                                                    required>
+                                                <option value="0" selected>Choisir un état</option>
+                                                <option value="3" {{ old('retour_statut') === '' ? 'selected' : '' }}>Retourné</option>
+                                                <option value="4" {{ old('retour_statut') === '' ? 'selected' : '' }}>HS</option>
                                             </select>
                                         </div>
                                     </div>
@@ -430,7 +432,7 @@
                                                    readonly>
                                         </div>
                                         <div class="col-md-6">
-                                            <label class="form-label" for="retour_date"><strong>Date de retour<span class="text-danger">*</span></strong></label>
+                                            <label class="form-label" for="retour_date"><strong>Date de retour<span class="text-danger"> *</span></strong></label>
                                             <input type="date"
                                                    class="form-control @error('retour_date', 'retour_phone_errors') is-invalid @enderror"
                                                    name="retour_date"
@@ -442,6 +444,18 @@
                                                     {{ $message }}
                                                 </div>
                                             @enderror
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-3">
+                                        <div class="col">
+                                            <!-- Commentaire -->
+                                            <div class="row mb-3">
+                                                <div class="col">
+                                                    <label for="retour_commentaire" class="form-label"><strong>Commentaire<span class="text-danger"> *</span></strong></label>
+                                                    <textarea id="retour_commentaire" name="retour_commentaire" class="form-control" rows="3" placeholder="Ajoutez un commentaire...">{{ old('commentaire') }}</textarea>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </form>

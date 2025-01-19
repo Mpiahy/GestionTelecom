@@ -35,68 +35,23 @@ class TableauDeBordExport implements FromArray, WithHeadings, WithStyles, WithCu
     public function array(): array
     {
         $annee = $this->annee;
-
-        // Étape 1 : Récupérer les données
-        $results = DB::table('affectation as a')
-            ->join('ligne as l', 'a.id_ligne', '=', 'l.id_ligne')
-            ->join('type_ligne as tl', 'l.id_type_ligne', '=', 'tl.id_type_ligne')
-            ->join('view_forfait_prix as vfp', 'l.id_forfait', '=', 'vfp.id_forfait')
-            ->selectRaw("
-                tl.type_ligne,
-                EXTRACT(MONTH FROM generate_series(
-                    GREATEST(DATE_TRUNC('month', a.debut_affectation), make_date(?, 1, 1)),
-                    LEAST(COALESCE(DATE_TRUNC('month', a.fin_affectation), make_date(?, 12, 31)), make_date(?, 12, 31)),
-                    '1 month'::interval
-                )) AS mois,
-                SUM(vfp.prix_forfait_ht) AS total_prix_forfait_ht
-            ", [$annee, $annee, $annee])
-            ->whereRaw("
-                a.debut_affectation <= make_date(?, 12, 31)
-                AND (a.fin_affectation IS NULL OR a.fin_affectation >= make_date(?, 1, 1))
-            ", [$annee, $annee])
-            ->groupByRaw('tl.type_ligne, mois')
-            ->orderByRaw('tl.type_ligne, mois')
-            ->get();
-
-        // Étape 2 : Organiser les données
-        $data = [];
-        $typesLigne = DB::table('type_ligne')->pluck('type_ligne')->toArray();
-        $totauxParMois = array_fill(1, 12, 0);
-        $totalAnnuelTousTypes = 0;
-
-        foreach ($typesLigne as $type) {
-            $data[$type] = array_fill(1, 12, 0);
-            $data[$type]['total_annuel'] = 0;
-        }
-
-        foreach ($results as $result) {
-            $type = $result->type_ligne;
-            $mois = (int)$result->mois;
-            $total = $result->total_prix_forfait_ht;
-
-            $data[$type][$mois] += $total;
-            $data[$type]['total_annuel'] += $total;
-            $totauxParMois[$mois] += $total;
-            $totalAnnuelTousTypes += $total;
-        }
-
-        $data['Total'] = $totauxParMois;
-        $data['Total']['total_annuel'] = $totalAnnuelTousTypes;
-
-        // Étape 3 : Créer un tableau avec les données à exporter
+        $data = \App\Models\Affectation::getYearlyData($annee);
+    
         $output = [];
-
         foreach ($data as $type => $values) {
             $row = [$type];
+    
             for ($mois = 1; $mois <= 12; $mois++) {
                 $row[] = number_format($values[$mois] ?? 0, 2, ',', ' ');
             }
+    
             $row[] = number_format($values['total_annuel'] ?? 0, 2, ',', ' ');
+    
             $output[] = $row;
         }
-
+    
         return $output;
-    }
+    }    
 
     /**
      * Définit les en-têtes des colonnes.

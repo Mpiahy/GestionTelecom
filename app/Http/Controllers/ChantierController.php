@@ -17,18 +17,32 @@ class ChantierController extends Controller
         // Récupérer tous les UE pour afficher les filtres dynamiques
         $services = Service::all();
 
-        // Obtenir les filtres actifs
-        $filterService = $request->input('service'); // Recherche par Service
-        $searchImputation = $request->input('search_chantier_imputation'); // Recherche par Imputation
+        // Vérifier si le bouton "Tout" a été cliqué (reset des filtres)
+        if ($request->has('reset_filters') && $request->input('reset_filters') == 'reset') {
+            // Réinitialiser tous les filtres
+            $filters = [
+                'service' => null,
+                'search_chantier' => null,
+                'search_imputation' => null,
+            ];
+        } else {
+            // Appliquer les filtres existants
+            $filters = [
+                'service' => $request->input('service'),
+                'search_chantier' => $request->input('search_chantier'),
+                'search_imputation' => $request->input('search_imputation'),
+            ];
+        }
 
         // Utiliser les méthodes du modèle pour appliquer les filtres
         $localisations = Localisation::with(['service', 'imputation'])
-            ->filterByService($filterService)
-            ->filterByImputation($searchImputation)
+            ->filterByService($filters['service'])
+            ->filterByImputation($filters['search_imputation'])
+            ->searchByTerm($filters['search_chantier'])
             ->paginate(10);
 
         // Passer les données à la vue, y compris les filtres actifs
-        return view('ref.chantier', compact('login', 'services', 'localisations', 'filterService', 'searchImputation'));
+        return view('ref.chantier', compact('login', 'services', 'localisations', 'filters'));
     }
 
     /**

@@ -203,7 +203,6 @@
                                 @if ($equipement->statut_equipement === 'HS')
                                     <td class="text-center">
                                         <a class="text-decoration-none"
-                                            style="margin-right: 10px;"
                                             data-bs-target="#modal_edt_phone"
                                             data-bs-toggle="modal"
                                             title="Modifier"
@@ -232,11 +231,11 @@
                                     <td class="text-center">
                                         <!-- Action buttons -->
                                         <a class="text-decoration-none"
-                                            style="margin-right: 10px;"
                                             data-bs-target="#modal_edt_phone"
                                             data-bs-toggle="modal"
                                             title="Modifier"
                                             href="#"
+                                            style="margin-right: 10px;"
                                             data-id="{{ $equipement->id_equipement }}"
                                             data-type="{{ $equipement->type_equipement }}"
                                             data-marque="{{ $equipement->marque ?? '' }}"
@@ -260,6 +259,8 @@
                                             data-imei-histo="{{ $equipement->imei }}">
                                             <i class="fas fa-history text-primary" style="font-size: 25px;"></i>
                                         </a>
+
+                                    @if ($equipement->statut_equipement === 'Retourné')
                                         <a class="text-decoration-none open-hs-modal"
                                             data-bs-toggle="tooltip"
                                             title="Déclarer HS"
@@ -270,15 +271,16 @@
                                             data-phone-sn="{{ $equipement->serial_number }}">
                                             <i class="far fa-times-circle text-danger" style="font-size: 25px;"></i>
                                         </a>
+                                    @endif
+                                        
                                     @if ($equipement->statut_equipement === 'Attribué')
                                         <a class="text-decoration-none open-retour-modal"
                                             data-bs-toggle="tooltip"
-                                            title="Déclarer HS"
+                                            title="Retourner"
                                             href="#"
                                             data-bs-target="#modal_retour_phone"
                                             data-bs-toggle="modal"
                                             title="Retourner"
-                                            style="margin-left: 10px;"
                                             data-id-retour="{{ $equipement->id_equipement }}"
                                             data-affectation-retour="{{ $equipement->id_affectation }}"
                                             data-debut-retour="{{ $equipement->debut_affectation }}"

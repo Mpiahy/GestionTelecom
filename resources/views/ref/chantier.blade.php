@@ -65,8 +65,9 @@
                             <form action="{{ route('ref.chantier') }}" method="get">
                                 <div class="input-group">
                                     <span class="input-group-text">Imputation</span>
-                                    <input class="form-control" type="text" placeholder="Rechercher par Imputation" name="search_chantier_imputation" value="{{ request('search_chantier_imputation') }}" />
-                                    <input type="hidden" name="service" value="{{ request('service') }}"> <!-- Champ caché pour conserver le filtre de service -->
+                                    <input class="form-control" type="text" placeholder="Rechercher par Imputation" name="search_imputation" value="{{ request('reset_filters') == 'reset' ? '' :  request('search_imputation') }}" />
+                                    <input type="hidden" name="service" value="{{ request('service') }}">
+                                    <input type="hidden" name="search_chantier" value="{{ request('search_chantier') }}">
                                     <button class="btn btn-primary" type="submit">Rechercher</button>
                                 </div>
                             </form>
@@ -77,8 +78,9 @@
                         <form action="{{ route('ref.chantier') }}" method="get">
                             <div class="input-group">
                                 <span class="input-group-text">Localisation</span>
-                                <input class="form-control" type="text" placeholder="Rechercher par Localisation" name="search_chantier" value="{{ request('search_chantier') }}" />
-                                <input type="hidden" name="service" value="{{ request('service') }}"> <!-- Champ caché pour conserver le filtre de service -->
+                                <input class="form-control" type="text" placeholder="Rechercher par Localisation" name="search_chantier" value="{{ request('reset_filters') == 'reset' ? '' :  request('search_chantier') }}" />
+                                <input type="hidden" name="service" value="{{ request('service') }}">
+                                <input type="hidden" name="search_imputation" value="{{ request('search_imputation') }}">
                                 <button class="btn btn-primary" type="submit">Rechercher</button>
                             </div>
                         </form>
@@ -89,7 +91,14 @@
                         <form id="filterForm" method="get" action="{{ route('ref.chantier') }}">
                             <div class="btn-group" role="group">
                                 <!-- Bouton "Tout" -->
-                                <button class="btn btn-outline-primary {{ request('service') ? '' : 'active' }}" type="submit" name="service" value="">Tout</button>
+                                <button 
+                                    class="btn btn-outline-primary {{ is_null(request('service')) ? 'active' : '' }}" 
+                                    type="submit" 
+                                    name="reset_filters" 
+                                    value="reset">
+                                    Tout
+                                </button>
+                        
                                 <!-- Boutons dynamiques pour chaque UE -->
                                 @foreach ($services as $service)
                                     <button 
@@ -100,8 +109,12 @@
                                         {{ $service->libelle_service }}
                                     </button>
                                 @endforeach
+                        
+                                <!-- Champs cachés pour conserver les autres filtres -->
+                                <input type="hidden" name="search_chantier" value="{{ request('search_chantier') }}">
+                                <input type="hidden" name="search_imputation" value="{{ request('search_imputation') }}">
                             </div>
-                        </form>
+                        </form>                        
                     </div>
                 </div>
                 <div id="dataTable-1" class="table-responsive table mt-2">

@@ -257,7 +257,7 @@
                                         data-imei-histo="{{ $equipement->imei }}">
                                         <i class="fas fa-history text-primary" style="font-size: 25px;"></i>
                                     </a>
-                                    <a id="btn_hs_box"
+                                    {{-- <a id="btn_hs_box"
                                         class="text-decoration-none open-hs-modal"
                                         data-bs-toggle="tooltip"
                                         title="Déclarer HS"
@@ -267,7 +267,7 @@
                                         data-box-imei="{{ $equipement->imei }}"
                                         data-box-sn="{{ $equipement->serial_number }}">
                                         <i class="far fa-times-circle text-danger" style="font-size: 25px;"></i>
-                                    </a>
+                                    </a> --}}
                                     @if ($equipement->statut_equipement === 'Attribué')
                                         <a class="text-decoration-none open-retour-modal" 
                                             href="#" 

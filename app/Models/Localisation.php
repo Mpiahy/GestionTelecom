@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -46,16 +47,13 @@ class Localisation extends Model
     }
 
     // Recherche d'un Chantier
-    public static function searchByTerm(string $term)
+    public function scopeSearchByTerm(Builder $query, $term)
     {
-        return self::where('localisation', 'ILIKE', "%{$term}%")
-            ->get()
-            ->map(function ($chantier) {
-                return [
-                    'id' => $chantier->id_localisation,
-                    'label' => $chantier->localisation,
-                ];
-            });
+        if ($term) {
+            return $query->where('localisation', 'ILIKE', "%{$term}%");
+        }
+
+        return $query;
     }
 
     /**

@@ -139,22 +139,23 @@ class PhoneController extends Controller
                 'retour_phone_id' => 'required|exists:equipement,id_equipement',
                 'retour_affectation_id' => 'required|exists:affectation,id_affectation',
                 'retour_date' => 'required|date',
+                'retour_statut' => 'required|integer|in:3,4', // Assure que le statut est soit "Retourné" (3) soit "HS" (4)
+                'retour_commentaire' => 'nullable|string|max:500',
             ]);
 
             $affectation = Affectation::findOrFail($validatedData['retour_affectation_id']);
-
-            $affectation->retourAffectationEquipement($validatedData['retour_date']);
+            $affectation->retourAffectationEquipement($validatedData['retour_date'], $validatedData['retour_commentaire']);
 
             $equipement = Equipement::findOrFail($validatedData['retour_phone_id']);
-            $equipement->retourEquipement();
+            $equipement->retourEquipement($validatedData['retour_statut']);
 
             return redirect()
                 ->route('ref.phone')
-                ->with('success', "Le téléphone {$equipement->modele->marque->marque} {$equipement->modele->nom_modele} ({$equipement->serial_number}) a été retourné.");
+                ->with('success', "Le téléphone {$equipement->modele->marque->marque} {$equipement->modele->nom_modele} ({$equipement->serial_number}) a été retourné avec succès.");
         } catch (ValidationException $e) {
             return redirect()
                 ->back()
-                ->withErrors($e->errors(),'retour_phone_errors')
+                ->withErrors($e->errors(), 'retour_phone_errors')
                 ->withInput();
         } catch (\Exception $e) {
             return redirect()

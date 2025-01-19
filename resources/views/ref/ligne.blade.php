@@ -236,7 +236,7 @@
                                     <div class="d-flex justify-content-center gap-2">
                                         {{-- Boutons spécifiques au statut --}}
                                         @if ($ligne->statut_ligne === 'Resilie')
-                                            <a id="btn_react_ligne"
+                                            {{-- <a id="btn_react_ligne"
                                                 class="text-decoration-none"
                                                 style="margin-right: 5px;" 
                                                 data-bs-target="#modal_react_ligne" 
@@ -251,7 +251,7 @@
                                                 data-forfait-react="{{ $ligne->id_forfait }}" 
                                                 data-id-react="{{ $ligne->id_ligne }}">
                                                 <i class="far fa-arrow-alt-circle-up text-success" style="font-size: 25px;"></i>
-                                            </a>
+                                            </a> --}}
                                         @elseif ($ligne->statut_ligne === 'Inactif' || $ligne->statut_ligne === 'En attente')    
                                             <a href="#"
                                                 id="btn_enr_ligne"

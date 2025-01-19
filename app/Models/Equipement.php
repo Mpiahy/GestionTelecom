@@ -317,9 +317,14 @@ class Equipement extends Model
         ];
     }
 
-    public function retourEquipement()
+    public function retourEquipement(int $statut)
     {
-        $this->id_statut_equipement = StatutEquipement::STATUT_RETOURNE;
+        if (!in_array($statut, [StatutEquipement::STATUT_RETOURNE, StatutEquipement::STATUT_HS])) {
+            throw new \Exception("Statut d'équipement invalide.");
+        }
+
+        $this->id_statut_equipement = $statut;
+        $this->updated_at = now();
         $this->save();
     }
 
@@ -329,7 +334,7 @@ class Equipement extends Model
         foreach ($equipements as $idEquipement) {
             $equipement = self::find($idEquipement);
             if ($equipement) {
-                $equipement->retourEquipement();
+                $equipement->retourEquipement(StatutEquipement::STATUT_RETOURNE);
             }
         }
     }
