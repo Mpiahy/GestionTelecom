@@ -15,8 +15,8 @@
         .header {
             text-align: center;
             margin-bottom: 20px;
-            position: relative; /* Nécessaire pour positionner le logo */
-            padding-top: 80px; /* Ajout d'un espace en haut pour décaler les éléments sous le logo */
+            position: relative;
+            padding-top: 80px;
         }
         .header h1 {
             font-size: 20px;
@@ -36,12 +36,12 @@
             border: 1px solid #ddd;
             padding: 8px;
             text-align: center;
-            font-size: 10px; /* Ajuster la taille pour le mode paysage */
+            font-size: 10px;
         }
         table th {
             background-color: #f4f4f4;
             color: #333;
-            font-size: 11px; /* Plus lisible pour un tableau large */
+            font-size: 11px;
         }
         .footer {
             text-align: right;
@@ -75,7 +75,7 @@
                 <tr>
                     <td>{{ $type }}</td>
                     @foreach(range(1, 12) as $mois)
-                        <td>{{ number_format($values[$mois] ?? 0, 2, ',', ' ') }}</td>
+                        <td>{{ number_format($values[$mois]['total_prix_forfait_ht'] ?? 0, 2, ',', ' ') }}</td>
                     @endforeach
                     <td>{{ number_format($values['total_annuel'] ?? 0, 2, ',', ' ') }}</td>
                 </tr>

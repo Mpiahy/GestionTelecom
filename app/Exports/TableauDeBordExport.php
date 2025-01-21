@@ -36,22 +36,26 @@ class TableauDeBordExport implements FromArray, WithHeadings, WithStyles, WithCu
     {
         $annee = $this->annee;
         $data = \App\Models\Affectation::getYearlyData($annee);
-    
+
         $output = [];
         foreach ($data as $type => $values) {
             $row = [$type];
-    
+
             for ($mois = 1; $mois <= 12; $mois++) {
-                $row[] = number_format($values[$mois] ?? 0, 2, ',', ' ');
+                // Récupérer la valeur correcte
+                $montant = $values[$mois]['total_prix_forfait_ht'] ?? 0;
+                $row[] = number_format($montant, 2, ',', ' ');
             }
-    
-            $row[] = number_format($values['total_annuel'] ?? 0, 2, ',', ' ');
-    
+
+            // Total annuel
+            $totalAnnuel = $values['total_annuel'] ?? 0;
+            $row[] = number_format($totalAnnuel, 2, ',', ' ');
+
             $output[] = $row;
         }
-    
+
         return $output;
-    }    
+    }
 
     /**
      * Définit les en-têtes des colonnes.

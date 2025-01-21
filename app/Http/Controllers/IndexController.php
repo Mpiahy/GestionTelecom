@@ -23,16 +23,25 @@ class IndexController extends Controller
      */
     public function indexView(Request $request)
     {
-        $data = $this->getDashboardData($request->input('annee', date('Y')), $request->input('mois', null));
+        // Récupération de l'année depuis les paramètres GET
+        $annee = $request->input('annee', date('Y'));
+
+        // Chargement des données pour le tableau de bord
+        $data = $this->getDashboardData($annee, $request->input('mois', null));
+
         return view('index', $data);
     }
+
 
     /**
      * Filtre les données du tableau de bord et recharge la vue.
      */
     public function filterDashboard(Request $request)
     {
-        return $this->indexView($request); // Réutilisation directe de la méthode `indexView`
+        $annee = $request->input('annee', date('Y'));
+
+        // Rediriger avec les données filtrées (utilisation des paramètres GET)
+        return redirect()->route('index', ['annee' => $annee]);
     }
 
     // Export PDF
@@ -70,11 +79,11 @@ class IndexController extends Controller
 
         // Données de facturation
         if ($selectedMonth) {
-            $totalPrixForfaitHT = Affectation::getTotalPrixForfaitHT($selectedYear, $selectedMonth);
+            $totalPrixForfaitHT = Affectation::getTbdMoisAnnee($selectedYear, $selectedMonth);
             $monthlyData = null;
         } else {
             $totalPrixForfaitHT = null;
-            $monthlyData = Affectation::getMonthlyData($selectedYear);
+            $monthlyData = Affectation::getTbdAnnee($selectedYear);
         }
 
         return array_merge(

@@ -12,38 +12,8 @@
     </div>
 
     <!-- Formulaire de filtrage -->
-    <form method="POST" action="{{ route('index.filter') }}" class="mb-4">
-        @csrf
+    <form method="GET" action="{{ route('index') }}" class="mb-4">
         <div class="row g-3 align-items-end">
-            <!-- Sélection du mois -->
-            <div class="col-md-3">
-                <label for="mois" class="form-label">Mois :</label>
-                <select name="mois" id="mois" class="form-select">
-                    <option value="">-- Tous les mois --</option>
-                    @php
-                        $moisFrancais = [
-                            1 => 'Janvier',
-                            2 => 'Février',
-                            3 => 'Mars',
-                            4 => 'Avril',
-                            5 => 'Mai',
-                            6 => 'Juin',
-                            7 => 'Juillet',
-                            8 => 'Août',
-                            9 => 'Septembre',
-                            10 => 'Octobre',
-                            11 => 'Novembre',
-                            12 => 'Décembre',
-                        ];
-                    @endphp
-                    @foreach($moisFrancais as $i => $mois)
-                        <option value="{{ $i }}" @if(request('mois') == $i) selected @endif>
-                            {{ $mois }}
-                        </option>
-                    @endforeach
-                </select>
-            </div>
-
             <!-- Sélection de l'année -->
             <div class="col-md-3">
                 <label for="annee" class="form-label">Année :</label>
@@ -88,20 +58,22 @@
                         <i class="fas fa-file-excel me-2"></i> Export SUIVI FLOTTE XLSX
                     </a>                    
                 </div>
-            @elseif($totalPrixForfaitHT)
+
+            @elseif(is_array($totalPrixForfaitHT) && isset($totalPrixForfaitHT['total_prix_forfait_ht']))
                 <!-- Affichage du total pour un mois donné -->
                 <div class="card shadow border-0">
                     <div class="card-body text-center">
                         <h4 class="text-dark mb-4 fw-bold">
-                            Total pour {{ $moisFrancais[$selectedMonth] }} {{ $selectedYear }}
+                            Total pour {{ $totalPrixForfaitHT['mois'] }} {{ $selectedYear }}
                         </h4>
                         <div class="alert alert-success text-center p-4" role="alert">
                             <span class="fw-bold h4">
-                                {{ number_format($totalPrixForfaitHT, 2, ',', ' ') }} MGA
+                                {{ number_format($totalPrixForfaitHT['total_prix_forfait_ht'], 2, ',', ' ') }} MGA
                             </span>
                         </div>
                     </div>
                 </div>
+
             @else
                 <!-- Message si aucune donnée n'est disponible -->
                 <div class="card shadow-sm border-warning">

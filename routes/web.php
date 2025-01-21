@@ -37,59 +37,60 @@ Route::get('/loginGuest', [LoginController::class, 'loginGuestView'])->name('aut
 Route::post('/loginCheck', [LoginController::class, 'loginCheck'])->name('auth.loginCheck');
 Route::get('/logout', [LoginController::class, 'logout'])->name('auth.logout');
 
-// Page d'accueil
-Route::get('/index', [IndexController::class, 'indexView'])->middleware('check.session')->name('index');
-Route::post('/index/filter', [IndexController::class, 'filterDashboard'])->middleware('check.session')->name('index.filter');
-   
-// Route pour import données
-Route::get('/import', [ImportController::class, 'importView'])->name('import.view');
-Route::post('/import/process', [ImportController::class, 'processImport'])->name('import.process');
-Route::post('/import/equipement', [ImportController::class, 'equipementImport'])->name('import.equipement');
-
-Route::get('/export-example/{type}', function ($type) {
-    $fileName = 'Exemple_Import_Lignes-Utilisateur.' . $type;
-    
-    if ($type === 'csv') {
-        return Excel::download(new ExampleExport, $fileName, \Maatwebsite\Excel\Excel::CSV);
-    } elseif ($type === 'xlsx') {
-        return Excel::download(new ExampleExport, $fileName, \Maatwebsite\Excel\Excel::XLSX);
-    }
-    
-    abort(404); // Retourne une erreur 404 si le type est invalide
-})->name('export.example');
-
-Route::get('/export-example-equipement/{type}', function ($type) {
-    $fileName = 'Exemple_Import_Equipement.' . $type;
-    
-    if ($type === 'csv') {
-        return Excel::download(new ExampleExportEquipement, $fileName, \Maatwebsite\Excel\Excel::CSV);
-    } elseif ($type === 'xlsx') {
-        return Excel::download(new ExampleExportEquipement, $fileName, \Maatwebsite\Excel\Excel::XLSX);
-    }
-    
-    abort(404); // Retourne une erreur 404 si le type est invalide
-})->name('export.example.equipement');
-
-// Afficher la page de simulation
-Route::get('/simulation', [SimulationController::class, 'simulationView'])->name('simulation.view');
-
-// Lancer la simulation
-Route::post('/simulation/run', [SimulationController::class, 'runSimulation'])->name('simulation.run');
-
-// Route pour l'export PDF
-Route::get('/export/pdf', [IndexController::class, 'exportPDF'])->name('export.pdf');
-
-// Route pour l'export XLSX
-Route::get('/export/xlsx', [IndexController::class, 'exportXLSX'])->name('export.xlsx');
-
-// Route pour l'export XLSX
-Route::get('/export/suivi-flotte', [IndexController::class, 'exportSuiviFlotte'])->name('export.suivi.xlsx');
-
-// Route pour l'export XLSX
-Route::get('/export/equipement', [IndexController::class, 'exportEquipement'])->name('export.equipement.xlsx');
-
 // Routes de Référentiels avec middleware commun 'check.session'
 Route::middleware('check.session')->group(function() {
+
+    // Page d'accueil
+    Route::get('/index', [IndexController::class, 'indexView'])->name('index');
+    
+    // Route pour import données
+    Route::get('/import', [ImportController::class, 'importView'])->name('import.view');
+    Route::post('/import/process', [ImportController::class, 'processImport'])->name('import.process');
+    Route::post('/import/equipement', [ImportController::class, 'equipementImport'])->name('import.equipement');
+
+    Route::get('/export-example/{type}', function ($type) {
+        $fileName = 'Exemple_Import_Lignes-Utilisateur.' . $type;
+        
+        if ($type === 'csv') {
+            return Excel::download(new ExampleExport, $fileName, \Maatwebsite\Excel\Excel::CSV);
+        } elseif ($type === 'xlsx') {
+            return Excel::download(new ExampleExport, $fileName, \Maatwebsite\Excel\Excel::XLSX);
+        }
+        
+        abort(404); // Retourne une erreur 404 si le type est invalide
+    })->name('export.example');
+
+    Route::get('/export-example-equipement/{type}', function ($type) {
+        $fileName = 'Exemple_Import_Equipement.' . $type;
+        
+        if ($type === 'csv') {
+            return Excel::download(new ExampleExportEquipement, $fileName, \Maatwebsite\Excel\Excel::CSV);
+        } elseif ($type === 'xlsx') {
+            return Excel::download(new ExampleExportEquipement, $fileName, \Maatwebsite\Excel\Excel::XLSX);
+        }
+        
+        abort(404); // Retourne une erreur 404 si le type est invalide
+    })->name('export.example.equipement');
+
+    // Afficher la page de simulation
+    Route::get('/simulation', [SimulationController::class, 'simulationView'])->name('simulation.view');
+
+    // Lancer la simulation
+    Route::post('/simulation/run', [SimulationController::class, 'runSimulation'])->name('simulation.run');
+
+    // Route pour l'export PDF
+    Route::get('/export/pdf', [IndexController::class, 'exportPDF'])->name('export.pdf');
+
+    // Route pour l'export XLSX
+    Route::get('/export/xlsx', [IndexController::class, 'exportXLSX'])->name('export.xlsx');
+
+    // Route pour l'export XLSX
+    Route::get('/export/suivi-flotte', [IndexController::class, 'exportSuiviFlotte'])->name('export.suivi.xlsx');
+
+    // Route pour l'export XLSX
+    Route::get('/export/equipement', [IndexController::class, 'exportEquipement'])->name('export.equipement.xlsx');
+
+
     Route::get('/user', [UserController::class, 'userView'])->name('ref.user');
     Route::post('/utilisateur/ajouter', [UserController::class, 'ajouterUtilisateur'])->name('ajouter.utilisateur');
     Route::post('/utilisateur/modifier', [UserController::class, 'modifierUtilisateur'])->name('modifier.utilisateur');

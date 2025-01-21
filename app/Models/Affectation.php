@@ -119,106 +119,169 @@ class Affectation extends Model
         }
     }
 
-    public static function getMonthlyData($annee)
+    public static function getTbdAnnee($annee)
     {
         Carbon::setLocale('fr');
     
-        // Récupération des affectations avec leurs périodes
+        // Récupération des affectations
         $results = DB::table('affectation as a')
             ->join('ligne as l', 'a.id_ligne', '=', 'l.id_ligne')
             ->join('view_forfait_prix as vfp', 'l.id_forfait', '=', 'vfp.id_forfait')
             ->selectRaw("
                 a.debut_affectation,
                 a.fin_affectation,
-                vfp.prix_forfait_ht
+                vfp.prix_forfait_ht,
+                vfp.prix_jour
             ")
             ->whereYear('a.debut_affectation', '<=', $annee)
             ->whereRaw("a.fin_affectation IS NULL OR EXTRACT(YEAR FROM a.fin_affectation) >= ?", [$annee])
             ->get();
     
+        // Initialisation des mois avec des montants à 0
         $months = [];
-        for ($i = 1; $i <= 12; $i++) {
-            $months[$i] = [
-                'mois' => Carbon::create($annee, $i, 1)->translatedFormat('F'),
+        for ($mois = 1; $mois <= 12; $mois++) {
+            $months[$mois] = [
+                'mois' => Carbon::create($annee, $mois, 1)->translatedFormat('F'),
                 'total_prix_forfait_ht' => 0,
             ];
         }
     
+        // Parcours des affectations
         foreach ($results as $result) {
             $debut = Carbon::parse($result->debut_affectation);
-            $fin = $result->fin_affectation ? Carbon::parse($result->fin_affectation) : Carbon::create($annee, 12, 31);
+            $fin = $result->fin_affectation ? Carbon::parse($result->fin_affectation) : null;
             $prixForfait = $result->prix_forfait_ht;
+            $prixJour = $result->prix_jour;
     
-            for ($i = 1; $i <= 12; $i++) {
-                $mois = Carbon::create($annee, $i, 1);
-                $debutMois = $mois->copy()->startOfMonth();
-                $finMois = $mois->copy()->endOfMonth();
+            $premierMoisFacture = null;
     
-                if ($debut->gt($finMois) || $fin->lt($debutMois)) {
-                    continue; // Pas d'affectation durant ce mois
+            for ($mois = 1; $mois <= 12; $mois++) {
+                $debutMois = Carbon::create($annee, $mois, 1)->startOfMonth();
+                $finMois = Carbon::create($annee, $mois, 1)->endOfMonth();
+    
+                // Exclure les mois hors période d'affectation
+                if ($debut->gt($finMois) || ($fin && $fin->lt($debutMois))) {
+                    continue;
                 }
     
-                $debutFacture = max($debut, $debutMois);
-                $finFacture = min($fin, $finMois);
-                $joursFactures = $finFacture->diffInDays($debutFacture) + 1;
-                $totalJoursMois = $mois->daysInMonth;
-                $prorata = $joursFactures / $totalJoursMois;
+                // Définir le premier mois de facturation
+                if ($premierMoisFacture === null && $debut->year == $annee && $debut->month == $mois) {
+                    $premierMoisFacture = $mois;
+                    continue; // Le premier mois n'est pas facturé
+                }
     
-                $months[$i]['total_prix_forfait_ht'] += $prixForfait * $prorata;
+                $montant = $prixForfait; // Par défaut, le mois est facturé en entier
+    
+                // Prorata du mois d'entrée (au deuxième mois seulement)
+                if ($premierMoisFacture !== null && $mois == $premierMoisFacture + 1) {
+                    $joursActifsPremierMois = 30 - $debut->day + 1;
+                    $montant += $joursActifsPremierMois * $prixJour;
+                }
+    
+                // Gestion des résiliations en milieu de mois
+                if ($fin && $fin->year == $annee && $fin->month == $mois && $fin->day < 30) {
+                    $joursNonUtilises = 30 - $fin->day + 1;
+                    $remboursement = $joursNonUtilises * $prixJour;
+    
+                    // Appliquer le remboursement au mois suivant
+                    if (isset($months[$mois + 1])) {
+                        $months[$mois + 1]['total_prix_forfait_ht'] -= round($remboursement, 2);
+                    }
+                }
+    
+                $months[$mois]['total_prix_forfait_ht'] += round($montant, 2);
             }
         }
     
         return $months;
     }    
 
-    public static function getTotalPrixForfaitHT($annee, $mois = null)
-    {
-        if ($mois) {
-            $debutMois = Carbon::create($annee, $mois, 1)->startOfMonth();
-            $finMois = $debutMois->copy()->endOfMonth();
-        } else {
-            $debutMois = Carbon::create($annee, 1, 1);
-            $finMois = Carbon::create($annee, 12, 31);
-        }
+    // public static function getTbdMoisAnnee($annee, $mois)
+    // {
+    //     Carbon::setLocale('fr');
     
-        $results = DB::table('affectation as a')
-            ->join('ligne as l', 'a.id_ligne', '=', 'l.id_ligne')
-            ->join('view_forfait_prix as vfp', 'l.id_forfait', '=', 'vfp.id_forfait')
-            ->selectRaw("
-                a.debut_affectation,
-                a.fin_affectation,
-                vfp.prix_forfait_ht
-            ")
-            ->whereRaw("
-                a.debut_affectation <= ?
-                AND (a.fin_affectation IS NULL OR a.fin_affectation >= ?)
-            ", [$finMois, $debutMois])
-            ->get();
+    //     // Initialisation du mois sélectionné
+    //     $monthData = [
+    //         'mois' => Carbon::create($annee, $mois, 1)->translatedFormat('F'),
+    //         'total_prix_forfait_ht' => 0,
+    //     ];
     
-        $totalPrixForfaitHT = 0;
+    //     // Récupération des affectations
+    //     $results = DB::table('affectation as a')
+    //         ->join('ligne as l', 'a.id_ligne', '=', 'l.id_ligne')
+    //         ->join('view_forfait_prix as vfp', 'l.id_forfait', '=', 'vfp.id_forfait')
+    //         ->selectRaw("
+    //             a.debut_affectation,
+    //             a.fin_affectation,
+    //             vfp.prix_forfait_ht,
+    //             vfp.prix_jour
+    //         ")
+    //         ->whereYear('a.debut_affectation', '<=', $annee)
+    //         ->whereRaw("a.fin_affectation IS NULL OR EXTRACT(YEAR FROM a.fin_affectation) >= ?", [$annee])
+    //         ->get();
     
-        foreach ($results as $result) {
-            $debut = Carbon::parse($result->debut_affectation);
-            $fin = $result->fin_affectation ? Carbon::parse($result->fin_affectation) : $finMois;
-            $prixForfait = $result->prix_forfait_ht;
+    //     // Parcours des affectations
+    //     foreach ($results as $result) {
+    //         $debut = Carbon::parse($result->debut_affectation);
+    //         $fin = $result->fin_affectation ? Carbon::parse($result->fin_affectation) : null;
+    //         $prixForfait = $result->prix_forfait_ht;
+    //         $prixJour = $result->prix_jour;
+    //         $premierMoisFacture = null;
     
-            $debutFacture = max($debut, $debutMois);
-            $finFacture = min($fin, $finMois);
-            $joursFactures = $finFacture->diffInDays($debutFacture) + 1;
-            $totalJoursPeriode = $debutMois->daysInMonth;
-            $prorata = $joursFactures / $totalJoursPeriode;
+    //         $debutMois = Carbon::create($annee, $mois, 1)->startOfMonth();
+    //         $finMois = Carbon::create($annee, $mois, 1)->endOfMonth();
     
-            $totalPrixForfaitHT += $prixForfait * $prorata;
-        }
+    //         // Exclure les affectations hors de la période du mois sélectionné
+    //         if ($debut->gt($finMois) || ($fin && $fin->lt($debutMois))) {
+    //             continue;
+    //         }
     
-        return $totalPrixForfaitHT;
-    }    
-
+    //         // Déterminer le premier mois facturé pour cette affectation
+    //         if ($premierMoisFacture === null && $debut->year == $annee && $debut->month == $mois) {
+    //             $premierMoisFacture = $mois;
+    //             continue; // Premier mois à 0
+    //         }
+    
+    //         $montant = $prixForfait; // Mois complet par défaut
+    
+    //         // 🔹 Prorata du mois d'entrée (ajouté au deuxième mois facturé)
+    //         if ($premierMoisFacture !== null && $mois == $premierMoisFacture + 1) {
+    //             $joursActifsPremierMois = 30 - ($debut->day + 1);
+    //             $montant += $joursActifsPremierMois * $prixJour;
+    //         }
+    
+    //         // 🔹 Gérer les résiliations en milieu de mois
+    //         if ($fin && $fin->year == $annee && $fin->month == $mois && $fin->day < 30) {
+    //             $joursNonUtilises = 30 - $fin->day + 1;
+    //             $remboursement = $joursNonUtilises * $prixJour;
+    //             $montant -= round($remboursement, 2);
+    //         }
+    
+    //         // 🔹 Ajouter au total du mois
+    //         $monthData['total_prix_forfait_ht'] += round($montant, 2);
+    //     }
+    
+    //     return $monthData;
+    // }
+    
     public static function getYearlyData($annee)
     {
         Carbon::setLocale('fr');
     
-        // Récupération des affectations avec leurs périodes
+        $typesLigne = DB::table('type_ligne')->pluck('type_ligne')->toArray();
+        $data = [];
+    
+        // Initialisation des données pour chaque type de ligne
+        foreach ($typesLigne as $type) {
+            for ($mois = 1; $mois <= 12; $mois++) {
+                $data[$type][$mois] = [
+                    'mois' => Carbon::create($annee, $mois, 1)->translatedFormat('F'),
+                    'total_prix_forfait_ht' => 0,
+                ];
+            }
+            $data[$type]['total_annuel'] = 0;
+        }
+    
         $results = DB::table('affectation as a')
             ->join('ligne as l', 'a.id_ligne', '=', 'l.id_ligne')
             ->join('type_ligne as tl', 'l.id_type_ligne', '=', 'tl.id_type_ligne')
@@ -227,58 +290,94 @@ class Affectation extends Model
                 a.debut_affectation,
                 a.fin_affectation,
                 vfp.prix_forfait_ht,
+                vfp.prix_jour,
                 tl.type_ligne
             ")
             ->whereYear('a.debut_affectation', '<=', $annee)
             ->whereRaw("a.fin_affectation IS NULL OR EXTRACT(YEAR FROM a.fin_affectation) >= ?", [$annee])
             ->get();
     
-        $data = [];
-        $typesLigne = DB::table('type_ligne')->pluck('type_ligne')->toArray();
-        $totauxParMois = array_fill(1, 12, 0);
-        $totalAnnuelTousTypes = 0;
-    
-        // Initialiser les données par type de ligne
-        foreach ($typesLigne as $type) {
-            $data[$type] = array_fill(1, 12, 0);
-            $data[$type]['total_annuel'] = 0;
-        }
-    
         foreach ($results as $result) {
             $debut = Carbon::parse($result->debut_affectation);
-            $fin = $result->fin_affectation ? Carbon::parse($result->fin_affectation) : Carbon::create($annee, 12, 31);
+            $fin = $result->fin_affectation ? Carbon::parse($result->fin_affectation) : null;
             $prixForfait = $result->prix_forfait_ht;
+            $prixJour = $result->prix_jour;
             $type = $result->type_ligne;
     
-            for ($mois = 1; $mois <= 12; $mois++) {
-                $moisDate = Carbon::create($annee, $mois, 1);
-                $debutMois = $moisDate->copy()->startOfMonth();
-                $finMois = $moisDate->copy()->endOfMonth();
+            $premierMoisFacture = null;
     
-                if ($debut->gt($finMois) || $fin->lt($debutMois)) {
-                    continue; // Pas de facturation pour ce mois
+            for ($mois = 1; $mois <= 12; $mois++) {
+                $debutMois = Carbon::create($annee, $mois, 1)->startOfMonth();
+                $finMois = Carbon::create($annee, $mois, 1)->endOfMonth();
+    
+                // Exclure les périodes hors du mois en question
+                if ($debut->gt($finMois) || ($fin && $fin->lt($debutMois))) {
+                    continue;
                 }
     
-                $debutFacture = max($debut, $debutMois);
-                $finFacture = min($fin, $finMois);
-                $joursFactures = $finFacture->diffInDays($debutFacture) + 1;
-                $totalJoursMois = $moisDate->daysInMonth;
-                $prorata = $joursFactures / $totalJoursMois;
+                $montant = $prixForfait; // Par défaut, le forfait complet est facturé
     
-                $montant = round($prixForfait * $prorata, 2);
+                // Définir le premier mois de facturation
+                if ($premierMoisFacture === null && $debut->year == $annee && $debut->month == $mois) {
+                    $premierMoisFacture = $mois;
+                    continue; // Le premier mois n'est pas facturé
+                }
     
-                $data[$type][$mois] += $montant;
-                $data[$type]['total_annuel'] += $montant;
-                $totauxParMois[$mois] += $montant;
-                $totalAnnuelTousTypes += $montant;
+                // Prorata du mois d'entrée (au deuxième mois seulement)
+                if ($premierMoisFacture !== null && $mois == $premierMoisFacture + 1) {
+                    $joursActifsPremierMois = 30 - $debut->day + 1;
+                    $montant += $joursActifsPremierMois * $prixJour;
+                }
+    
+                // Gestion des résiliations en milieu de mois
+                if ($fin && $fin->year == $annee && $fin->month == $mois && $fin->day < 30) {
+                    $joursNonUtilises = 30 - $fin->day + 1;
+                    $remboursement = $joursNonUtilises * $prixJour;
+    
+                    // Appliquer le remboursement au mois suivant
+                    if (isset($data[$type][$mois + 1])) {
+                        $data[$type][$mois + 1]['total_prix_forfait_ht'] -= round($remboursement, 2);
+                    }
+                }
+    
+                $data[$type][$mois]['total_prix_forfait_ht'] += round($montant, 2);
+                $data[$type]['total_annuel'] += round($montant, 2);
             }
         }
     
+        // Calcul des totaux globaux
+        $totauxParMois = [];
+        for ($mois = 1; $mois <= 12; $mois++) {
+            $totauxParMois[$mois] = [
+                'mois' => Carbon::create($annee, $mois, 1)->translatedFormat('F'),
+                'total_prix_forfait_ht' => 0, // Initialisation à 0
+            ];
+        }
+        $totauxParMois['total_annuel'] = 0;
+
+        // Recalcul des totaux pour chaque mois et chaque type
+        foreach ($data as $type => $moisData) {
+            // Ignorer les totaux globaux existants (éviter les erreurs de double comptage)
+            if ($type === 'Total') {
+                continue;
+            }
+
+            // Additionner les montants pour chaque mois
+            for ($mois = 1; $mois <= 12; $mois++) {
+                $totauxParMois[$mois]['total_prix_forfait_ht'] += $moisData[$mois]['total_prix_forfait_ht'];
+            }
+        }
+
+        // Calcul du total annuel global basé sur les nouveaux totaux mensuels
+        for ($mois = 1; $mois <= 12; $mois++) {
+            $totauxParMois['total_annuel'] += $totauxParMois[$mois]['total_prix_forfait_ht'];
+        }
+
+        // Ajout des totaux recalculés dans les données
         $data['Total'] = $totauxParMois;
-        $data['Total']['total_annuel'] = $totalAnnuelTousTypes;
     
         return $data;
-    }    
+    }
     
     public static function cloturerAffectationsUtilisateur($idUtilisateur, $dateDepart, $commentaire = null)
     {
