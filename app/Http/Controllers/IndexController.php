@@ -15,6 +15,7 @@ use Maatwebsite\Excel\Facades\Excel;
 use App\Helpers\DateHelper;
 use App\Services\FlotteService;
 use App\Services\EquipementService;
+use Illuminate\Support\Facades\Auth;
 
 class IndexController extends Controller
 {
@@ -25,13 +26,23 @@ class IndexController extends Controller
     {
         // Récupération de l'année depuis les paramètres GET
         $annee = $request->input('annee', date('Y'));
+        $mois = $request->input('mois', null);
 
-        // Chargement des données pour le tableau de bord
-        $data = $this->getDashboardData($annee, $request->input('mois', null));
+        // Vérifier si l'utilisateur est authentifié
+        $user = Auth::user();
+
+        // Définir le rôle
+        $role = $user->isAdmin ? 'admin' : 'guest';
+
+        // Charger des données différentes en fonction du rôle
+        $data = $this->getDashboardData($annee, $mois);
+
+        // Ajouter des informations utilisateur et rôle pour la vue
+        $data['login'] = $user->login;
+        $data['role'] = $role;
 
         return view('index', $data);
     }
-
 
     /**
      * Filtre les données du tableau de bord et recharge la vue.

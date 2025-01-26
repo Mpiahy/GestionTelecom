@@ -5,6 +5,42 @@
 </head>
 
 @section('content_index')
+<!-- Affichage du message d'erreur si présent dans la session -->
+@if (session('error'))
+    <div id="error-message" style="
+        position: fixed;
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: #f8d7da;
+        color: #842029;
+        padding: 15px 20px;
+        border-radius: 5px;
+        border: 1px solid #f5c6cb;
+        z-index: 1000;
+        box-shadow: 0px 4px 6px rgba(0,0,0,0.1);
+        display: none;">
+        {{ session('error') }}
+    </div>
+@endif
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Sélectionne l'élément du message d'erreur
+        const errorMessage = document.getElementById('error-message');
+        
+        if (errorMessage) {
+            // Affiche le message d'erreur
+            errorMessage.style.display = 'block';
+
+            // Masque le message après 5 secondes
+            setTimeout(() => {
+                errorMessage.style.display = 'none';
+            }, 5000);
+        }
+    });
+</script>
+
 <div class="container-fluid">
     <!-- Titre principal -->
     <div class="d-sm-flex justify-content-between align-items-center mb-4">

@@ -11,6 +11,8 @@ class Kernel extends HttpKernel
     protected $routeMiddleware = [
         // autres middlewares...
         'check.session' => \App\Http\Middleware\CheckSession::class,
+        'admin' => \App\Http\Middleware\CheckAdmin::class,
+        'guest' => \App\Http\Middleware\CheckGuest::class,
     ];
     /**
      * The application's global HTTP middleware stack.

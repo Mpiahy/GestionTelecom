@@ -33,12 +33,21 @@ class LoginController extends Controller
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
             $user = Auth::user();
+        
+            // Stocker le login dans la session
             $request->session()->put('login', $user->login);
+            
+            // Enregistrer le statut d'administrateur ou invité
+            $status = $user->isAdmin ? 'admin' : 'invité';
+            $request->session()->put('login_status', $status);
+        
             return redirect()->route('index');
         }
+        
         // Si l'authentification échoue
         return to_route('auth.login')->withErrors(['identifiant' => "Identifiant ou mot de passe invalide"])->onlyInput('identifiant');
     }
+
     // Logout
     public function logout(Request $request)
     {
@@ -47,10 +56,5 @@ class LoginController extends Controller
         $request->session()->regenerateToken();
         return to_route("auth.login");
     }
-    
-    // Load LoginGuest View
-    public function loginGuestView()
-    {
-        return view("auth.loginGuest");
-    }
+
 }

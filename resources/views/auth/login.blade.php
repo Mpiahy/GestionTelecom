@@ -22,16 +22,16 @@
                                     <div class="text-center mb-5" style="padding-top: 0px;margin-top: -30px;">
                                         <img width="258" height="90" src="{{asset('/assets/img/COLAS%20WE%20OPEN%20THE%20WAY.png')}}"></div>
                                     <div class="text-center mb-5">
-                                        <h4 class="text-dark">Connectez vous en tant qu'administrateur</h4>
+                                        <h4 class="text-dark">Connectez vous à Telecom</h4>
                                     </div>
                                     <form method="post" action="{{ url('/loginCheck') }}" class="user">
                                         @csrf
                                         <div class="mb-3">
-                                            <input value="telecom@telecom.mg" name="identifiant" class="form-control form-control-user" type="text" placeholder="Adresse e-mail ou login" required>
+                                            <input name="identifiant" class="form-control form-control-user" type="text" placeholder="Adresse e-mail ou login" required>
                                         </div>
                                         
                                         <div class="mb-3">
-                                            <input value="telecom" name="password" class="form-control form-control-user" type="password" placeholder="Mot de passe" required>
+                                            <input name="password" class="form-control form-control-user" type="password" placeholder="Mot de passe" required>
                                         </div>
                                         
                                         @if ($errors->any())
@@ -46,9 +46,6 @@
                                         <button class="btn btn-primary d-block btn-user w-100 mt-5" type="submit">Se connecter</button>
                                         <hr>
                                     </form>
-                                    <div class="text-center">
-                                        <a class="small" href="{{ url('/loginGuest') }}">Se connecter en tant qu'invité?</a>
-                                    </div>
                                 </div>
                             </div>
                         </div>

@@ -94,15 +94,16 @@
                                 <div class="nav-item dropdown no-arrow">
                                     <a class="dropdown-toggle nav-link" aria-expanded="false" data-bs-toggle="dropdown" data-bss-hover-animate="pulse" href="#">
                                         @if (Auth::check())
-                                        <span class="d-none d-lg-inline me-2 text-600 small" style="font-size: 18px;padding-right: 10px;">
-                                            {{ $login }}
-                                        </span>
+                                            <span class="d-none d-lg-inline me-2 text-600 small" style="font-size: 18px; padding-right: 10px;">
+                                                {{ Auth::user()->login }} ({{ Auth::user()->isAdmin ? 'Administrateur' : 'Invité' }})
+                                            </span>
                                         @else
-                                            <span class="d-none d-lg-inline me-2 text-600 small" style="font-size: 18px;padding-right: 10px;">
-                                                Error
+                                            <span class="d-none d-lg-inline me-2 text-600 small" style="font-size: 18px; padding-right: 10px;">
+                                                Erreur : Non connecté
                                             </span>
                                         @endif
-                                        <img class="border rounded-circle img-profile" src="/assets/img/avatars/User.png" width="32" height="32"></a>
+                                        <img class="border rounded-circle img-profile" src="/assets/img/avatars/User.png" width="32" height="32">
+                                    </a>
                                     <div class="dropdown-menu shadow dropdown-menu-end animated--grow-in">
                                         <a class="dropdown-item" data-bss-hover-animate="pulse" href="#">
                                             <i class="fas fa-user fa-sm fa-fw me-2 text-gray-400"></i>&nbsp;Profil
@@ -118,6 +119,7 @@
                                 </div>
                             </li>
                         </ul>
+                        
                     </div>
                 </nav>
 
