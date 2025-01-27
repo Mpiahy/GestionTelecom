@@ -209,7 +209,7 @@
                         <span class="text-muted ms-2">(exemple : RAKOTOE2)</span>
                     </li>
                     <li class="mb-2">
-                        <code class="bg-light px-1 py-1 rounded">Nom et Prénoms</code> 
+                        <code class="bg-light px-1 py-1 rounded">Nom et Prenoms</code> 
                         <span class="text-muted ms-2">(exemple : RAKOTOARISOA Eliot)</span>
                     </li>
                     <li class="mb-2">

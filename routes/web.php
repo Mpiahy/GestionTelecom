@@ -14,7 +14,8 @@ use \App\Http\Controllers\{
     BoxController,
     ForfaitController,
     ImportController,
-    SimulationController
+    SimulationController,
+    AdminController
 };
 use App\Exports\ExampleExport;
 use Maatwebsite\Excel\Facades\Excel;
@@ -37,11 +38,16 @@ Route::post('/loginCheck', [LoginController::class, 'loginCheck'])->name('auth.l
 Route::get('/logout', [LoginController::class, 'logout'])->name('auth.logout');
 
 Route::middleware(['check.session'])->group(function () {
-
+    
         // Page d'accueil
         Route::get('/index', [IndexController::class, 'indexView'])->name('index');
-
-         // Route pour l'export PDF
+      
+        // Page des paramètres (modification du mot de passe et informations personnelles)
+        Route::get('/settings', [LoginController::class, 'settingsView'])->name('settings');
+        Route::post('/update_usr', [LoginController::class, 'updateUser'])->name('update_usr');
+        Route::post('/change_pwd', [LoginController::class, 'updatePassword'])->name('change_pwd');
+        
+        // Route pour l'export PDF
         Route::get('/export/pdf', [IndexController::class, 'exportPDF'])->name('export.pdf');
 
         // Route pour l'export XLSX
@@ -88,6 +94,9 @@ Route::middleware(['check.session'])->group(function () {
 
     // Routes pour les administrateurs uniquement
     Route::middleware(['admin'])->group(function () {
+
+        // Page d'administration(accès utilisateurs)
+        Route::get('/manage', [AdminController::class, 'manageView'])->name('manage');
 
         // Route pour import données
         Route::get('/import', [ImportController::class, 'importView'])->name('import.view');

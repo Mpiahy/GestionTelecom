@@ -36,7 +36,7 @@ class UserController extends Controller
             ->filterByLogin($request->input('search_user_login'))
             ->filterByName($request->input('search_user_name'))
             ->orderBy('updated_at', 'desc')
-            ->paginate(10);
+            ->paginate(5);
     
         return view('ref.user', compact('login', 'types', 'fonctions', 'chantiers', 'utilisateurs', 'operateurs'));
     }    
